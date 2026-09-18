@@ -150,7 +150,7 @@ h1{font-size:34px}
 
 <script>
 const SUPABASE_URL = 'https://sayeyuampbsmhhdukzv.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'COLE_AQUI_SUA_PUBLISHABLE_KEY';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 const form=document.getElementById('loginForm');
@@ -163,7 +163,7 @@ function showMessage(text,type='error'){
   msg.textContent=text;
   msg.className='msg show '+type;
 }
-function openDre(){window.location.href='dre.html';}
+function openDre(){window.location.href='dre/';}
 
 document.getElementById('eye').onclick=()=>{
   password.type=password.type==='password'?'text':'password';
@@ -222,4 +222,3 @@ document.getElementById('forgot').onclick=async(e)=>{
 </script>
 </body>
 </html>
-
