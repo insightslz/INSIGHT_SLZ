@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clientes | Insight</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,sans-serif}
@@ -51,7 +51,16 @@ const URL='https://sayeyuyampbsmhhdukzv.supabase.co',KEY='sb_publishable_ehw8AIk
 let user=null,clientes=[],contratos=[],clienteAtual=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
-async function init(){let r=await sb.auth.getUser();if(!r.data.user){location.href='../';return}user=r.data.user;atualizar()}
+async function init(){
+  if(!sb)return;
+  try{
+    const r=await sb.auth.getUser();
+    if(r.error) throw r.error;
+    if(!r.data.user){location.href='../';return}
+    user=r.data.user;
+    await atualizar();
+  }catch(e){mostrarErroInicial('Erro de sessão/conexão: '+(e.message||e));}
+}
 async function atualizar(){
   const a=await sb.from('clientes').select('*').order('id_cliente');
   if(a.error){alert('Erro ao carregar clientes: '+a.error.message);return}
@@ -139,13 +148,19 @@ function novoContrato(){novoContrato.style.display='block';['numero_contrato','s
 function cancelarContrato(){novoContrato.style.display='none'}
 async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await sb.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
 function fechar(){modal.classList.remove('open')}async function diagnostico(){
-  const r=await sb.auth.getUser();
-  const u=r.data?.user;
-  if(!u){alert('Sessão não encontrada.');return}
-  const q=await sb.from('clientes').select('id',{count:'exact',head:true});
-  alert('UID da sessão:\n'+u.id+'\n\nClientes visíveis para esta sessão: '+(q.count??0)+'\n\nUID esperado:\n046a346e-8f84-4a7a-8442-97ea937b4e4c');
+  if(!sb){alert('Supabase não foi carregado no navegador.');return}
+  try{
+    const r=await sb.auth.getUser();
+    const u=r.data?.user;
+    if(!u){alert('Sessão não encontrada.');return}
+    const q=await sb.from('clientes').select('id',{count:'exact',head:true});
+    alert('UID da sessão:\n'+u.id+'\n\nClientes visíveis para esta sessão: '+(q.count??0)+'\n\nUID esperado:\n046a346e-8f84-4a7a-8442-97ea937b4e4c'+(q.error?'\n\nErro: '+q.error.message:''));
+  }catch(e){alert('Erro no diagnóstico: '+(e.message||e))}
 }
 async function sair(){await sb.auth.signOut();location.href='../'}
-busca.addEventListener('input',render);filtro.addEventListener('change',render);init();
+busca.addEventListener('input',render);
+filtro.addEventListener('change',render);
+window.addEventListener('error',e=>mostrarErroInicial('Erro JavaScript: '+e.message));
+if(criarSupabase()) init();
 </script>
 </body></html>
