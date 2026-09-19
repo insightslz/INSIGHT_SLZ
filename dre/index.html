@@ -541,11 +541,13 @@ function renderTabela(){
 
   const linhaInput = (label, obj, id)=>{
     let l = `<tr><td>${label}</td>`;
+    const tipoObj = (id === 'folha') ? 'folha' : (obj===b.rec ? 'rec' : (obj===b.cd ? 'cd' : 'df'));
+    const fonte = (id === 'folha') ? b.folha : obj[id];
     mesesVis.forEach(i=>{
-      const val = obj[id][i] || 0;
+      const val = fonte[i] || 0;
       l += `<td><input type="text" inputmode="decimal"
               value="${fmtInput(val)}"
-              data-obj="${obj===b.rec?'rec':(obj===b.cd?'cd':'df')}"
+              data-obj="${tipoObj}"
               data-id="${id}" data-mes="${i}"
               oninput="onEdit(this)"
               onblur="reformatarInput(this)"></td>`;
