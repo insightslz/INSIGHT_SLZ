@@ -46,13 +46,14 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2
 </div></div>
 
 <script>
-const URL='https://sayeyuyampbsmhhdukzv.supabase.co',KEY='sb_publishable_ehw8AIkVTS6kI2Rh9nJ1w_2S6Au_GA',sb=supabase.createClient(URL,KEY);
+const URL='https://sayeyuyampbsmhhdukzv.supabase.co',KEY='sb_publishable_ehw8AIkVTS6kI2Rh9nJ1w_2S6Au_GA',window.sbClient=supabase.createClient(URL,KEY);
 let user=null,clientes=[],contratos=[],clienteAtual=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
 async function init(){
   try{
-    const r=await sb.auth.getUser();
+    if(!window.sbClient) throw new Error('Biblioteca Supabase não foi carregada.');
+    const r=await window.sbClient.auth.getUser();
     if(r.error) throw r.error;
     if(!r.data.user){location.href='../';return}
     user=r.data.user;
@@ -60,10 +61,10 @@ async function init(){
   }catch(e){mostrarErroInicial('Erro de sessão/conexão: '+(e.message||e));}
 }
 async function atualizar(){
-  const a=await sb.from('clientes').select('*').order('id_cliente');
+  const a=await window.sbClient.from('clientes').select('*').order('id_cliente');
   if(a.error){alert('Erro ao carregar clientes: '+a.error.message);return}
   clientes=a.data||[];
-  const b=await sb.from('contratos').select('*').order('fim_vigencia');
+  const b=await window.sbClient.from('contratos').select('*').order('fim_vigencia');
   contratos=b.error?[]:(b.data||[]);
   if(b.error) console.warn('Contratos ainda não disponíveis:',b.error.message);
   render();
@@ -94,10 +95,10 @@ async function importarBase(){
       status:(normalizar(r['STATUS']).toUpperCase()||'ATIVO')
     })).filter(r=>r.id_cliente&&r.razao_social);
 
-    let r=await sb.from('clientes').upsert(clientesReg,{onConflict:'user_id,id_cliente'});
+    let r=await window.sbClient.from('clientes').upsert(clientesReg,{onConflict:'user_id,id_cliente'});
     if(r.error){alert('Erro ao importar CLIENTES: '+r.error.message);return}
 
-    const atual=await sb.from('clientes').select('id,id_cliente,razao_social,nome_fantasia').eq('user_id',user.id);
+    const atual=await window.sbClient.from('clientes').select('id,id_cliente,razao_social,nome_fantasia').eq('user_id',user.id);
     if(atual.error){alert('Clientes importados, mas não foi possível vincular os contratos: '+atual.error.message);await atualizar();return}
     const mapa={};
     (atual.data||[]).forEach(c=>{mapa[c.id_cliente]=c;});
@@ -128,7 +129,7 @@ async function importarBase(){
     });
 
     if(contratosReg.length){
-      r=await sb.from('contratos').upsert(contratosReg,{onConflict:'user_id,numero_contrato'});
+      r=await window.sbClient.from('contratos').upsert(contratosReg,{onConflict:'user_id,numero_contrato'});
       if(r.error){alert(clientesReg.length+' clientes importados.\\n\\nErro ao importar contratos: '+r.error.message);await atualizar();return}
     }
 
@@ -141,21 +142,22 @@ async function importarBase(){
 function novo(){clienteAtual=null;document.getElementById('id').value='';['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>document.getElementById(x).value='');status.value='ATIVO';gestao.style.display=contratos.style.display=novoContrato.style.display='none';mt.textContent='Novo Cliente';modal.classList.add('open')}
 async function abrir(id){clienteAtual=clientes.find(x=>x.id===id);if(!clienteAtual)return;document.getElementById('id').value=id;['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel','status'].forEach(x=>document.getElementById(x).value=clienteAtual[x]??'');mt.textContent='Ficha do Cliente';gestao.style.display=contratos.style.display='block';novoContrato.style.display='none';renderFicha();modal.classList.add('open')}
 function renderFicha(){let cs=contratos.filter(x=>x.cliente_id===clienteAtual.id),ativos=cs.filter(x=>x.status==='ATIVO'),pend=cs.filter(x=>(x.pendencias||'').trim()).length;sa.textContent=ativos.length;sv.textContent=brl(ativos.reduce((s,x)=>s+Number(x.valor_mensal||0),0));let datas=ativos.filter(x=>x.fim_vigencia).map(x=>x.fim_vigencia).sort();sd.textContent=datas[0]||'—';sp.textContent=pend;listaContratos.innerHTML=cs.map(x=>{let venc=x.fim_vigencia?Math.ceil((new Date(x.fim_vigencia)-new Date())/86400000):null;let cls=venc!==null&&venc<=30?'warn':'';return `<div class="contract-card"><div class="contract-head"><b>${esc(x.numero_contrato||'Sem número')} · ${esc(x.servico||'Sem serviço')}</b><span class="tag">${esc(x.status)}</span></div><div class="contract-grid"><div><b>TIPO</b>${esc(x.tipo_contrato)}</div><div><b>VIGÊNCIA</b>${esc(x.inicio_vigencia)} → ${esc(x.fim_vigencia)}</div><div><b>VALOR MENSAL</b>${brl(x.valor_mensal)}</div><div><b>PAGAMENTO</b>${esc(x.forma_pagamento)} · dia ${esc(x.dia_vencimento)}</div><div><b>ARQUIVO</b>${x.arquivo_url?`<a class="link" target="_blank" href="${esc(x.arquivo_url)}">Abrir documento</a>`:'—'}</div><div><b>TÉRMINO</b><span class="${cls}">${venc===null?'—':venc<0?'Encerrado':venc+' dias'}</span></div><div><b>PRÓXIMA AÇÃO</b>${esc(x.proxima_acao)}<br>${esc(x.proxima_acao_data)}</div><div><b>PENDÊNCIAS</b>${esc(x.pendencias)||'Nenhuma'}</div></div></div>`}).join('')||'<p>Nenhum contrato cadastrado para este cliente.</p>'}
-async function salvarCliente(){let id=document.getElementById('id').value,obj={user_id:user.id,id_cliente:id_cliente.value.trim(),razao_social:razao_social.value.trim(),cnpj:cnpj.value.trim(),nome_fantasia:nome_fantasia.value.trim(),contato:contato.value.trim(),email:email.value.trim(),responsavel:responsavel.value.trim(),status:status.value};if(!obj.id_cliente||!obj.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let r=id?await sb.from('clientes').update(obj).eq('id',id).eq('user_id',user.id):await sb.from('clientes').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();fechar()}
+async function salvarCliente(){let id=document.getElementById('id').value,obj={user_id:user.id,id_cliente:id_cliente.value.trim(),razao_social:razao_social.value.trim(),cnpj:cnpj.value.trim(),nome_fantasia:nome_fantasia.value.trim(),contato:contato.value.trim(),email:email.value.trim(),responsavel:responsavel.value.trim(),status:status.value};if(!obj.id_cliente||!obj.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let r=id?await window.sbClient.from('clientes').update(obj).eq('id',id).eq('user_id',user.id):await window.sbClient.from('clientes').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();fechar()}
 function novoContrato(){novoContrato.style.display='block';['numero_contrato','servico','data_contrato','inicio_vigencia','fim_vigencia','valor_mensal','dia_vencimento','arquivo_url','proxima_acao','proxima_acao_data','pendencias'].forEach(x=>document.getElementById(x).value='');status_contrato.value='ATIVO';tipo_contrato.value='Mensal';forma_pagamento.value='Boleto'}
 function cancelarContrato(){novoContrato.style.display='none'}
-async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await sb.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
+async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await window.sbClient.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
 function fechar(){modal.classList.remove('open')}async function diagnostico(){
   try{
-    const r=await sb.auth.getUser();
+    if(!window.sbClient) throw new Error('Biblioteca Supabase não foi carregada.');
+    const r=await window.sbClient.auth.getUser();
     const u=r.data?.user;
     if(!u){alert('Sessão não encontrada.');return}
-    const q=await sb.from('clientes').select('id',{count:'exact',head:true});
+    const q=await window.sbClient.from('clientes').select('id',{count:'exact',head:true});
     const msg='UID da sessão:\n'+u.id+'\n\nClientes visíveis: '+(q.count??0)+'\n\nUID esperado:\n046a346e-8f84-4a7a-8442-97ea937b4e4c'+(q.error?'\n\nErro: '+q.error.message:'');
     alert(msg);
   }catch(e){alert('Erro no diagnóstico: '+(e.message||e))}
 }
-async function sair(){await sb.auth.signOut();location.href='../'}
+async function sair(){await window.sbClient.auth.signOut();location.href='../'}
 const busca=document.getElementById('busca');
 const filtro=document.getElementById('filtro');
 busca.addEventListener('input',render);
