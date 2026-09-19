@@ -18,7 +18,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2
 </head>
 <body>
 <header><div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
-<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="importarBase()">⇧ Importar Excel</button><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
+<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="importarBase()">⇧ Importar Excel</button><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="diagnostico()">🔎 Diagnóstico</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
 <main>
 <div class="kpis"><div class="kpi"><span>CLIENTES ATIVOS</span><b id="a">0</b></div><div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="t">0</b></div><div class="kpi"><span>PROSPECTS</span><b id="p">0</b></div><div class="kpi"><span>CONTRATOS ATIVOS</span><b id="c">0</b></div></div>
 <div class="toolbar"><input id="busca" placeholder="Pesquisar cliente, CNPJ, contato, responsável..."><select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
@@ -138,7 +138,14 @@ async function salvarCliente(){let id=document.getElementById('id').value,obj={u
 function novoContrato(){novoContrato.style.display='block';['numero_contrato','servico','data_contrato','inicio_vigencia','fim_vigencia','valor_mensal','dia_vencimento','arquivo_url','proxima_acao','proxima_acao_data','pendencias'].forEach(x=>document.getElementById(x).value='');status_contrato.value='ATIVO';tipo_contrato.value='Mensal';forma_pagamento.value='Boleto'}
 function cancelarContrato(){novoContrato.style.display='none'}
 async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await sb.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
-function fechar(){modal.classList.remove('open')}async function sair(){await sb.auth.signOut();location.href='../'}
+function fechar(){modal.classList.remove('open')}async function diagnostico(){
+  const r=await sb.auth.getUser();
+  const u=r.data?.user;
+  if(!u){alert('Sessão não encontrada.');return}
+  const q=await sb.from('clientes').select('id',{count:'exact',head:true});
+  alert('UID da sessão:\n'+u.id+'\n\nClientes visíveis para esta sessão: '+(q.count??0)+'\n\nUID esperado:\n046a346e-8f84-4a7a-8442-97ea937b4e4c');
+}
+async function sair(){await sb.auth.signOut();location.href='../'}
 busca.addEventListener('input',render);filtro.addEventListener('change',render);init();
 </script>
 </body></html>
