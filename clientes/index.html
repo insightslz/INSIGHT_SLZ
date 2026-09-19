@@ -1,130 +1,67 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clientes | Insight</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#172033;font-family:Segoe UI,Arial,sans-serif}
-.wrap{max-width:1450px;margin:auto;padding:20px}.top{background:linear-gradient(135deg,#0f2d6b,#2563eb);color:#fff;border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.top h1{margin:0}.top p{margin:5px 0 0;opacity:.85;font-size:13px}
-button{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointer}.white{background:#fff;color:#173b84}.green{background:#10b981;color:#fff}.red{background:#ef4444;color:#fff}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.card,.toolbar,.table{background:#fff;border:1px solid #e2e8f0;border-radius:12px}.card{padding:16px}.card small{color:#64748b;font-weight:700}.card b{display:block;font-size:25px;color:#1e3a8a;margin-top:5px}
-.toolbar{padding:12px;display:flex;gap:10px;margin-bottom:12px}.toolbar input,.toolbar select{padding:10px;border:1px solid #cbd5e1;border-radius:8px}.toolbar input{flex:1}
-.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:950px}th{background:#0f172a;color:#fff;padding:10px;text-align:left;font-size:12px}td{padding:10px;border-bottom:1px solid #edf2f7;font-size:13px}.badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}.at{background:#d1fae5;color:#065f46}.in{background:#fee2e2;color:#991b1b}.pr{background:#fef3c7;color:#92400e}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.box{background:#fff;border-radius:14px;padding:22px;width:min(800px,100%);max-height:90vh;overflow:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;font-weight:700;color:#475569}.field input,.field select{padding:10px;border:1px solid #cbd5e1;border-radius:8px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.toast{position:fixed;right:20px;bottom:20px;background:#059669;color:#fff;padding:12px 16px;border-radius:9px;display:none}.toast.show{display:block}
-@media(max-width:700px){.cards{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.toolbar{flex-direction:column}}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,sans-serif}
+header{margin:12px;padding:24px 28px;border-radius:20px;background:linear-gradient(110deg,#17367d,#2863e6);color:white;display:flex;justify-content:space-between;align-items:center;gap:15px}h1{margin:0;font-size:36px}.sub{opacity:.9;margin-top:6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:700;cursor:pointer}.primary{background:#0e2048;color:#fff}.white{background:#fff;color:#17367d}
+main{padding:0 12px 30px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.kpi,.panel{background:#fff;border:1px solid #d9e2ef;border-radius:16px;padding:16px}.kpi span{font-size:11px;font-weight:700;color:#68758c}.kpi b{display:block;font-size:27px;color:#173f91;margin-top:7px}
+.toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cdd8e8;border-radius:9px}.toolbar input{flex:1}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2ef;border-radius:16px;overflow:hidden}.wrap{overflow:auto}.table th{background:#0e1830;color:white;text-align:left;padding:12px;font-size:12px}.table td{padding:11px;border-bottom:1px solid #e7edf5;font-size:13px}.tag{background:#eaf1ff;color:#17428f;border-radius:99px;padding:5px 8px;font-weight:700;font-size:11px}.warn{color:#a76500;font-weight:700}.danger{color:#a40020;font-weight:700}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}.box{background:#fff;border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:22px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field label{display:block;font-size:11px;font-weight:700;color:#5e6c83;margin-bottom:5px}.full{grid-column:1/-1}.field textarea{min-height:75px}.section{margin-top:22px;border-top:1px solid #e3e9f2;padding-top:17px}.section h3{margin:0 0 12px}.contract-card{border:1px solid #dce4ef;border-radius:13px;padding:14px;margin-bottom:10px;background:#fbfcff}.contract-head{display:flex;justify-content:space-between;gap:10px}.contract-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;font-size:12px}.contract-grid b{display:block;font-size:11px;color:#66758b;margin-bottom:3px}.link{color:#1558b0;font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.summary div{background:#f3f6fb;padding:10px;border-radius:10px}.summary b{display:block;color:#173f91;margin-top:4px}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:900px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}}@media(max-width:600px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="top">
-<div><h1>👥 Clientes</h1><p>Base de clientes — Insight | Gerenciamento SGQ</p></div>
-<div><button class="white" onclick="novo()">＋ Novo cliente</button> <button class="white" onclick="document.getElementById('arquivoExcel').click()">⇧ Importar Excel</button> <button class="white" onclick="carregar()">↻ Atualizar</button>
-<input id="arquivoExcel" type="file" accept=".xlsx,.xls" style="display:none" onchange="importarExcel(event)"> <button class="white" onclick="sair()">↪ Sair</button></div>
-</header>
+<header><div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
+<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
+<main>
+<div class="kpis"><div class="kpi"><span>CLIENTES ATIVOS</span><b id="a">0</b></div><div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="t">0</b></div><div class="kpi"><span>PROSPECTS</span><b id="p">0</b></div><div class="kpi"><span>CONTRATOS ATIVOS</span><b id="c">0</b></div></div>
+<div class="toolbar"><input id="busca" placeholder="Pesquisar cliente, CNPJ, contato, responsável..."><select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
+<div class="wrap"><table class="table"><thead><tr><th>ID CLIENTE</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÃO</th></tr></thead><tbody id="tb"></tbody></table></div>
+</main>
 
-<section class="cards">
-<div class="card"><small>CLIENTES ATIVOS</small><b id="kAtivos">0</b></div>
-<div class="card"><small>CLIENTES CADASTRADOS</small><b id="kTotal">0</b></div>
-<div class="card"><small>PROSPECTS</small><b id="kProspects">0</b></div>
-</section>
-
-<div class="toolbar">
-<input id="q" placeholder="Pesquisar razão social, nome fantasia, CNPJ, contato ou responsável..." oninput="render()">
-<select id="st" onchange="render()"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select>
-</div>
-
-<div class="table"><table><thead><tr>
-<th>ID Cliente</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÕES</th>
-</tr></thead><tbody id="body"></tbody></table></div>
-</div>
-
-<div class="modal" id="modal"><div class="box">
-<h2 id="titulo">Novo cliente</h2><input type="hidden" id="uuid">
+<div id="modal" class="modal"><div class="box">
+<h2 id="mt">Ficha do Cliente</h2><input type="hidden" id="id">
 <div class="grid">
-<div class="field"><label>ID Cliente *</label><input id="id_cliente" placeholder="001"></div>
-<div class="field"><label>RAZÃO SOCIAL *</label><input id="razao_social"></div>
-<div class="field"><label>CNPJ</label><input id="cnpj"></div>
-<div class="field"><label>NOME FANTASIA</label><input id="nome_fantasia"></div>
-<div class="field"><label>CONTATO</label><input id="contato"></div>
-<div class="field"><label>E-mail</label><input id="email" type="email"></div>
-<div class="field"><label>RESPONSÁVEL</label><input id="responsavel"></div>
-<div class="field"><label>STATUS</label><select id="status"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
+<div class="field"><label>ID Cliente *</label><input id="id_cliente"></div><div class="field"><label>Razão Social *</label><input id="razao_social"></div><div class="field"><label>CNPJ</label><input id="cnpj"></div>
+<div class="field"><label>Nome Fantasia</label><input id="nome_fantasia"></div><div class="field"><label>Contato</label><input id="contato"></div><div class="field"><label>E-mail</label><input id="email" type="email"></div>
+<div class="field"><label>Responsável</label><input id="responsavel"></div><div class="field"><label>Status</label><select id="status"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
 </div>
-<div class="actions"><button onclick="fechar()">Cancelar</button><button class="green" onclick="salvar()">Salvar cliente</button></div>
+<div id="gestao" class="section" style="display:none"><h3>Visão de Gestão</h3><div class="summary"><div>Contratos ativos<b id="sa">0</b></div><div>Valor mensal<b id="sv">R$ 0,00</b></div><div>Próximo vencimento<b id="sd">—</b></div><div>Pendências<b id="sp">0</b></div></div></div>
+<div id="contratos" class="section" style="display:none"><h3>Contratos do Cliente</h3><div id="listaContratos"></div><button class="btn primary" onclick="novoContrato()">＋ Adicionar contrato</button></div>
+<div id="novoContrato" class="section" style="display:none"><h3>Novo contrato</h3><div class="grid">
+<div class="field"><label>Nº Contrato</label><input id="numero_contrato"></div><div class="field"><label>Tipo de Contrato</label><select id="tipo_contrato"><option>Avulso</option><option>Mensal</option><option>Treinamento</option><option>Auditoria</option><option>Projeto</option></select></div><div class="field"><label>Serviço</label><input id="servico"></div>
+<div class="field"><label>Data do Contrato</label><input id="data_contrato" type="date"></div><div class="field"><label>Início da Vigência</label><input id="inicio_vigencia" type="date"></div><div class="field"><label>Fim da Vigência</label><input id="fim_vigencia" type="date"></div>
+<div class="field"><label>Valor Mensal</label><input id="valor_mensal" type="number" step=".01" min="0"></div><div class="field"><label>Forma de Pagamento</label><select id="forma_pagamento"><option>Boleto</option><option>TED</option><option>PIX</option><option>Dinheiro</option></select></div><div class="field"><label>Dia de Vencimento</label><input id="dia_vencimento" type="number" min="1" max="31"></div>
+<div class="field"><label>Status</label><select id="status_contrato"><option>ATIVO</option><option>ENCERRADO</option><option>SUSPENSO</option><option>RENOVAR</option><option>SOB DEMANDA</option></select></div>
+<div class="field"><label>Link / local do arquivo</label><input id="arquivo_url" placeholder="Cole aqui o link do documento"></div>
+<div class="field"><label>Próxima ação</label><input id="proxima_acao"></div><div class="field"><label>Data da próxima ação</label><input id="proxima_acao_data" type="date"></div>
+<div class="field full"><label>Pendências</label><textarea id="pendencias" placeholder="Documentos, renovação, assinatura, pagamento, ajustes etc."></textarea></div>
+</div><div class="foot"><button class="btn" onclick="cancelarContrato()">Cancelar</button><button class="btn primary" onclick="salvarContrato()">Salvar contrato</button></div></div>
+<div class="foot"><button class="btn" onclick="fechar()">Fechar</button><button class="btn primary" onclick="salvarCliente()">Salvar cliente</button></div>
 </div></div>
-<div class="toast" id="toast"></div>
 
 <script>
-const sb=supabase.createClient('https://sayeyuyampbsmhhdukzv.supabase.co','sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA');
-let dados=[];
-const $=x=>document.getElementById(x);
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function msg(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
-async function user(){const {data}=await sb.auth.getUser();if(!data.user){location.href='../';return null}return data.user}
-async function carregar(){const u=await user();if(!u)return;const r=await sb.from('clientes').select('*').order('id_cliente');if(r.error){alert(r.error.message);return}dados=r.data||[];kpis();render()}
-function kpis(){$('kAtivos').textContent=dados.filter(x=>x.status==='ATIVO').length;$('kTotal').textContent=dados.length;$('kProspects').textContent=dados.filter(x=>x.status==='PROSPECT').length}
-function render(){let q=$('q').value.toLowerCase(),s=$('st').value;let a=dados.filter(x=>(!s||x.status===s)&&(!q||[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].join(' ').toLowerCase().includes(q)));$('body').innerHTML=a.length?a.map(x=>{let c=x.status==='ATIVO'?'at':x.status==='PROSPECT'?'pr':'in';return `<tr><td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td><td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td><td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td><td><span class="badge ${c}">${esc(x.status)}</span></td><td><button onclick="editar('${x.id}')">✏️</button> <button onclick="excluir('${x.id}')">🗑️</button></td></tr>`}).join(''):'<tr><td colspan="9" style="text-align:center;padding:30px;color:#64748b">Nenhum cliente encontrado.</td></tr>'}
-function limpar(){['uuid','id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>$(x).value='');$('status').value='ATIVO'}
-function novo(){limpar();$('titulo').textContent='Novo cliente';$('modal').classList.add('show')}
-function fechar(){$('modal').classList.remove('show')}
-function editar(id){let x=dados.find(y=>y.id===id);if(!x)return;Object.keys(x).forEach(k=>{if($(k))$(k).value=x[k]??''});$('uuid').value=x.id;$('titulo').textContent='Editar cliente';$('modal').classList.add('show')}
-async function salvar(){let u=await user();if(!u)return;let p={user_id:u.id,id_cliente:$('id_cliente').value.trim(),razao_social:$('razao_social').value.trim(),cnpj:$('cnpj').value.trim(),nome_fantasia:$('nome_fantasia').value.trim(),contato:$('contato').value.trim(),email:$('email').value.trim(),responsavel:$('responsavel').value.trim(),status:$('status').value};if(!p.id_cliente||!p.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let id=$('uuid').value;let r=id?await sb.from('clientes').update(p).eq('id',id):await sb.from('clientes').insert(p);if(r.error){alert(r.error.message);return}fechar();msg('Cliente salvo no banco');await carregar()}
-async function excluir(id){let x=dados.find(y=>y.id===id);if(!confirm('Excluir '+x.razao_social+'?'))return;let r=await sb.from('clientes').delete().eq('id',id);if(r.error){alert(r.error.message);return}msg('Cliente excluído');await carregar()}
-
-async function importarExcel(ev){
-  const file=ev.target.files?.[0];
-  ev.target.value='';
-  if(!file)return;
-  const u=await user(); if(!u)return;
-  try{
-    msg('Lendo a planilha...');
-    const buf=await file.arrayBuffer();
-    const wb=XLSX.read(buf,{type:'array'});
-    const nome=wb.SheetNames.includes('CLIENTES')?'CLIENTES':wb.SheetNames[0];
-    const ws=wb.Sheets[nome];
-    const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-    if(rows.length<2) throw new Error('A planilha não possui dados.');
-    const h=rows[0].map(v=>String(v).trim().toUpperCase());
-    const idx={};
-    ['ID CLIENTE','RAZÃO SOCIAL','CNPJ','NOME FANTASIA','CONTATO','E-MAIL','RESPONSÁVEL','STATUS'].forEach(k=>idx[k]=h.indexOf(k));
-    const obrig=['ID CLIENTE','RAZÃO SOCIAL','STATUS'];
-    const falt=obrig.filter(k=>idx[k]<0);
-    if(falt.length) throw new Error('Colunas obrigatórias não encontradas: '+falt.join(', '));
-    const arr=[];
-    for(let i=1;i<rows.length;i++){
-      const r=rows[i];
-      const id=String(r[idx['ID CLIENTE']]??'').trim();
-      const razao=String(r[idx['RAZÃO SOCIAL']]??'').trim();
-      if(!id && !razao) continue;
-      if(!id||!razao) continue;
-      let status=String(r[idx['STATUS']]??'ATIVO').trim().toUpperCase();
-      if(!['ATIVO','INATIVO','PROSPECT'].includes(status)) status='ATIVO';
-      arr.push({
-        user_id:u.id,
-        id_cliente:id,
-        razao_social:razao,
-        cnpj:String(r[idx['CNPJ']]??'').trim(),
-        nome_fantasia:String(r[idx['NOME FANTASIA']]??'').trim(),
-        contato:String(r[idx['CONTATO']]??'').trim(),
-        email:String(r[idx['E-MAIL']]??'').trim(),
-        responsavel:String(r[idx['RESPONSÁVEL']]??'').trim(),
-        status
-      });
-    }
-    if(!arr.length) throw new Error('Nenhum cliente válido foi encontrado na aba CLIENTES.');
-    const r=await sb.from('clientes').upsert(arr,{onConflict:'user_id,id_cliente'});
-    if(r.error) throw r.error;
-    msg(arr.length+' clientes importados/atualizados com sucesso.');
-    await carregar();
-  }catch(e){
-    alert('Erro na importação: '+(e.message||e));
-  }
-}
-
-async function sair(){await sb.auth.signOut();location.href='../'}
-carregar();
+const URL='https://sayeyuyampbsmhhdukzv.supabase.co',KEY='sb_publishable_ehw8AIkVTS6kI2Rh9nJ1w_2S6Au_GA',sb=supabase.createClient(URL,KEY);
+let user=null,clientes=[],contratos=[],clienteAtual=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
+async function init(){let r=await sb.auth.getUser();if(!r.data.user){location.href='../';return}user=r.data.user;atualizar()}
+async function atualizar(){let [a,b]=await Promise.all([sb.from('clientes').select('*').order('id_cliente'),sb.from('contratos').select('*').order('fim_vigencia')]);if(a.error){alert(a.error.message);return}clientes=a.data||[];contratos=b.error?[]:(b.data||[]);render()}
+function lista(){let q=(busca.value||'').toLowerCase(),f=filtro.value;return clientes.filter(x=>(!f||x.status===f)&&(!q||[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].some(v=>String(v||'').toLowerCase().includes(q))))}
+function render(){let l=lista();a.textContent=clientes.filter(x=>x.status==='ATIVO').length;t.textContent=clientes.length;p.textContent=clientes.filter(x=>x.status==='PROSPECT').length;c.textContent=contratos.filter(x=>x.status==='ATIVO').length;tb.innerHTML=l.map(x=>`<tr><td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td><td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td><td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td><td><span class="tag">${esc(x.status)}</span></td><td><button class="btn" onclick="abrir('${x.id}')">Abrir ficha</button></td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;padding:30px">Nenhum cliente encontrado.</td></tr>'}
+function novo(){clienteAtual=null;document.getElementById('id').value='';['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>document.getElementById(x).value='');status.value='ATIVO';gestao.style.display=contratos.style.display=novoContrato.style.display='none';mt.textContent='Novo Cliente';modal.classList.add('open')}
+async function abrir(id){clienteAtual=clientes.find(x=>x.id===id);if(!clienteAtual)return;document.getElementById('id').value=id;['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel','status'].forEach(x=>document.getElementById(x).value=clienteAtual[x]??'');mt.textContent='Ficha do Cliente';gestao.style.display=contratos.style.display='block';novoContrato.style.display='none';renderFicha();modal.classList.add('open')}
+function renderFicha(){let cs=contratos.filter(x=>x.cliente_id===clienteAtual.id),ativos=cs.filter(x=>x.status==='ATIVO'),pend=cs.filter(x=>(x.pendencias||'').trim()).length;sa.textContent=ativos.length;sv.textContent=brl(ativos.reduce((s,x)=>s+Number(x.valor_mensal||0),0));let datas=ativos.filter(x=>x.fim_vigencia).map(x=>x.fim_vigencia).sort();sd.textContent=datas[0]||'—';sp.textContent=pend;listaContratos.innerHTML=cs.map(x=>{let venc=x.fim_vigencia?Math.ceil((new Date(x.fim_vigencia)-new Date())/86400000):null;let cls=venc!==null&&venc<=30?'warn':'';return `<div class="contract-card"><div class="contract-head"><b>${esc(x.numero_contrato||'Sem número')} · ${esc(x.servico||'Sem serviço')}</b><span class="tag">${esc(x.status)}</span></div><div class="contract-grid"><div><b>TIPO</b>${esc(x.tipo_contrato)}</div><div><b>VIGÊNCIA</b>${esc(x.inicio_vigencia)} → ${esc(x.fim_vigencia)}</div><div><b>VALOR MENSAL</b>${brl(x.valor_mensal)}</div><div><b>PAGAMENTO</b>${esc(x.forma_pagamento)} · dia ${esc(x.dia_vencimento)}</div><div><b>ARQUIVO</b>${x.arquivo_url?`<a class="link" target="_blank" href="${esc(x.arquivo_url)}">Abrir documento</a>`:'—'}</div><div><b>TÉRMINO</b><span class="${cls}">${venc===null?'—':venc<0?'Encerrado':venc+' dias'}</span></div><div><b>PRÓXIMA AÇÃO</b>${esc(x.proxima_acao)}<br>${esc(x.proxima_acao_data)}</div><div><b>PENDÊNCIAS</b>${esc(x.pendencias)||'Nenhuma'}</div></div></div>`}).join('')||'<p>Nenhum contrato cadastrado para este cliente.</p>'}
+async function salvarCliente(){let id=document.getElementById('id').value,obj={user_id:user.id,id_cliente:id_cliente.value.trim(),razao_social:razao_social.value.trim(),cnpj:cnpj.value.trim(),nome_fantasia:nome_fantasia.value.trim(),contato:contato.value.trim(),email:email.value.trim(),responsavel:responsavel.value.trim(),status:status.value};if(!obj.id_cliente||!obj.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let r=id?await sb.from('clientes').update(obj).eq('id',id).eq('user_id',user.id):await sb.from('clientes').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();fechar()}
+function novoContrato(){novoContrato.style.display='block';['numero_contrato','servico','data_contrato','inicio_vigencia','fim_vigencia','valor_mensal','dia_vencimento','arquivo_url','proxima_acao','proxima_acao_data','pendencias'].forEach(x=>document.getElementById(x).value='');status_contrato.value='ATIVO';tipo_contrato.value='Mensal';forma_pagamento.value='Boleto'}
+function cancelarContrato(){novoContrato.style.display='none'}
+async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await sb.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
+function fechar(){modal.classList.remove('open')}async function sair(){await sb.auth.signOut();location.href='../'}
+busca.addEventListener('input',render);filtro.addEventListener('change',render);init();
 </script>
 </body></html>
