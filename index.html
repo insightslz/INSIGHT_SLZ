@@ -149,7 +149,7 @@ h1{font-size:34px}
 
 
 <script>
-const SUPABASE_URL = 'https://sayeyuampbsmhhdukzv.supabase.co';
+const SUPABASE_URL = 'https://sayeyuyampbsmhhdukzv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
@@ -181,8 +181,7 @@ form.onsubmit=async(e)=>{
   });
 
   if(error){
-    console.error('Supabase signInWithPassword:', error);
-    showMessage('Supabase: '+(error.message || 'erro desconhecido')+' ['+(error.code || error.status || 'sem código')+']');
+    showMessage('E-mail ou senha inválidos. Verifique seus dados ou crie uma nova conta.');
     loginBtn.disabled=false;
     loginBtn.textContent='Entrar  →';
     return;
@@ -247,3 +246,4 @@ document.getElementById('forgot').onclick=async(e)=>{
 </script>
 </body>
 </html>
+
