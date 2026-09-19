@@ -33,24 +33,6 @@
   .b-red{background:#ef4444;color:#fff;}
   .b-ghost{background:rgba(255,255,255,.2);color:#fff;}
 
-
-  /* MENU PRINCIPAL — acrescentado sem alterar a estrutura da DRE */
-  .menu-principal{
-    background:#0f2f73;
-    display:flex;align-items:center;gap:4px;
-    padding:7px 20px;
-    flex-wrap:wrap;
-  }
-  .menu-principal a{
-    color:#fff;text-decoration:none;
-    padding:7px 12px;border-radius:6px;
-    font-size:.72rem;font-weight:700;
-    transition:.15s;
-  }
-  .menu-principal a:hover{background:rgba(255,255,255,.16);}
-  .menu-principal a.ativo{background:#fff;color:#1e3a8a;}
-  @media(max-width:700px){.menu-principal{padding:7px 10px}.menu-principal a{font-size:.68rem;padding:7px 9px;}}
-
   .barra{
     background:#fff;padding:10px 20px;border-bottom:1px solid #e2e8f0;
     display:flex;gap:14px;flex-wrap:wrap;align-items:center;
@@ -230,16 +212,6 @@
     <span id="authStatus" class="auth-status warn">Modo local — configure o Supabase</span>
   </div>
 
-
-  <!-- MENU PRINCIPAL -->
-  <nav class="menu-principal" aria-label="Menu principal">
-    <a href="/INSIGHT_SLZ/dre/" class="ativo">📊 DRE</a>
-    <a href="/INSIGHT_SLZ/clientes/">👥 Clientes</a>
-    <a href="/INSIGHT_SLZ/contratos/">📄 Contratos</a>
-    <a href="/INSIGHT_SLZ/crm/">🎯 CRM</a>
-    <a href="/INSIGHT_SLZ/indicadores/">📈 Indicadores</a>
-    <a href="/INSIGHT_SLZ/psicologia/">🧠 Psicologia</a>
-  </nav>
   <div class="barra">
     <label>Base:</label>
     <div class="toggle">
