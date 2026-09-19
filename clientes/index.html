@@ -52,7 +52,6 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
 async function init(){
   try{
-    conectarSupabase();
     const r=await sb.auth.getUser();
     if(r.error) throw r.error;
     if(!r.data.user){location.href='../';return}
@@ -148,7 +147,6 @@ function cancelarContrato(){novoContrato.style.display='none'}
 async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await sb.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
 function fechar(){modal.classList.remove('open')}async function diagnostico(){
   try{
-    conectarSupabase();
     const r=await sb.auth.getUser();
     const u=r.data?.user;
     if(!u){alert('Sessão não encontrada.');return}
