@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clientes | Insight</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#172033;font-family:Segoe UI,Arial,sans-serif}
+.wrap{max-width:1450px;margin:auto;padding:20px}.top{background:linear-gradient(135deg,#0f2d6b,#2563eb);color:#fff;border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.top h1{margin:0}.top p{margin:5px 0 0;opacity:.85;font-size:13px}
+button{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointer}.white{background:#fff;color:#173b84}.green{background:#10b981;color:#fff}.red{background:#ef4444;color:#fff}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.card,.toolbar,.table{background:#fff;border:1px solid #e2e8f0;border-radius:12px}.card{padding:16px}.card small{color:#64748b;font-weight:700}.card b{display:block;font-size:25px;color:#1e3a8a;margin-top:5px}
+.toolbar{padding:12px;display:flex;gap:10px;margin-bottom:12px}.toolbar input,.toolbar select{padding:10px;border:1px solid #cbd5e1;border-radius:8px}.toolbar input{flex:1}
+.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:950px}th{background:#0f172a;color:#fff;padding:10px;text-align:left;font-size:12px}td{padding:10px;border-bottom:1px solid #edf2f7;font-size:13px}.badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}.at{background:#d1fae5;color:#065f46}.in{background:#fee2e2;color:#991b1b}.pr{background:#fef3c7;color:#92400e}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.box{background:#fff;border-radius:14px;padding:22px;width:min(800px,100%);max-height:90vh;overflow:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;font-weight:700;color:#475569}.field input,.field select{padding:10px;border:1px solid #cbd5e1;border-radius:8px}.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.toast{position:fixed;right:20px;bottom:20px;background:#059669;color:#fff;padding:12px 16px;border-radius:9px;display:none}.toast.show{display:block}
+@media(max-width:700px){.cards{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.toolbar{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+<div><h1>👥 Clientes</h1><p>Base de clientes — Insight | Gerenciamento SGQ</p></div>
+<div><button class="white" onclick="novo()">＋ Novo cliente</button> <button class="white" onclick="carregar()">↻ Atualizar</button> <button class="white" onclick="sair()">↪ Sair</button></div>
+</header>
+
+<section class="cards">
+<div class="card"><small>CLIENTES ATIVOS</small><b id="kAtivos">0</b></div>
+<div class="card"><small>CLIENTES CADASTRADOS</small><b id="kTotal">0</b></div>
+<div class="card"><small>PROSPECTS</small><b id="kProspects">0</b></div>
+</section>
+
+<div class="toolbar">
+<input id="q" placeholder="Pesquisar razão social, nome fantasia, CNPJ, contato ou responsável..." oninput="render()">
+<select id="st" onchange="render()"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select>
+</div>
+
+<div class="table"><table><thead><tr>
+<th>ID Cliente</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÕES</th>
+</tr></thead><tbody id="body"></tbody></table></div>
+</div>
+
+<div class="modal" id="modal"><div class="box">
+<h2 id="titulo">Novo cliente</h2><input type="hidden" id="uuid">
+<div class="grid">
+<div class="field"><label>ID Cliente *</label><input id="id_cliente" placeholder="001"></div>
+<div class="field"><label>RAZÃO SOCIAL *</label><input id="razao_social"></div>
+<div class="field"><label>CNPJ</label><input id="cnpj"></div>
+<div class="field"><label>NOME FANTASIA</label><input id="nome_fantasia"></div>
+<div class="field"><label>CONTATO</label><input id="contato"></div>
+<div class="field"><label>E-mail</label><input id="email" type="email"></div>
+<div class="field"><label>RESPONSÁVEL</label><input id="responsavel"></div>
+<div class="field"><label>STATUS</label><select id="status"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
+</div>
+<div class="actions"><button onclick="fechar()">Cancelar</button><button class="green" onclick="salvar()">Salvar cliente</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const sb=supabase.createClient('https://sayeyuyampbsmhhdukzv.supabase.co','sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA');
+let dados=[];
+const $=x=>document.getElementById(x);
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function msg(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}
+async function user(){const {data}=await sb.auth.getUser();if(!data.user){location.href='../';return null}return data.user}
+async function carregar(){const u=await user();if(!u)return;const r=await sb.from('clientes').select('*').order('id_cliente');if(r.error){alert(r.error.message);return}dados=r.data||[];kpis();render()}
+function kpis(){$('kAtivos').textContent=dados.filter(x=>x.status==='ATIVO').length;$('kTotal').textContent=dados.length;$('kProspects').textContent=dados.filter(x=>x.status==='PROSPECT').length}
+function render(){let q=$('q').value.toLowerCase(),s=$('st').value;let a=dados.filter(x=>(!s||x.status===s)&&(!q||[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].join(' ').toLowerCase().includes(q)));$('body').innerHTML=a.length?a.map(x=>{let c=x.status==='ATIVO'?'at':x.status==='PROSPECT'?'pr':'in';return `<tr><td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td><td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td><td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td><td><span class="badge ${c}">${esc(x.status)}</span></td><td><button onclick="editar('${x.id}')">✏️</button> <button onclick="excluir('${x.id}')">🗑️</button></td></tr>`}).join(''):'<tr><td colspan="9" style="text-align:center;padding:30px;color:#64748b">Nenhum cliente encontrado.</td></tr>'}
+function limpar(){['uuid','id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>$(x).value='');$('status').value='ATIVO'}
+function novo(){limpar();$('titulo').textContent='Novo cliente';$('modal').classList.add('show')}
+function fechar(){$('modal').classList.remove('show')}
+function editar(id){let x=dados.find(y=>y.id===id);if(!x)return;Object.keys(x).forEach(k=>{if($(k))$(k).value=x[k]??''});$('uuid').value=x.id;$('titulo').textContent='Editar cliente';$('modal').classList.add('show')}
+async function salvar(){let u=await user();if(!u)return;let p={user_id:u.id,id_cliente:$('id_cliente').value.trim(),razao_social:$('razao_social').value.trim(),cnpj:$('cnpj').value.trim(),nome_fantasia:$('nome_fantasia').value.trim(),contato:$('contato').value.trim(),email:$('email').value.trim(),responsavel:$('responsavel').value.trim(),status:$('status').value};if(!p.id_cliente||!p.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let id=$('uuid').value;let r=id?await sb.from('clientes').update(p).eq('id',id):await sb.from('clientes').insert(p);if(r.error){alert(r.error.message);return}fechar();msg('Cliente salvo no banco');await carregar()}
+async function excluir(id){let x=dados.find(y=>y.id===id);if(!confirm('Excluir '+x.razao_social+'?'))return;let r=await sb.from('clientes').delete().eq('id',id);if(r.error){alert(r.error.message);return}msg('Cliente excluído');await carregar()}
+async function sair(){await sb.auth.signOut();location.href='../'}
+carregar();
+</script>
+</body></html>
