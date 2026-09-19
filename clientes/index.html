@@ -4,12 +4,13 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clientes | Insight</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,sans-serif}
 header{margin:12px;padding:24px 28px;border-radius:20px;background:linear-gradient(110deg,#17367d,#2863e6);color:white;display:flex;justify-content:space-between;align-items:center;gap:15px}h1{margin:0;font-size:36px}.sub{opacity:.9;margin-top:6px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:700;cursor:pointer}.primary{background:#0e2048;color:#fff}.white{background:#fff;color:#17367d}
 main{padding:0 12px 30px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.kpi,.panel{background:#fff;border:1px solid #d9e2ef;border-radius:16px;padding:16px}.kpi span{font-size:11px;font-weight:700;color:#68758c}.kpi b{display:block;font-size:27px;color:#173f91;margin-top:7px}
-.toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cdd8e8;border-radius:9px}.toolbar input{flex:1}
+.toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cdd8e8;border-radius:9px}.toolbar input{flex:1;min-width:0}
 table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2ef;border-radius:16px;overflow:hidden}.wrap{overflow:auto}.table th{background:#0e1830;color:white;text-align:left;padding:12px;font-size:12px}.table td{padding:11px;border-bottom:1px solid #e7edf5;font-size:13px}.tag{background:#eaf1ff;color:#17428f;border-radius:99px;padding:5px 8px;font-weight:700;font-size:11px}.warn{color:#a76500;font-weight:700}.danger{color:#a40020;font-weight:700}
 .modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}.box{background:#fff;border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:22px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field label{display:block;font-size:11px;font-weight:700;color:#5e6c83;margin-bottom:5px}.full{grid-column:1/-1}.field textarea{min-height:75px}.section{margin-top:22px;border-top:1px solid #e3e9f2;padding-top:17px}.section h3{margin:0 0 12px}.contract-card{border:1px solid #dce4ef;border-radius:13px;padding:14px;margin-bottom:10px;background:#fbfcff}.contract-head{display:flex;justify-content:space-between;gap:10px}.contract-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;font-size:12px}.contract-grid b{display:block;font-size:11px;color:#66758b;margin-bottom:3px}.link{color:#1558b0;font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.summary div{background:#f3f6fb;padding:10px;border-radius:10px}.summary b{display:block;color:#173f91;margin-top:4px}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 @media(max-width:900px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}}@media(max-width:600px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr}}
@@ -17,7 +18,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2
 </head>
 <body>
 <header><div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
-<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
+<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="document.getElementById('arquivoExcel').click()">⇧ Importar Excel</button><input id="arquivoExcel" type="file" accept=".xlsx,.xls" style="display:none" onchange="importarExcel(event)"><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
 <main>
 <div class="kpis"><div class="kpi"><span>CLIENTES ATIVOS</span><b id="a">0</b></div><div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="t">0</b></div><div class="kpi"><span>PROSPECTS</span><b id="p">0</b></div><div class="kpi"><span>CONTRATOS ATIVOS</span><b id="c">0</b></div></div>
 <div class="toolbar"><input id="busca" placeholder="Pesquisar cliente, CNPJ, contato, responsável..."><select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
@@ -51,9 +52,113 @@ let user=null,clientes=[],contratos=[],clienteAtual=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
 async function init(){let r=await sb.auth.getUser();if(!r.data.user){location.href='../';return}user=r.data.user;atualizar()}
-async function atualizar(){let [a,b]=await Promise.all([sb.from('clientes').select('*').order('id_cliente'),sb.from('contratos').select('*').order('fim_vigencia')]);if(a.error){alert(a.error.message);return}clientes=a.data||[];contratos=b.error?[]:(b.data||[]);render()}
+async function atualizar(){
+  const a=await sb.from('clientes').select('*').order('id_cliente');
+  if(a.error){alert('Erro ao carregar clientes: '+a.error.message);return}
+  clientes=a.data||[];
+  const b=await sb.from('contratos').select('*').order('fim_vigencia');
+  contratos=b.error?[]:(b.data||[]);
+  if(b.error) console.warn('Contratos ainda não disponíveis:',b.error.message);
+  render();
+}
 function lista(){let q=(busca.value||'').toLowerCase(),f=filtro.value;return clientes.filter(x=>(!f||x.status===f)&&(!q||[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].some(v=>String(v||'').toLowerCase().includes(q))))}
 function render(){let l=lista();a.textContent=clientes.filter(x=>x.status==='ATIVO').length;t.textContent=clientes.length;p.textContent=clientes.filter(x=>x.status==='PROSPECT').length;c.textContent=contratos.filter(x=>x.status==='ATIVO').length;tb.innerHTML=l.map(x=>`<tr><td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td><td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td><td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td><td><span class="tag">${esc(x.status)}</span></td><td><button class="btn" onclick="abrir('${x.id}')">Abrir ficha</button></td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;padding:30px">Nenhum cliente encontrado.</td></tr>'}
+
+async function importarExcel(event){
+  const file=event.target.files?.[0];
+  event.target.value='';
+  if(!file)return;
+  if(!user){alert('Faça login antes de importar.');return}
+  try{
+    const buffer=await file.arrayBuffer();
+    const wb=XLSX.read(buffer,{type:'array'});
+    const wsC=wb.Sheets['CLIENTES'];
+    const wsK=wb.Sheets['CONTRATOS'];
+    if(!wsC){alert('A planilha precisa ter uma aba chamada CLIENTES.');return}
+
+    const normalizar=v=>String(v??'').trim();
+    const clientesExcel=XLSX.utils.sheet_to_json(wsC,{defval:''});
+    const clientesReg=clientesExcel.map(r=>({
+      user_id:user.id,
+      id_cliente:normalizar(r['ID Cliente']),
+      razao_social:normalizar(r['RAZÃO SOCIAL']),
+      cnpj:normalizar(r['CNPJ']),
+      nome_fantasia:normalizar(r['NOME FANTASIA']),
+      contato:normalizar(r['CONTATO']),
+      email:normalizar(r['E-mail']),
+      responsavel:normalizar(r['RESPONSÁVEL']),
+      status:(normalizar(r['STATUS']).toUpperCase() || 'ATIVO')
+    })).filter(r=>r.id_cliente && r.razao_social);
+
+    if(!clientesReg.length){alert('Nenhum cliente válido foi encontrado na aba CLIENTES.');return}
+    let r=await sb.from('clientes').upsert(clientesReg,{onConflict:'user_id,id_cliente'});
+    if(r.error){alert('Erro ao importar CLIENTES: '+r.error.message);return}
+
+    let msg=clientesReg.length+' clientes importados/atualizados.';
+    if(wsK){
+      const contratosExcel=XLSX.utils.sheet_to_json(wsK,{defval:''});
+      const clientesMap={};
+      const atual=await sb.from('clientes').select('id,id_cliente,nome_fantasia,razao_social').eq('user_id',user.id);
+      (atual.data||[]).forEach(c=>clientesMap[c.id_cliente]=c);
+
+      const contratosReg=[];
+      const pendentes=[];
+      contratosExcel.forEach(r=>{
+        const numero=normalizar(r['Nº Contrato']);
+        const m=numero.match(/^CTR-(\d+)/i);
+        const idCli=m?m[1].padStart(3,'0'):'';
+        const cli=clientesMap[idCli];
+        const empresa=normalizar(r['Empresa']);
+        const clienteId=cli?.id||null;
+        if(!clienteId) pendentes.push(empresa||numero);
+        contratosReg.push({
+          user_id:user.id,
+          cliente_id:clienteId,
+          empresa:empresa,
+          numero_contrato:numero||null,
+          tipo_contrato:normalizar(r['Tipo Contrato'])||'Mensal',
+          servico:normalizar(r['Serviço'])||null,
+          data_contrato:r['Data Contrato']||null,
+          inicio_vigencia:r['Início Vigência']||null,
+          fim_vigencia:r['Fim Vigência']||null,
+          valor_mensal:Number(r['Valor Mensal']||0),
+          forma_pagamento:normalizar(r['Forma Pagamento'])||null,
+          dia_vencimento:normalizar(r['Dia Vencimento'])?Number(r['Dia Vencimento']):null,
+          status:normalizar(r['Status'])||'ATIVO'
+        });
+      });
+
+      // Convert Excel serial dates to ISO dates where necessary.
+      const excelDateToISO=v=>{
+        if(v instanceof Date && !isNaN(v)) return v.toISOString().slice(0,10);
+        if(typeof v==='number'){
+          const d=new Date(Date.UTC(1899,11,30)+v*86400000);
+          return isNaN(d)?null:d.toISOString().slice(0,10);
+        }
+        if(typeof v==='string' && v.trim()) {
+          const d=new Date(v);
+          return isNaN(d)?null:d.toISOString().slice(0,10);
+        }
+        return null;
+      };
+      contratosReg.forEach(c=>{
+        c.data_contrato=excelDateToISO(c.data_contrato);
+        c.inicio_vigencia=excelDateToISO(c.inicio_vigencia);
+        c.fim_vigencia=excelDateToISO(c.fim_vigencia);
+      });
+
+      r=await sb.from('contratos').insert(contratosReg);
+      if(r.error){alert(msg+'\n\nErro ao importar CONTRATOS: '+r.error.message);return}
+      msg += '\n'+contratosReg.length+' contratos importados.';
+      if(pendentes.length) msg += '\n\nContratos sem vínculo automático: '+pendentes.join(', ');
+    }
+
+    alert(msg);
+    await atualizar();
+  }catch(e){
+    alert('Não foi possível ler/importar o Excel: '+e.message);
+  }
+}
 function novo(){clienteAtual=null;document.getElementById('id').value='';['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>document.getElementById(x).value='');status.value='ATIVO';gestao.style.display=contratos.style.display=novoContrato.style.display='none';mt.textContent='Novo Cliente';modal.classList.add('open')}
 async function abrir(id){clienteAtual=clientes.find(x=>x.id===id);if(!clienteAtual)return;document.getElementById('id').value=id;['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel','status'].forEach(x=>document.getElementById(x).value=clienteAtual[x]??'');mt.textContent='Ficha do Cliente';gestao.style.display=contratos.style.display='block';novoContrato.style.display='none';renderFicha();modal.classList.add('open')}
 function renderFicha(){let cs=contratos.filter(x=>x.cliente_id===clienteAtual.id),ativos=cs.filter(x=>x.status==='ATIVO'),pend=cs.filter(x=>(x.pendencias||'').trim()).length;sa.textContent=ativos.length;sv.textContent=brl(ativos.reduce((s,x)=>s+Number(x.valor_mensal||0),0));let datas=ativos.filter(x=>x.fim_vigencia).map(x=>x.fim_vigencia).sort();sd.textContent=datas[0]||'—';sp.textContent=pend;listaContratos.innerHTML=cs.map(x=>{let venc=x.fim_vigencia?Math.ceil((new Date(x.fim_vigencia)-new Date())/86400000):null;let cls=venc!==null&&venc<=30?'warn':'';return `<div class="contract-card"><div class="contract-head"><b>${esc(x.numero_contrato||'Sem número')} · ${esc(x.servico||'Sem serviço')}</b><span class="tag">${esc(x.status)}</span></div><div class="contract-grid"><div><b>TIPO</b>${esc(x.tipo_contrato)}</div><div><b>VIGÊNCIA</b>${esc(x.inicio_vigencia)} → ${esc(x.fim_vigencia)}</div><div><b>VALOR MENSAL</b>${brl(x.valor_mensal)}</div><div><b>PAGAMENTO</b>${esc(x.forma_pagamento)} · dia ${esc(x.dia_vencimento)}</div><div><b>ARQUIVO</b>${x.arquivo_url?`<a class="link" target="_blank" href="${esc(x.arquivo_url)}">Abrir documento</a>`:'—'}</div><div><b>TÉRMINO</b><span class="${cls}">${venc===null?'—':venc<0?'Encerrado':venc+' dias'}</span></div><div><b>PRÓXIMA AÇÃO</b>${esc(x.proxima_acao)}<br>${esc(x.proxima_acao_data)}</div><div><b>PENDÊNCIAS</b>${esc(x.pendencias)||'Nenhuma'}</div></div></div>`}).join('')||'<p>Nenhum contrato cadastrado para este cliente.</p>'}
