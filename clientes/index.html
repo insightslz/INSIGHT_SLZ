@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clientes | Insight</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#172033;font-family:Segoe UI,Arial,sans-serif}
 .wrap{max-width:1450px;margin:auto;padding:20px}.top{background:linear-gradient(135deg,#0f2d6b,#2563eb);color:#fff;border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.top h1{margin:0}.top p{margin:5px 0 0;opacity:.85;font-size:13px}
@@ -20,7 +21,8 @@ button{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointe
 <div class="wrap">
 <header class="top">
 <div><h1>👥 Clientes</h1><p>Base de clientes — Insight | Gerenciamento SGQ</p></div>
-<div><button class="white" onclick="novo()">＋ Novo cliente</button> <button class="white" onclick="carregar()">↻ Atualizar</button> <button class="white" onclick="sair()">↪ Sair</button></div>
+<div><button class="white" onclick="novo()">＋ Novo cliente</button> <button class="white" onclick="document.getElementById('arquivoExcel').click()">⇧ Importar Excel</button> <button class="white" onclick="carregar()">↻ Atualizar</button>
+<input id="arquivoExcel" type="file" accept=".xlsx,.xls" style="display:none" onchange="importarExcel(event)"> <button class="white" onclick="sair()">↪ Sair</button></div>
 </header>
 
 <section class="cards">
@@ -71,6 +73,57 @@ function fechar(){$('modal').classList.remove('show')}
 function editar(id){let x=dados.find(y=>y.id===id);if(!x)return;Object.keys(x).forEach(k=>{if($(k))$(k).value=x[k]??''});$('uuid').value=x.id;$('titulo').textContent='Editar cliente';$('modal').classList.add('show')}
 async function salvar(){let u=await user();if(!u)return;let p={user_id:u.id,id_cliente:$('id_cliente').value.trim(),razao_social:$('razao_social').value.trim(),cnpj:$('cnpj').value.trim(),nome_fantasia:$('nome_fantasia').value.trim(),contato:$('contato').value.trim(),email:$('email').value.trim(),responsavel:$('responsavel').value.trim(),status:$('status').value};if(!p.id_cliente||!p.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let id=$('uuid').value;let r=id?await sb.from('clientes').update(p).eq('id',id):await sb.from('clientes').insert(p);if(r.error){alert(r.error.message);return}fechar();msg('Cliente salvo no banco');await carregar()}
 async function excluir(id){let x=dados.find(y=>y.id===id);if(!confirm('Excluir '+x.razao_social+'?'))return;let r=await sb.from('clientes').delete().eq('id',id);if(r.error){alert(r.error.message);return}msg('Cliente excluído');await carregar()}
+
+async function importarExcel(ev){
+  const file=ev.target.files?.[0];
+  ev.target.value='';
+  if(!file)return;
+  const u=await user(); if(!u)return;
+  try{
+    msg('Lendo a planilha...');
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array'});
+    const nome=wb.SheetNames.includes('CLIENTES')?'CLIENTES':wb.SheetNames[0];
+    const ws=wb.Sheets[nome];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+    if(rows.length<2) throw new Error('A planilha não possui dados.');
+    const h=rows[0].map(v=>String(v).trim().toUpperCase());
+    const idx={};
+    ['ID CLIENTE','RAZÃO SOCIAL','CNPJ','NOME FANTASIA','CONTATO','E-MAIL','RESPONSÁVEL','STATUS'].forEach(k=>idx[k]=h.indexOf(k));
+    const obrig=['ID CLIENTE','RAZÃO SOCIAL','STATUS'];
+    const falt=obrig.filter(k=>idx[k]<0);
+    if(falt.length) throw new Error('Colunas obrigatórias não encontradas: '+falt.join(', '));
+    const arr=[];
+    for(let i=1;i<rows.length;i++){
+      const r=rows[i];
+      const id=String(r[idx['ID CLIENTE']]??'').trim();
+      const razao=String(r[idx['RAZÃO SOCIAL']]??'').trim();
+      if(!id && !razao) continue;
+      if(!id||!razao) continue;
+      let status=String(r[idx['STATUS']]??'ATIVO').trim().toUpperCase();
+      if(!['ATIVO','INATIVO','PROSPECT'].includes(status)) status='ATIVO';
+      arr.push({
+        user_id:u.id,
+        id_cliente:id,
+        razao_social:razao,
+        cnpj:String(r[idx['CNPJ']]??'').trim(),
+        nome_fantasia:String(r[idx['NOME FANTASIA']]??'').trim(),
+        contato:String(r[idx['CONTATO']]??'').trim(),
+        email:String(r[idx['E-MAIL']]??'').trim(),
+        responsavel:String(r[idx['RESPONSÁVEL']]??'').trim(),
+        status
+      });
+    }
+    if(!arr.length) throw new Error('Nenhum cliente válido foi encontrado na aba CLIENTES.');
+    const r=await sb.from('clientes').upsert(arr,{onConflict:'user_id,id_cliente'});
+    if(r.error) throw r.error;
+    msg(arr.length+' clientes importados/atualizados com sucesso.');
+    await carregar();
+  }catch(e){
+    alert('Erro na importação: '+(e.message||e));
+  }
+}
+
 async function sair(){await sb.auth.signOut();location.href='../'}
 carregar();
 </script>
