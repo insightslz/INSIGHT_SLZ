@@ -177,7 +177,11 @@
     thead th:first-child,tbody td:first-child{min-width:150px;font-size:.68rem;}
     td input{font-size:.68rem;padding:5px 4px;}
   }
-.auth-status.ok{color:#047857}.auth-status.warn{color:#b45309}.auth-status.err{color:#b91c1c}
+
+  .authbox{display:none !important;background:#fff;padding:14px 20px;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .authbox input{padding:7px 9px;border:1.5px solid #cbd5e1;border-radius:6px;font-size:.75rem;min-width:210px;}
+  .auth-status{font-size:.72rem;font-weight:700;color:#64748b;margin-left:auto;}
+  .auth-status.ok{color:#047857}.auth-status.warn{color:#b45309}.auth-status.err{color:#b91c1c}
 </style>
 </head>
 <body>
@@ -194,9 +198,18 @@
       <button class="btn b-purple" onclick="exportarExcel()">📤 Excel</button>
       <button class="btn b-green" onclick="salvar()">💾 Salvar</button>
       <button class="btn b-ghost" onclick="carregar()">↻ Recarregar</button>
-      <button class="btn b-red" onclick="resetar()">🗑️ Resetar</button>
+      <button class="btn b-red" onclick="resetar()">🗑️ Resetar</button>\n      <button class="btn b-ghost" onclick="sair()">↪️ Sair</button>
       <input type="file" id="fileIn" accept=".xlsx,.xls" style="display:none" onchange="lerArquivo(event)">
     </div>
+  </div>
+
+  <div class="authbox">
+    <input id="authEmail" type="email" placeholder="E-mail">
+    <input id="authSenha" type="password" placeholder="Senha">
+    <button class="btn b-blue" onclick="entrar()">🔐 Entrar</button>
+    <button class="btn b-green" onclick="cadastrar()">Criar conta</button>
+    <button class="btn b-ghost" style="background:#e2e8f0;color:#1e3a8a" onclick="sair()">Sair</button>
+    <span id="authStatus" class="auth-status warn">Modo local — configure o Supabase</span>
   </div>
 
   <div class="barra">
@@ -1012,6 +1025,26 @@ function salvarLocal(){
 }
 async function usuarioAtual(){ if(!sb) return null; const {data:{user}}=await sb.auth.getUser(); return user||null; }
 function statusAuth(t,c='warn'){ const e=document.getElementById('authStatus'); e.textContent=t; e.className='auth-status '+c; }
+async function entrar(){
+  if(!sb){toast('Configure o Supabase primeiro','error');return;}
+  const email=document.getElementById('authEmail').value.trim(), senha=document.getElementById('authSenha').value;
+  if(!email||!senha){toast('Informe e-mail e senha','error');return;}
+  const {error}=await sb.auth.signInWithPassword({email,password:senha});
+  if(error){statusAuth('Erro de login','err');toast(error.message,'error');return;}
+  await carregarNuvem(); statusAuth('Conectado ao banco','ok'); toast('Login realizado','success');
+}
+async function cadastrar(){
+  if(!sb){toast('Configure o Supabase primeiro','error');return;}
+  const email=document.getElementById('authEmail').value.trim(), senha=document.getElementById('authSenha').value;
+  if(!email||senha.length<6){toast('Use e-mail e senha com pelo menos 6 caracteres','error');return;}
+  const {error}=await sb.auth.signUp({email,password:senha});
+  if(error){toast(error.message,'error');return;}
+  statusAuth('Conta criada — confirme o e-mail se solicitado','ok'); toast('Conta criada','success');
+}
+async function sair(){
+  if(sb) await sb.auth.signOut();
+  window.location.href='../';
+}
 async function salvar(){
   salvarLocal();
   if(!sb){toast('Salvo neste navegador. Configure o Supabase para salvar na nuvem.','info');return;}
@@ -1038,6 +1071,22 @@ async function resetar(){
   if(sb){const user=await usuarioAtual();if(user){const {error}=await sb.from('dre_dados').upsert({user_id:user.id,nome:'DRE Insight SST',dados:DADOS,atualizado_em:new Date().toISOString()},{onConflict:'user_id'});if(error){toast('Reset local feito, mas houve erro no banco','error');render();return;}}}
   render();toast('Resetado','success');
 }
+async function inicializarAuth(){
+  if(!SUPABASE_CONFIGURADO){
+    document.body.innerHTML='<div style="font-family:Arial;padding:40px;text-align:center;color:#991b1b"><h2>Configuração pendente</h2><p>Configure a Publishable Key do Supabase no arquivo dre.html.</p></div>';
+    return;
+  }
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){
+    window.location.href='../';
+    return;
+  }
+  statusAuth('Conectado: '+(session.user.email||'usuário'),'ok');
+  await carregarNuvem();
+  sb.auth.onAuthStateChange((event)=>{
+    if(event==='SIGNED_OUT') window.location.href='../';
+  });
+}
 
 /* ============================================================
    TOAST
@@ -1062,6 +1111,7 @@ function render(){
 
 /* INIT */
 render();
+inicializarAuth();
 </script>
 
 </body>
