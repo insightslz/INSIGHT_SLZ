@@ -1,168 +1,198 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clientes | Insight</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,sans-serif}
-header{margin:12px;padding:24px 28px;border-radius:20px;background:linear-gradient(110deg,#17367d,#2863e6);color:white;display:flex;justify-content:space-between;align-items:center;gap:15px}h1{margin:0;font-size:36px}.sub{opacity:.9;margin-top:6px}
-.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:700;cursor:pointer}.primary{background:#0e2048;color:#fff}.white{background:#fff;color:#17367d}
-main{padding:0 12px 30px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.kpi,.panel{background:#fff;border:1px solid #d9e2ef;border-radius:16px;padding:16px}.kpi span{font-size:11px;font-weight:700;color:#68758c}.kpi b{display:block;font-size:27px;color:#173f91;margin-top:7px}
-.toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cdd8e8;border-radius:9px}.toolbar input{flex:1;min-width:0}
-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d9e2ef;border-radius:16px;overflow:hidden}.wrap{overflow:auto}.table th{background:#0e1830;color:white;text-align:left;padding:12px;font-size:12px}.table td{padding:11px;border-bottom:1px solid #e7edf5;font-size:13px}.tag{background:#eaf1ff;color:#17428f;border-radius:99px;padding:5px 8px;font-weight:700;font-size:11px}.warn{color:#a76500;font-weight:700}.danger{color:#a40020;font-weight:700}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}.box{background:#fff;border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:22px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field label{display:block;font-size:11px;font-weight:700;color:#5e6c83;margin-bottom:5px}.full{grid-column:1/-1}.field textarea{min-height:75px}.section{margin-top:22px;border-top:1px solid #e3e9f2;padding-top:17px}.section h3{margin:0 0 12px}.contract-card{border:1px solid #dce4ef;border-radius:13px;padding:14px;margin-bottom:10px;background:#fbfcff}.contract-head{display:flex;justify-content:space-between;gap:10px}.contract-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;font-size:12px}.contract-grid b{display:block;font-size:11px;color:#66758b;margin-bottom:3px}.link{color:#1558b0;font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.summary div{background:#f3f6fb;padding:10px;border-radius:10px}.summary b{display:block;color:#173f91;margin-top:4px}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-@media(max-width:900px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}}@media(max-width:600px){.kpis,.grid,.summary,.contract-grid{grid-template-columns:1fr}}
+header{margin:14px;padding:25px 32px;border-radius:20px;background:linear-gradient(110deg,#17367d,#2863e6);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:20px}
+h1{margin:0;font-size:40px}.sub{margin-top:8px;font-size:18px}.actions{display:flex;gap:9px;flex-wrap:wrap}
+button{border:0;border-radius:11px;padding:12px 17px;font-weight:700;font-size:15px;cursor:pointer}.white{background:#fff;color:#17367d}
+main{padding:0 14px 35px}.msg{display:none;margin:12px 0;padding:14px 16px;border-radius:10px;background:#fff1f1;color:#9d001d;border:1px solid #e6aab4}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0}.kpi{background:#fff;border:1px solid #d9e2ef;border-radius:17px;padding:20px}.kpi span{font-size:13px;font-weight:700;color:#68758c}.kpi b{display:block;font-size:32px;color:#173f91;margin-top:8px}
+.toolbar{display:flex;gap:10px;margin:15px 0}.toolbar input,.toolbar select{width:100%;padding:13px;border:1px solid #cdd8e8;border-radius:10px;background:#fff;font-size:16px}.toolbar input{flex:1}.toolbar select{max-width:260px}
+.tablewrap{overflow:auto;background:#fff;border-radius:17px;border:1px solid #d9e2ef}.table{width:100%;border-collapse:collapse;min-width:1000px}.table th{background:#0e1830;color:#fff;text-align:left;padding:14px}.table td{padding:13px;border-bottom:1px solid #e7edf5}.tag{display:inline-block;background:#d9f7e8;color:#087344;border-radius:99px;padding:6px 10px;font-weight:700;font-size:12px}
+.empty{text-align:center;padding:35px;color:#68758c}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}.box{background:#fff;border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:25px}.boxhead{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field label{display:block;font-size:12px;font-weight:700;color:#5e6c83;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #cdd8e8;border-radius:8px}.field textarea{min-height:75px}.full{grid-column:1/-1}.section{margin-top:22px;padding-top:16px;border-top:1px solid #e2e8f0}.contract{border:1px solid #dce4ef;border-radius:12px;padding:14px;margin:10px 0}.contractgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:13px;margin-top:10px}.contractgrid b{display:block;color:#68758c;font-size:11px;margin-bottom:3px}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.contractgrid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header><div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
-<div class="actions"><button class="btn white" onclick="novo()">＋ Novo cliente</button><button class="btn white" onclick="atualizar()">↻ Atualizar</button><button class="btn white" onclick="location.href='../'">⌂ Início</button><button class="btn white" onclick="diagnostico()">🔎 Diagnóstico</button><button class="btn white" onclick="sair()">↪ Sair</button></div></header>
+<header>
+<div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
+<div class="actions">
+<button class="white" id="btnNovo">＋ Novo cliente</button>
+<button class="white" id="btnAtualizar">↻ Atualizar</button>
+<button class="white" id="btnInicio">⌂ Início</button>
+<button class="white" id="btnSair">↪ Sair</button>
+</div>
+</header>
 <main>
-<div class="kpis"><div class="kpi"><span>CLIENTES ATIVOS</span><b id="a">0</b></div><div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="t">0</b></div><div class="kpi"><span>PROSPECTS</span><b id="p">0</b></div><div class="kpi"><span>CONTRATOS ATIVOS</span><b id="c">0</b></div></div>
-<div class="toolbar"><input id="busca" placeholder="Pesquisar cliente, CNPJ, contato, responsável..."><select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
-<div class="wrap"><table class="table"><thead><tr><th>ID CLIENTE</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÃO</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div id="msg" class="msg"></div>
+<div class="kpis">
+<div class="kpi"><span>CLIENTES ATIVOS</span><b id="kAtivos">0</b></div>
+<div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="kTotal">0</b></div>
+<div class="kpi"><span>PROSPECTS</span><b id="kProspects">0</b></div>
+<div class="kpi"><span>CONTRATOS ATIVOS</span><b id="kContratos">0</b></div>
+</div>
+<div class="toolbar">
+<input id="busca" placeholder="Pesquisar razão social, nome fantasia, CNPJ, contato ou responsável...">
+<select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select>
+</div>
+<div class="tablewrap"><table class="table"><thead><tr>
+<th>ID CLIENTE</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÃO</th>
+</tr></thead><tbody id="corpo"></tbody></table></div>
 </main>
 
-<div id="modal" class="modal"><div class="box">
-<h2 id="mt">Ficha do Cliente</h2><input type="hidden" id="id">
+<div class="modal" id="modal">
+<div class="box">
+<div class="boxhead"><h2 id="tituloModal">Ficha do Cliente</h2><button id="btnFechar">✕</button></div>
+<input type="hidden" id="clienteId">
 <div class="grid">
-<div class="field"><label>ID Cliente *</label><input id="id_cliente"></div><div class="field"><label>Razão Social *</label><input id="razao_social"></div><div class="field"><label>CNPJ</label><input id="cnpj"></div>
-<div class="field"><label>Nome Fantasia</label><input id="nome_fantasia"></div><div class="field"><label>Contato</label><input id="contato"></div><div class="field"><label>E-mail</label><input id="email" type="email"></div>
-<div class="field"><label>Responsável</label><input id="responsavel"></div><div class="field"><label>Status</label><select id="status"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
+<div class="field"><label>ID CLIENTE</label><input id="fId"></div>
+<div class="field"><label>RAZÃO SOCIAL</label><input id="fRazao"></div>
+<div class="field"><label>CNPJ</label><input id="fCnpj"></div>
+<div class="field"><label>NOME FANTASIA</label><input id="fFantasia"></div>
+<div class="field"><label>CONTATO</label><input id="fContato"></div>
+<div class="field"><label>E-MAIL</label><input id="fEmail"></div>
+<div class="field"><label>RESPONSÁVEL</label><input id="fResponsavel"></div>
+<div class="field"><label>STATUS</label><select id="fStatus"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
 </div>
-<div id="gestao" class="section" style="display:none"><h3>Visão de Gestão</h3><div class="summary"><div>Contratos ativos<b id="sa">0</b></div><div>Valor mensal<b id="sv">R$ 0,00</b></div><div>Próximo vencimento<b id="sd">—</b></div><div>Pendências<b id="sp">0</b></div></div></div>
-<div id="contratos" class="section" style="display:none"><h3>Contratos do Cliente</h3><div id="listaContratos"></div><button class="btn primary" onclick="novoContrato()">＋ Adicionar contrato</button></div>
-<div id="novoContrato" class="section" style="display:none"><h3>Novo contrato</h3><div class="grid">
-<div class="field"><label>Nº Contrato</label><input id="numero_contrato"></div><div class="field"><label>Tipo de Contrato</label><select id="tipo_contrato"><option>Avulso</option><option>Mensal</option><option>Treinamento</option><option>Auditoria</option><option>Projeto</option></select></div><div class="field"><label>Serviço</label><input id="servico"></div>
-<div class="field"><label>Data do Contrato</label><input id="data_contrato" type="date"></div><div class="field"><label>Início da Vigência</label><input id="inicio_vigencia" type="date"></div><div class="field"><label>Fim da Vigência</label><input id="fim_vigencia" type="date"></div>
-<div class="field"><label>Valor Mensal</label><input id="valor_mensal" type="number" step=".01" min="0"></div><div class="field"><label>Forma de Pagamento</label><select id="forma_pagamento"><option>Boleto</option><option>TED</option><option>PIX</option><option>Dinheiro</option></select></div><div class="field"><label>Dia de Vencimento</label><input id="dia_vencimento" type="number" min="1" max="31"></div>
-<div class="field"><label>Status</label><select id="status_contrato"><option>ATIVO</option><option>ENCERRADO</option><option>SUSPENSO</option><option>RENOVAR</option><option>SOB DEMANDA</option></select></div>
-<div class="field"><label>Link / local do arquivo</label><input id="arquivo_url" placeholder="Cole aqui o link do documento"></div>
-<div class="field"><label>Próxima ação</label><input id="proxima_acao"></div><div class="field"><label>Data da próxima ação</label><input id="proxima_acao_data" type="date"></div>
-<div class="field full"><label>Pendências</label><textarea id="pendencias" placeholder="Documentos, renovação, assinatura, pagamento, ajustes etc."></textarea></div>
-</div><div class="foot"><button class="btn" onclick="cancelarContrato()">Cancelar</button><button class="btn primary" onclick="salvarContrato()">Salvar contrato</button></div></div>
-<div class="foot"><button class="btn" onclick="fechar()">Fechar</button><button class="btn primary" onclick="salvarCliente()">Salvar cliente</button></div>
-</div></div>
+<div class="foot"><button id="btnSalvarCliente">Salvar cliente</button></div>
+<div class="section"><h3>Contratos do cliente</h3><div id="listaContratos">Carregando...</div></div>
+</div>
+</div>
 
 <script>
-const URL='https://sayeyuyampbsmhhdukzv.supabase.co',KEY='sb_publishable_ehw8AIkVTS6kI2Rh9nJ1w_2S6Au_GA',window.sbClient=supabase.createClient(URL,KEY);
-let user=null,clientes=[],contratos=[],clienteAtual=null;
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
-async function init(){
-  try{
-    if(!window.sbClient) throw new Error('Biblioteca Supabase não foi carregada.');
-    const r=await window.sbClient.auth.getUser();
-    if(r.error) throw r.error;
-    if(!r.data.user){location.href='../';return}
-    user=r.data.user;
-    await atualizar();
-  }catch(e){mostrarErroInicial('Erro de sessão/conexão: '+(e.message||e));}
+(function(){
+'use strict';
+
+const SUPABASE_URL = 'https://sayeyuyampbsmhhdukzv.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ehw8AIkVTS6k6iI2Rh9nJ1w_2S6Au_GA';
+window.SUPABASE_CLIENT = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let usuario = null;
+let clientes = [];
+let contratos = [];
+let clienteSelecionado = null;
+
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const moeda = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
+
+function erro(texto){
+  const el=$('msg'); el.textContent=texto; el.style.display='block';
 }
-async function atualizar(){
-  const a=await window.sbClient.from('clientes').select('*').order('id_cliente');
-  if(a.error){alert('Erro ao carregar clientes: '+a.error.message);return}
-  clientes=a.data||[];
-  const b=await window.sbClient.from('contratos').select('*').order('fim_vigencia');
-  contratos=b.error?[]:(b.data||[]);
-  if(b.error) console.warn('Contratos ainda não disponíveis:',b.error.message);
+function limparErro(){ $('msg').style.display='none'; }
+
+async function carregar(){
+  limparErro();
+  const sb=window.SUPABASE_CLIENT;
+  const sess=await sb.auth.getUser();
+  if(sess.error) throw sess.error;
+  usuario=sess.data.user;
+  if(!usuario){ window.location.href='../'; return; }
+
+  const cr=await sb.from('clientes').select('*').eq('user_id',usuario.id).order('id_cliente');
+  if(cr.error) throw new Error('Clientes: '+cr.error.message);
+  clientes=cr.data||[];
+
+  const tr=await sb.from('contratos').select('*').eq('user_id',usuario.id);
+  if(tr.error) throw new Error('Contratos: '+tr.error.message);
+  contratos=tr.data||[];
+
   render();
 }
-function lista(){let q=(busca.value||'').toLowerCase(),f=filtro.value;return clientes.filter(x=>(!f||x.status===f)&&(!q||[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].some(v=>String(v||'').toLowerCase().includes(q))))}
-function render(){let l=lista();a.textContent=clientes.filter(x=>x.status==='ATIVO').length;t.textContent=clientes.length;p.textContent=clientes.filter(x=>x.status==='PROSPECT').length;c.textContent=contratos.filter(x=>x.status==='ATIVO').length;tb.innerHTML=l.map(x=>`<tr><td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td><td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td><td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td><td><span class="tag">${esc(x.status)}</span></td><td><button class="btn" onclick="abrir('${x.id}')">Abrir ficha</button></td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;padding:30px">Nenhum cliente encontrado.</td></tr>'}
 
+function render(){
+  const q=$('busca').value.trim().toLowerCase();
+  const f=$('filtro').value;
+  const lista=clientes.filter(x=>{
+    const texto=[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].join(' ').toLowerCase();
+    return (!f || x.status===f) && (!q || texto.includes(q));
+  });
 
-const BASE_PLANILHA_CLIENTES=[{"ID Cliente":"001","RAZÃO SOCIAL":"AMPLO ENGENHARIA E GESTAO DE PROJETOS LTDA","CNPJ":"10.724.859/0001-05","NOME FANTASIA":"Amplo Engenharia","CONTATO":"(31) 3273-8364","E-mail":"thiago.moraes@amploengenharia.com.br\nrosicler.furtado@amploengenharia.com.br","RESPONSÁVEL":"Thiago Moraes\nRosicler Furtado","STATUS":"ATIVO"},{"ID Cliente":"002","RAZÃO SOCIAL":"C MENEZES SERVICOS E MANUTENCAO DE REDES LTDA","CNPJ":"30.256.728/0001-40","NOME FANTASIA":"C Menezes","CONTATO":"(98) 3244-1279","E-mail":"cmenezesmanutencao@bol.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"003","RAZÃO SOCIAL":"CF COMERCIO E SISTEMAS CONTRA INCENDIO LTDA","CNPJ":"10.724.859/0001-05","NOME FANTASIA":"CF Sistemas","CONTATO":"(19) 3242-9905","E-mail":"cfsistemas@cfsistemas.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"004","RAZÃO SOCIAL":"CONSTROEM FILIAL","CNPJ":"07.357.551/0003-18","NOME FANTASIA":"Constroem","CONTATO":"(98) 3311-2000","E-mail":"fiscal@constroem.eng.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"005","RAZÃO SOCIAL":"CONSTROEM MATRIZ","CNPJ":"07.357.551/0001-56","NOME FANTASIA":"Constroem","CONTATO":"(98) 3311-2000","E-mail":"fiscal@constroem.eng.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"006","RAZÃO SOCIAL":"CONTINENTAL SERVICOS DO BRASIL LTDA","CNPJ":"02.692.797/0007-56","NOME FANTASIA":"Continental","CONTATO":"(11) 3303-3450","E-mail":"admar.lima@continental-na.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"007","RAZÃO SOCIAL":"COTECNA SERVICOS LTDA","CNPJ":"53.174.983/0014-63","NOME FANTASIA":"Cotecna","CONTATO":"(13) 3219-4100","E-mail":"financeiro@cotecna.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"008","RAZÃO SOCIAL":"EMANI","CNPJ":"06.087.724/0001-09","NOME FANTASIA":"Emani","CONTATO":"(98) 3248-2616","E-mail":"emani@emani.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"009","RAZÃO SOCIAL":"ERIC GUIMARAES ARAUJO - ME","CNPJ":"17.668.873/0001-70","NOME FANTASIA":"CEMIC","CONTATO":"(98) 98114-1111","E-mail":"ericguimaraes@hotmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"010","RAZÃO SOCIAL":"EUDES","CNPJ":"20.638.062/0001-30","NOME FANTASIA":"Eudes","CONTATO":"(98) 3258-0050","E-mail":"eudesebarbosa@hotmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"011","RAZÃO SOCIAL":"EXIMPORT","CNPJ":"73.012.411/0001-70","NOME FANTASIA":"Eximport","CONTATO":"(11) 5525-4555","E-mail":"eximport@eximport.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"012","RAZÃO SOCIAL":"FORNECEDORA ENGENHARIA E LOGISTICA LTDA","CNPJ":"39.711.575/0001-58","NOME FANTASIA":"Fornecedora","CONTATO":"(85) 3304-4000","E-mail":"controladoria@fornecedora.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"013","RAZÃO SOCIAL":"FORNECEDORA-MAQUINAS E EQUIPAMENTOS LTDA","CNPJ":"07.197.718/0020-21","NOME FANTASIA":"Fornecedora Case","CONTATO":"(85) 3304-4000","E-mail":"fiscal@fornecedora.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"014","RAZÃO SOCIAL":"FUGRO IN SITU GEOTECNIA LTDA","CNPJ":"65.088.700/0001-25","NOME FANTASIA":"Fugro","CONTATO":"(21) 3523-9000","E-mail":"fgbri-contabil@fugro.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"015","RAZÃO SOCIAL":"INALDO AMORIM GARCIA JUNIOR","CNPJ":"459.367.573-15","NOME FANTASIA":"Inaldo","CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"016","RAZÃO SOCIAL":"INFRALINK","CNPJ":"01.704.331/0001-75","NOME FANTASIA":"Infralink","CONTATO":"(11) 3303-3450","E-mail":"admar.lima@infralink.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"017","RAZÃO SOCIAL":"ISES","CNPJ":"07.295.456/0001-75","NOME FANTASIA":"Ises","CONTATO":"(11) 2227-2358","E-mail":"adm@ises.org.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"018","RAZÃO SOCIAL":"J T PEREIRA TRANSPORTES E SERVICOS","CNPJ":"05.216.472/0001-08","NOME FANTASIA":"J T Pereira","CONTATO":"(98) 3254-0414","E-mail":"jtpereira_ma@hotmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"019","RAZÃO SOCIAL":"JC AMBIENTAL RECICLAGEM LTDA","CNPJ":"10.451.968/0001-98","NOME FANTASIA":"JC Ambiental","CONTATO":"(98) 3245-5668","E-mail":"jc_ambiental@yahoo.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"020","RAZÃO SOCIAL":"LUBRIN LUBRIFICACAO INDUSTRIAL LTDA","CNPJ":"01.078.322/0001-16","NOME FANTASIA":"Lubrin","CONTATO":"(11) 4133-1455","E-mail":"lubrin@lubrin.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"021","RAZÃO SOCIAL":"M. G. SANTOS COSTA FERNANDES LTDA","CNPJ":"30.062.052/0001-53","NOME FANTASIA":"Posto Jr","CONTATO":"(98) 3236-8480","E-mail":"mc_fernandes@hotmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"022","RAZÃO SOCIAL":"MAKRO ENGENHARIA","CNPJ":"05.325.014/0010-90","NOME FANTASIA":"Makro","CONTATO":"(85) 3304-5100","E-mail":"fiscal@makroengenharia.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"023","RAZÃO SOCIAL":"MONACO DIESEL CAMINHOES E ONIBUS LTDA","CNPJ":"05.442.121/0001-07","NOME FANTASIA":"Monaco Diesel","CONTATO":"(91) 3205-7200","E-mail":"gerenciafiscal@gruponamoneco.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"024","RAZÃO SOCIAL":"NATUS LUMINE EMPREENDIMENTOS MEDICOS E HOSPITALARE","CNPJ":"23.813.270/0001-17","NOME FANTASIA":"Natus Lumine","CONTATO":"(98) 3194-4000","E-mail":"natuslumine@gmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"025","RAZÃO SOCIAL":"OMEGA SERVICOS E MONTAGENS INDUSTRIAIS LTDA","CNPJ":"07.134.777/0002-79","NOME FANTASIA":"Omega","CONTATO":"(11) 2201-4475","E-mail":"contato@omegaservicos.ind.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"026","RAZÃO SOCIAL":"OPUS INDUSTRIA DE CONSTRUCOES MODULARES LTDA","CNPJ":"28.811.839/0008-03","NOME FANTASIA":"Opus","CONTATO":"(11) 4153-6111","E-mail":"fiscal@opusmodular.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"027","RAZÃO SOCIAL":"PLANAVE S/A ESTUDOS E PROJETOS DE ENGENHARIA","CNPJ":"33.953.340/0001-96","NOME FANTASIA":"Planave","CONTATO":"(21) 2112-7100","E-mail":"planave@planave.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"028","RAZÃO SOCIAL":"R. A. S. MURAD","CNPJ":"17.010.192/0001-10","NOME FANTASIA":"Murad","CONTATO":"(98) 3235-6215","E-mail":"rasmurad@hotmail.com","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"029","RAZÃO SOCIAL":"REDE MONTAGENS ELETROMECANICAS S/A","CNPJ":"20.098.146/0012-81","NOME FANTASIA":"Rede","CONTATO":"(31) 2108-7200","E-mail":"fiscal@redemontagens.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"030","RAZÃO SOCIAL":"RTT SOLUCOES INDUSTRIAIS LTDA","CNPJ":"67.844.183/0011-74","NOME FANTASIA":"RTT","CONTATO":"(11) 4596-9300","E-mail":"fiscal@rtt.ind.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"031","RAZÃO SOCIAL":"TAC","CNPJ":"23.433.246/0001-52","NOME FANTASIA":"Tac","CONTATO":"(98) 3244-2451","E-mail":"financeiro@tacslz.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"032","RAZÃO SOCIAL":"USIMG","CNPJ":"01.313.486/0004-23","NOME FANTASIA":"Usimg","CONTATO":"(31) 3822-4466","E-mail":"fiscal@usimg.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"033","RAZÃO SOCIAL":"WINDOWS HOTEIS","CNPJ":"09.456.657/0001-32","NOME FANTASIA":"Windows Rock Hotel","CONTATO":"(98) 3311-6655","E-mail":"gerencia@windowsrockhotel.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"034","RAZÃO SOCIAL":"WINDOWS OPEN MALL","CNPJ":"15.553.434/0001-96","NOME FANTASIA":"Windows Mall","CONTATO":"(98) 3311-6655","E-mail":"contabilidade@windowsrockhotel.com.br","RESPONSÁVEL":null,"STATUS":"ATIVO"},{"ID Cliente":"035","RAZÃO SOCIAL":"TRASIX IMPORTACAO, EXPORTACAO, COMERCIO E SANEAMENTO AMBIENTAL S.A","CNPJ":"18.765.997/0001-36","NOME FANTASIA":"TRASIX","CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"036","RAZÃO SOCIAL":"R Q CLINICA VETERINARIA LTDA","CNPJ":"14.603.462/0001-08","NOME FANTASIA":"AUQMIA","CONTATO":"(98) 9191-8690","E-mail":"auqmia.medvet@gmail.com","RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"037","RAZÃO SOCIAL":"PARAGUACU ENGENHARIA LTDA","CNPJ":"34.375.501/0001-74","NOME FANTASIA":"PARAGUACU","CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"038","RAZÃO SOCIAL":"A5 COMERCIO E REPRESENTAÇÕES LTDA","CNPJ":"22.548.559/0001-93","NOME FANTASIA":"A5","CONTATO":"\n(98) 3089-0312","E-mail":"\ncomercial@a5automacao.com.br","RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"039","RAZÃO SOCIAL":"O MARINHEIRO SERVIÇOS NAVAIS LTDA","CNPJ":"22.386.397/0001-34","NOME FANTASIA":"O MARINHEIRO","CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"040","RAZÃO SOCIAL":"DROGRARIA SOCORRÃO","CNPJ":"11.052.842/0001-03","NOME FANTASIA":null,"CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"041","RAZÃO SOCIAL":"FORTCENTER REFRIGERAÇÃO","CNPJ":"03.238.203/0001-09","NOME FANTASIA":"FORTCENTER","CONTATO":null,"E-mail":null,"RESPONSÁVEL":null,"STATUS":null},{"ID Cliente":"042","RAZÃO SOCIAL":"ARBLITZ CONTROLE DE PRAGAS URBANAS LTDA - ME","CNPJ":"50.634.332/0001-04","NOME FANTASIA":"ARBLITZ","CONTATO":"98) 98494-5252","E-mail":null,"RESPONSÁVEL":null,"STATUS":null}];
-const BASE_PLANILHA_CONTRATOS=[{"Empresa":"Amplo Engenharia","Nº Contrato":"CTR-001/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"C Menezes","Nº Contrato":"CTR-002/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"CF Sistemas","Nº Contrato":"CTR-003/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Constroem","Nº Contrato":"CTR-004/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":8000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Constroem","Nº Contrato":"CTR-005/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":4000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Continental","Nº Contrato":"CTR-006/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":" ","Status":"ATIVO"},{"Empresa":"Cotecna","Nº Contrato":"CTR-007/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Emani","Nº Contrato":"CTR-008/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":8000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"CEMIC","Nº Contrato":"CTR-009/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":4500,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Eudes","Nº Contrato":"CTR-010/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":7500,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Eximport","Nº Contrato":"CTR-011/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ENCERRADO"},{"Empresa":"Fornecedora","Nº Contrato":"CTR-012/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Fornecedora Case","Nº Contrato":"CTR-013/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Fugro","Nº Contrato":"CTR-014/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Inaldo","Nº Contrato":"CTR-015/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ENCERRADO"},{"Empresa":"Infralink","Nº Contrato":"CTR-016/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Ises","Nº Contrato":"CTR-017/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"J T Pereira","Nº Contrato":"CTR-018/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"JC Ambiental","Nº Contrato":"CTR-019/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Lubrin","Nº Contrato":"CTR-020/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Posto Jr","Nº Contrato":"CTR-021/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Makro","Nº Contrato":"CTR-022/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Monaco Diesel","Nº Contrato":"CTR-023/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Natus Lumine","Nº Contrato":"CTR-024/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Omega","Nº Contrato":"CTR-025/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Opus","Nº Contrato":"CTR-026/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Planave","Nº Contrato":"CTR-027/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Murad","Nº Contrato":"CTR-028/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":7000,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Rede","Nº Contrato":"CTR-029/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"RTT","Nº Contrato":"CTR-030/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"Tac","Nº Contrato":"CTR-031/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":15000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Usimg","Nº Contrato":"CTR-032/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":null,"Forma Pagamento":"Boleto","Dia Vencimento":null,"Status":"ENCERRADO"},{"Empresa":"Windows Rock Hotel","Nº Contrato":"CTR-033/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":7000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"Windows Mall","Nº Contrato":"CTR-034/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":"2026-12-31","Valor Mensal":6000,"Forma Pagamento":"Boleto","Dia Vencimento":5,"Status":"ATIVO"},{"Empresa":"AUQMIA","Nº Contrato":"CTR-035/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":"2026-07-02","Início Vigência":"2027-07-02","Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"PARAGUACU","Nº Contrato":"CTR-036/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"A5","Nº Contrato":"CTR-037/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":"2026-07-01","Início Vigência":"2027-01-01","Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"O MARINHEIRO","Nº Contrato":"CTR-038/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"DROGARIA SOCORRÃO","Nº Contrato":"CTR-039/2026","Tipo Contrato":"Avulso","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"FORTCENTER","Nº Contrato":"CTR-040/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":"ATIVO"},{"Empresa":"ARBLITZ","Nº Contrato":"CTR-041/2026","Tipo Contrato":"Mensal","Serviço":"Consultoria","Data Contrato":null,"Início Vigência":null,"Fim Vigência":null,"Valor Mensal":null,"Forma Pagamento":null,"Dia Vencimento":null,"Status":null}];
+  $('kAtivos').textContent=clientes.filter(x=>x.status==='ATIVO').length;
+  $('kTotal').textContent=clientes.length;
+  $('kProspects').textContent=clientes.filter(x=>x.status==='PROSPECT').length;
+  $('kContratos').textContent=contratos.filter(x=>x.status==='ATIVO').length;
 
-async function importarBase(){
-  // A base da planilha foi incorporada ao módulo para não depender de biblioteca externa.
-  if(!user){alert('Faça login antes de importar.');return}
-  const confirmar=confirm('Importar a base da planilha CONTROLE CLIENTES_INSIGHT?\\n\\n'+BASE_PLANILHA_CLIENTES.length+' clientes e '+BASE_PLANILHA_CONTRATOS.length+' contratos serão importados/atualizados.'); 
-  if(!confirmar)return;
-  try{
-    const normalizar=v=>String(v??'').trim();
-    const clientesReg=BASE_PLANILHA_CLIENTES.map(r=>({
-      user_id:user.id,
-      id_cliente:normalizar(r['ID Cliente']),
-      razao_social:normalizar(r['RAZÃO SOCIAL']),
-      cnpj:normalizar(r['CNPJ']),
-      nome_fantasia:normalizar(r['NOME FANTASIA']),
-      contato:normalizar(r['CONTATO']),
-      email:normalizar(r['E-mail']),
-      responsavel:normalizar(r['RESPONSÁVEL']),
-      status:(normalizar(r['STATUS']).toUpperCase()||'ATIVO')
-    })).filter(r=>r.id_cliente&&r.razao_social);
+  $('corpo').innerHTML=lista.length ? lista.map(x=>`
+    <tr>
+      <td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td>
+      <td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td>
+      <td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td>
+      <td><span class="tag">${esc(x.status)}</span></td>
+      <td><button data-id="${esc(x.id)}" class="abrir">Abrir ficha</button></td>
+    </tr>`).join('')
+    : '<tr><td colspan="9" class="empty">Nenhum cliente encontrado.</td></tr>';
 
-    let r=await window.sbClient.from('clientes').upsert(clientesReg,{onConflict:'user_id,id_cliente'});
-    if(r.error){alert('Erro ao importar CLIENTES: '+r.error.message);return}
-
-    const atual=await window.sbClient.from('clientes').select('id,id_cliente,razao_social,nome_fantasia').eq('user_id',user.id);
-    if(atual.error){alert('Clientes importados, mas não foi possível vincular os contratos: '+atual.error.message);await atualizar();return}
-    const mapa={};
-    (atual.data||[]).forEach(c=>{mapa[c.id_cliente]=c;});
-
-    const contratosReg=[];
-    const semVinculo=[];
-    BASE_PLANILHA_CONTRATOS.forEach(r=>{
-      const numero=normalizar(r['Nº Contrato']);
-      const m=numero.match(/^CTR-(\d+)/i);
-      const idCli=m?m[1].padStart(3,'0'):'';
-      const cli=mapa[idCli];
-      if(!cli) semVinculo.push((r['Empresa']||'')+' / '+numero);
-      contratosReg.push({
-        user_id:user.id,
-        cliente_id:cli?cli.id:null,
-        empresa:normalizar(r['Empresa']),
-        numero_contrato:numero||null,
-        tipo_contrato:normalizar(r['Tipo Contrato'])||'Mensal',
-        servico:normalizar(r['Serviço'])||null,
-        data_contrato:r['Data Contrato']||null,
-        inicio_vigencia:r['Início Vigência']||null,
-        fim_vigencia:r['Fim Vigência']||null,
-        valor_mensal:Number(r['Valor Mensal']||0),
-        forma_pagamento:normalizar(r['Forma Pagamento'])||null,
-        dia_vencimento:r['Dia Vencimento']?Number(r['Dia Vencimento']):null,
-        status:normalizar(r['Status'])||'ATIVO'
-      });
-    });
-
-    if(contratosReg.length){
-      r=await window.sbClient.from('contratos').upsert(contratosReg,{onConflict:'user_id,numero_contrato'});
-      if(r.error){alert(clientesReg.length+' clientes importados.\\n\\nErro ao importar contratos: '+r.error.message);await atualizar();return}
-    }
-
-    let msg=clientesReg.length+' clientes importados/atualizados com sucesso.\\n'+contratosReg.length+' contratos importados/atualizados com sucesso.';
-    if(semVinculo.length)msg+='\\n\\nContratos sem vínculo automático: '+semVinculo.join(', ');
-    alert(msg);
-    await atualizar();
-  }catch(e){alert('Erro na importação: '+e.message)}
+  document.querySelectorAll('.abrir').forEach(b=>b.addEventListener('click',()=>abrirFicha(b.dataset.id)));
 }
-function novo(){clienteAtual=null;document.getElementById('id').value='';['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel'].forEach(x=>document.getElementById(x).value='');status.value='ATIVO';gestao.style.display=contratos.style.display=novoContrato.style.display='none';mt.textContent='Novo Cliente';modal.classList.add('open')}
-async function abrir(id){clienteAtual=clientes.find(x=>x.id===id);if(!clienteAtual)return;document.getElementById('id').value=id;['id_cliente','razao_social','cnpj','nome_fantasia','contato','email','responsavel','status'].forEach(x=>document.getElementById(x).value=clienteAtual[x]??'');mt.textContent='Ficha do Cliente';gestao.style.display=contratos.style.display='block';novoContrato.style.display='none';renderFicha();modal.classList.add('open')}
-function renderFicha(){let cs=contratos.filter(x=>x.cliente_id===clienteAtual.id),ativos=cs.filter(x=>x.status==='ATIVO'),pend=cs.filter(x=>(x.pendencias||'').trim()).length;sa.textContent=ativos.length;sv.textContent=brl(ativos.reduce((s,x)=>s+Number(x.valor_mensal||0),0));let datas=ativos.filter(x=>x.fim_vigencia).map(x=>x.fim_vigencia).sort();sd.textContent=datas[0]||'—';sp.textContent=pend;listaContratos.innerHTML=cs.map(x=>{let venc=x.fim_vigencia?Math.ceil((new Date(x.fim_vigencia)-new Date())/86400000):null;let cls=venc!==null&&venc<=30?'warn':'';return `<div class="contract-card"><div class="contract-head"><b>${esc(x.numero_contrato||'Sem número')} · ${esc(x.servico||'Sem serviço')}</b><span class="tag">${esc(x.status)}</span></div><div class="contract-grid"><div><b>TIPO</b>${esc(x.tipo_contrato)}</div><div><b>VIGÊNCIA</b>${esc(x.inicio_vigencia)} → ${esc(x.fim_vigencia)}</div><div><b>VALOR MENSAL</b>${brl(x.valor_mensal)}</div><div><b>PAGAMENTO</b>${esc(x.forma_pagamento)} · dia ${esc(x.dia_vencimento)}</div><div><b>ARQUIVO</b>${x.arquivo_url?`<a class="link" target="_blank" href="${esc(x.arquivo_url)}">Abrir documento</a>`:'—'}</div><div><b>TÉRMINO</b><span class="${cls}">${venc===null?'—':venc<0?'Encerrado':venc+' dias'}</span></div><div><b>PRÓXIMA AÇÃO</b>${esc(x.proxima_acao)}<br>${esc(x.proxima_acao_data)}</div><div><b>PENDÊNCIAS</b>${esc(x.pendencias)||'Nenhuma'}</div></div></div>`}).join('')||'<p>Nenhum contrato cadastrado para este cliente.</p>'}
-async function salvarCliente(){let id=document.getElementById('id').value,obj={user_id:user.id,id_cliente:id_cliente.value.trim(),razao_social:razao_social.value.trim(),cnpj:cnpj.value.trim(),nome_fantasia:nome_fantasia.value.trim(),contato:contato.value.trim(),email:email.value.trim(),responsavel:responsavel.value.trim(),status:status.value};if(!obj.id_cliente||!obj.razao_social){alert('Preencha ID Cliente e Razão Social.');return}let r=id?await window.sbClient.from('clientes').update(obj).eq('id',id).eq('user_id',user.id):await window.sbClient.from('clientes').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();fechar()}
-function novoContrato(){novoContrato.style.display='block';['numero_contrato','servico','data_contrato','inicio_vigencia','fim_vigencia','valor_mensal','dia_vencimento','arquivo_url','proxima_acao','proxima_acao_data','pendencias'].forEach(x=>document.getElementById(x).value='');status_contrato.value='ATIVO';tipo_contrato.value='Mensal';forma_pagamento.value='Boleto'}
-function cancelarContrato(){novoContrato.style.display='none'}
-async function salvarContrato(){let obj={user_id:user.id,cliente_id:clienteAtual.id,empresa:clienteAtual.razao_social,numero_contrato:numero_contrato.value.trim(),tipo_contrato:tipo_contrato.value,servico:servico.value.trim(),data_contrato:data_contrato.value||null,inicio_vigencia:inicio_vigencia.value||null,fim_vigencia:fim_vigencia.value||null,valor_mensal:Number(valor_mensal.value||0),forma_pagamento:forma_pagamento.value,dia_vencimento:dia_vencimento.value?Number(dia_vencimento.value):null,status:status_contrato.value,arquivo_url:arquivo_url.value.trim(),pendencias:pendencias.value.trim(),proxima_acao:proxima_acao.value.trim(),proxima_acao_data:proxima_acao_data.value||null};let r=await window.sbClient.from('contratos').insert(obj);if(r.error){alert(r.error.message);return}await atualizar();renderFicha();cancelarContrato()}
-function fechar(){modal.classList.remove('open')}async function diagnostico(){
-  try{
-    if(!window.sbClient) throw new Error('Biblioteca Supabase não foi carregada.');
-    const r=await window.sbClient.auth.getUser();
-    const u=r.data?.user;
-    if(!u){alert('Sessão não encontrada.');return}
-    const q=await window.sbClient.from('clientes').select('id',{count:'exact',head:true});
-    const msg='UID da sessão:\n'+u.id+'\n\nClientes visíveis: '+(q.count??0)+'\n\nUID esperado:\n046a346e-8f84-4a7a-8442-97ea937b4e4c'+(q.error?'\n\nErro: '+q.error.message:'');
-    alert(msg);
-  }catch(e){alert('Erro no diagnóstico: '+(e.message||e))}
+
+function abrirFicha(id){
+  clienteSelecionado=clientes.find(x=>x.id===id);
+  if(!clienteSelecionado) return;
+  $('clienteId').value=clienteSelecionado.id;
+  $('fId').value=clienteSelecionado.id_cliente||'';
+  $('fRazao').value=clienteSelecionado.razao_social||'';
+  $('fCnpj').value=clienteSelecionado.cnpj||'';
+  $('fFantasia').value=clienteSelecionado.nome_fantasia||'';
+  $('fContato').value=clienteSelecionado.contato||'';
+  $('fEmail').value=clienteSelecionado.email||'';
+  $('fResponsavel').value=clienteSelecionado.responsavel||'';
+  $('fStatus').value=clienteSelecionado.status||'ATIVO';
+
+  const cs=contratos.filter(c=>c.cliente_id===clienteSelecionado.id);
+  $('listaContratos').innerHTML=cs.length ? cs.map(c=>`
+    <div class="contract">
+      <b>${esc(c.numero_contrato||'Sem número')} — ${esc(c.servico||'Sem serviço')}</b>
+      <div class="contractgrid">
+        <div><b>TIPO</b>${esc(c.tipo_contrato)}</div>
+        <div><b>STATUS</b>${esc(c.status)}</div>
+        <div><b>INÍCIO</b>${esc(c.inicio_vigencia)}</div>
+        <div><b>FIM</b>${esc(c.fim_vigencia)}</div>
+        <div><b>VALOR MENSAL</b>${moeda(c.valor_mensal)}</div>
+        <div><b>PAGAMENTO</b>${esc(c.forma_pagamento)} — dia ${esc(c.dia_vencimento)}</div>
+        <div><b>ARQUIVO</b>${c.arquivo_url?`<a href="${esc(c.arquivo_url)}" target="_blank">Abrir documento</a>`:'—'}</div>
+        <div><b>PENDÊNCIAS</b>${esc(c.pendencias)||'Nenhuma'}</div>
+        <div><b>PRÓXIMA AÇÃO</b>${esc(c.proxima_acao)||'—'} ${esc(c.proxima_acao_data)||''}</div>
+      </div>
+    </div>`).join('') : '<p>Nenhum contrato vinculado a este cliente.</p>';
+
+  $('modal').classList.add('open');
 }
-async function sair(){await window.sbClient.auth.signOut();location.href='../'}
-const busca=document.getElementById('busca');
-const filtro=document.getElementById('filtro');
-busca.addEventListener('input',render);
-filtro.addEventListener('change',render);
-window.addEventListener('error',e=>mostrarErroInicial('Erro JavaScript: '+e.message));
-window.addEventListener('DOMContentLoaded',()=>init());
+
+async function salvarCliente(){
+  if(!clienteSelecionado) return;
+  const obj={
+    id_cliente:$('fId').value.trim(),razao_social:$('fRazao').value.trim(),
+    cnpj:$('fCnpj').value.trim(),nome_fantasia:$('fFantasia').value.trim(),
+    contato:$('fContato').value.trim(),email:$('fEmail').value.trim(),
+    responsavel:$('fResponsavel').value.trim(),status:$('fStatus').value
+  };
+  const r=await window.SUPABASE_CLIENT.from('clientes').update(obj).eq('id',clienteSelecionado.id).eq('user_id',usuario.id);
+  if(r.error){alert(r.error.message);return;}
+  $('modal').classList.remove('open');
+  await carregar();
+}
+
+$('btnAtualizar').addEventListener('click',carregar);
+$('busca').addEventListener('input',render);
+$('filtro').addEventListener('change',render);
+$('btnFechar').addEventListener('click',()=> $('modal').classList.remove('open'));
+$('btnSalvarCliente').addEventListener('click',salvarCliente);
+$('btnNovo').addEventListener('click',()=>alert('O cadastro de novo cliente será ativado na próxima etapa.'));
+$('btnInicio').addEventListener('click',()=>window.location.href='../');
+$('btnSair').addEventListener('click',async()=>{await window.SUPABASE_CLIENT.auth.signOut();window.location.href='../';});
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  try{await carregar();}
+  catch(e){erro('Erro ao carregar o módulo: '+(e.message||e));console.error(e);}
+});
+})();
 </script>
-</body></html>
+</body>
+</html>
