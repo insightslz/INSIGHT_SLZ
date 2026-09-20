@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Insight | Menu Principal</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(25,105,236,.18), transparent 28%),
+        radial-gradient(circle at 15% 85%, rgba(16,88,194,.18), transparent 30%),
+        linear-gradient(135deg, #032052 0%, #073d88 55%, #021b3e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1050px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .subtitulo {
+      margin-top: 8px;
+      opacity: .78;
+      font-size: 15px;
+    }
+
+    .usuario {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: .65;
+    }
+
+    .modulos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .modulo {
+      text-decoration: none;
+      color: #ffffff;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      padding: 28px 22px;
+      min-height: 155px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transition: .2s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .modulo:hover {
+      transform: translateY(-4px);
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.30);
+    }
+
+    .icone {
+      font-size: 38px;
+      margin-bottom: 14px;
+    }
+
+    .nome {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .descricao {
+      margin-top: 6px;
+      font-size: 12px;
+      opacity: .65;
+    }
+
+    .rodape {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .sair {
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.08);
+      color: #ffffff;
+      padding: 10px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .sair:hover {
+      background: rgba(255,255,255,.15);
+    }
+
+    @media (max-width: 800px) {
+      .modulos {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .modulos {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="header">
+      <div class="logo">✚</div>
+
+      <h1>Insight | Sistema de Gestão</h1>
+
+      <div class="subtitulo">
+        Gerenciamento SGQ — Insight SST
+      </div>
+
+      <div class="usuario" id="usuario">
+        Verificando acesso...
+      </div>
+    </header>
+
+    <section class="modulos">
+
+      <a class="modulo" href="../dre/">
+        <div class="icone">📊</div>
+        <div class="nome">DRE</div>
+        <div class="descricao">DRE Orçamentária</div>
+      </a>
+
+      <a class="modulo" href="../clientes/">
+        <div class="icone">👥</div>
+        <div class="nome">Clientes</div>
+        <div class="descricao">Cadastro e gestão de clientes</div>
+      </a>
+
+      <a class="modulo" href="../contratos/">
+        <div class="icone">📄</div>
+        <div class="nome">Contratos</div>
+        <div class="descricao">Gestão de contratos</div>
+      </a>
+
+      <a class="modulo" href="../crm/">
+        <div class="icone">🎯</div>
+        <div class="nome">CRM</div>
+        <div class="descricao">Gestão comercial</div>
+      </a>
+
+      <a class="modulo" href="../indicadores/">
+        <div class="icone">📈</div>
+        <div class="nome">Indicadores</div>
+        <div class="descricao">Indicadores de desempenho</div>
+      </a>
+
+      <a class="modulo" href="../psicologia/">
+        <div class="icone">🧠</div>
+        <div class="nome">Psicologia</div>
+        <div class="descricao">Gestão e desenvolvimento de pessoas</div>
+      </a>
+
+    </section>
+
+    <footer class="rodape">
+      <button class="sair" id="btnSair">
+        Sair
+      </button>
+    </footer>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://sayeyuyampbsmhhdukzv.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+
+    const sb = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    async function iniciar() {
+
+      const {
+        data: { session },
+        error
+      } = await sb.auth.getSession();
+
+      if (error || !session) {
+        window.location.href = "../";
+        return;
+      }
+
+      const email = session.user.email || "";
+
+      document.getElementById("usuario").textContent =
+        "Usuário: " + email;
+    }
+
+    document.getElementById("btnSair").addEventListener("click", async () => {
+
+      await sb.auth.signOut();
+
+      window.location.href = "../";
+    });
+
+    iniciar();
+  </script>
+
+</body>
+</html>
