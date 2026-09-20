@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CRM | Insight</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f4f7fb;
+  color:#17233d;
+  font-family:Arial,Helvetica,sans-serif
+}
+
+header{
+  margin:10px 12px 20px;
+  background:linear-gradient(110deg,#17367d,#2863e6);
+  color:#fff;
+  border-radius:20px;
+  padding:28px 34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px
+}
+
+h1{margin:0;font-size:40px}
+
+.sub{
+  margin-top:8px;
+  font-size:18px;
+  opacity:.9
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:12px 18px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer
+}
+
+.white{
+  background:#fff;
+  color:#17367d
+}
+
+main{
+  padding:0 12px 35px
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #d9e0ec;
+  border-radius:18px;
+  padding:22px
+}
+
+.card span{
+  display:block;
+  color:#667085;
+  font-size:14px;
+  font-weight:700
+}
+
+.card strong{
+  display:block;
+  margin-top:9px;
+  font-size:30px;
+  color:#17367d
+}
+
+.panel{
+  margin-top:18px;
+  background:#fff;
+  border:1px solid #d9e0ec;
+  border-radius:18px;
+  padding:20px
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap
+}
+
+.toolbar input,
+.toolbar select{
+  flex:1;
+  min-width:220px;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  font-size:15px
+}
+
+.pipeline{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-top:20px
+}
+
+.coluna{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:12px;
+  min-height:300px
+}
+
+.coluna h3{
+  margin:4px 4px 12px;
+  font-size:15px;
+  color:#17367d
+}
+
+.lead{
+  background:#fff;
+  border:1px solid #dce3ee;
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:10px
+}
+
+.lead strong{
+  display:block;
+  margin-bottom:6px
+}
+
+.lead small{
+  display:block;
+  color:#667085;
+  margin-top:4px
+}
+
+.valor{
+  color:#17367d;
+  font-weight:700;
+  margin-top:8px
+}
+
+.empty{
+  color:#98a2b3;
+  font-size:13px;
+  text-align:center;
+  padding:30px 8px
+}
+
+@media(max-width:1000px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .pipeline{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:650px){
+  header{
+    flex-direction:column;
+    align-items:flex-start
+  }
+
+  h1{font-size:30px}
+
+  .cards{
+    grid-template-columns:1fr 1fr
+  }
+
+  .pipeline{
+    grid-template-columns:1fr
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>🎯 CRM</h1>
+    <div class="sub">
+      Gestão comercial — Insight | Gerenciamento SGQ
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="white" onclick="novoLead()">＋ Novo lead</button>
+    <button class="white" onclick="window.location.href='../menu/'">☰ Menu</button>
+    <button class="white" onclick="sair()">↪ Sair</button>
+  </div>
+</header>
+
+<main>
+
+  <section class="cards">
+
+    <div class="card">
+      <span>LEADS</span>
+      <strong id="totalLeads">0</strong>
+    </div>
+
+    <div class="card">
+      <span>OPORTUNIDADES</span>
+      <strong id="oportunidades">0</strong>
+    </div>
+
+    <div class="card">
+      <span>PROPOSTAS</span>
+      <strong id="propostas">0</strong>
+    </div>
+
+    <div class="card">
+      <span>NEGOCIAÇÕES</span>
+      <strong id="negociacoes">0</strong>
+    </div>
+
+    <div class="card">
+      <span>VALOR DO PIPELINE</span>
+      <strong id="pipelineValor">R$ 0,00</strong>
+    </div>
+
+  </section>
+
+  <section class="panel">
+
+    <div class="toolbar">
+
+      <input
+        id="busca"
+        type="text"
+        placeholder="Pesquisar empresa, contato ou oportunidade..."
+        oninput="renderizar()"
+      >
+
+      <select id="origem" onchange="renderizar()">
+        <option value="">Todas as origens</option>
+        <option>Indicação</option>
+        <option>WhatsApp</option>
+        <option>Instagram</option>
+        <option>LinkedIn</option>
+        <option>Site</option>
+        <option>Prospecção ativa</option>
+        <option>Outro</option>
+      </select>
+
+    </div>
+
+    <div class="pipeline">
+
+      <div class="coluna">
+        <h3>🟦 LEAD</h3>
+        <div id="lead"></div>
+      </div>
+
+      <div class="coluna">
+        <h3>🟨 QUALIFICAÇÃO</h3>
+        <div id="qualificacao"></div>
+      </div>
+
+      <div class="coluna">
+        <h3>🟧 PROPOSTA</h3>
+        <div id="proposta"></div>
+      </div>
+
+      <div class="coluna">
+        <h3>🟪 NEGOCIAÇÃO</h3>
+        <div id="negociacao"></div>
+      </div>
+
+      <div class="coluna">
+        <h3>🟩 GANHO</h3>
+        <div id="ganho"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+
+const SUPABASE_URL =
+"https://sayeyuyampbsmhhdukzv.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let oportunidades =
+JSON.parse(localStorage.getItem("insight_crm") || "[]");
+
+async function iniciar(){
+
+  const {
+    data:{session}
+  } = await sb.auth.getSession();
+
+  if(!session){
+    window.location.href="../";
+    return;
+  }
+
+  renderizar();
+}
+
+function renderizar(){
+
+  const busca =
+    document.getElementById("busca").value
+      .toLowerCase();
+
+  const origem =
+    document.getElementById("origem").value;
+
+  const dados =
+    oportunidades.filter(x=>{
+
+      const texto =
+        `${x.empresa} ${x.contato} ${x.oportunidade}`
+        .toLowerCase();
+
+      return (
+        (!busca || texto.includes(busca)) &&
+        (!origem || x.origem === origem)
+      );
+
+    });
+
+  const colunas =
+    ["lead","qualificacao","proposta","negociacao","ganho"];
+
+  colunas.forEach(c=>{
+    document.getElementById(c).innerHTML="";
+  });
+
+  dados.forEach(x=>{
+
+    const destino =
+      document.getElementById(x.etapa);
+
+    if(!destino) return;
+
+    destino.innerHTML += `
+      <div class="lead">
+
+        <strong>${esc(x.empresa)}</strong>
+
+        <small>${esc(x.oportunidade)}</small>
+
+        <small>Contato: ${esc(x.contato)}</small>
+
+        <small>Origem: ${esc(x.origem)}</small>
+
+        <div class="valor">
+          ${formatarMoeda(x.valor)}
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  colunas.forEach(c=>{
+
+    const el =
+      document.getElementById(c);
+
+    if(!el.innerHTML){
+
+      el.innerHTML =
+        `<div class="empty">Nenhuma oportunidade</div>`;
+
+    }
+
+  });
+
+  document.getElementById("totalLeads").textContent =
+    oportunidades.length;
+
+  document.getElementById("oportunidades").textContent =
+    oportunidades.filter(x=>
+      x.etapa==="qualificacao"
+    ).length;
+
+  document.getElementById("propostas").textContent =
+    oportunidades.filter(x=>
+      x.etapa==="proposta"
+    ).length;
+
+  document.getElementById("negociacoes").textContent =
+    oportunidades.filter(x=>
+      x.etapa==="negociacao"
+    ).length;
+
+  const total =
+    oportunidades
+      .filter(x=>x.etapa!=="ganho")
+      .reduce((s,x)=>s + Number(x.valor || 0),0);
+
+  document.getElementById("pipelineValor").textContent =
+    formatarMoeda(total);
+}
+
+function novoLead(){
+
+  const empresa =
+    prompt("Empresa:");
+
+  if(!empresa) return;
+
+  const contato =
+    prompt("Contato:");
+
+  const oportunidade =
+    prompt("Oportunidade:");
+
+  const valor =
+    Number(
+      prompt("Valor estimado:","0")
+    ) || 0;
+
+  const origem =
+    prompt(
+      "Origem:",
+      "Prospecção ativa"
+    );
+
+  oportunidades.push({
+
+    id:Date.now(),
+
+    empresa,
+
+    contato:contato || "",
+
+    oportunidade:
+      oportunidade || "",
+
+    valor,
+
+    origem:
+      origem || "Outro",
+
+    etapa:"lead"
+
+  });
+
+  localStorage.setItem(
+    "insight_crm",
+    JSON.stringify(oportunidades)
+  );
+
+  renderizar();
+}
+
+function formatarMoeda(valor){
+
+  return Number(valor || 0)
+    .toLocaleString(
+      "pt-BR",
+      {
+        style:"currency",
+        currency:"BRL"
+      }
+    );
+}
+
+function esc(text){
+
+  return String(text || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+async function sair(){
+
+  await sb.auth.signOut();
+
+  window.location.href="../";
+}
+
+iniciar();
+
+</script>
+
+</body>
+</html>
