@@ -3,736 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Matriz de Treinamentos | Insight</title>
+<title>Treinamentos | Insight</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,Helvetica,sans-serif}
 header{margin:10px 12px 20px;background:linear-gradient(110deg,#17367d,#2863e6);color:#fff;border-radius:20px;padding:28px 34px;display:flex;justify-content:space-between;align-items:center;gap:20px}
-h1{margin:0;font-size:40px}
-.sub{margin-top:8px;font-size:18px;opacity:.9}
+h1{margin:0;font-size:40px}.sub{margin-top:8px;font-size:18px;opacity:.9}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
-button{border:0;border-radius:11px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer}
-.white{background:#fff;color:#17367d}
-.primary{background:#17367d;color:#fff}
-.secondary{background:#eef3fb;color:#17367d}
-.danger{background:#fee4e2;color:#b42318}
-main{padding:0 12px 35px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.card,.panel{background:#fff;border:1px solid #d9e0ec;border-radius:18px}
-.card{padding:20px}
-.card span{display:block;color:#667085;font-size:13px;font-weight:700}
-.card strong{display:block;margin-top:8px;font-size:28px;color:#17367d}
-.card small{display:block;margin-top:6px;color:#98a2b3}
-.panel{margin-top:18px;padding:22px}
-.panel h2{margin:0 0 16px;color:#17367d}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:12px;font-weight:700;color:#475467}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+.white{background:#fff;color:#17367d}.primary{background:#17367d;color:#fff}.secondary{background:#eef3fb;color:#17367d}.danger{background:#fee4e2;color:#b42318}
+main{padding:0 12px 35px}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.card,.panel{background:#fff;border:1px solid #d9e0ec;border-radius:18px}.card{padding:20px}
+.card span{display:block;color:#667085;font-size:13px;font-weight:700}.card strong{display:block;margin-top:8px;font-size:27px;color:#17367d}.card small{display:block;margin-top:6px;color:#98a2b3}
+.panel{margin-top:18px;padding:22px}.panel h2{margin:0 0 16px;color:#17367d}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:700;color:#475467}
 input,select,textarea{width:100%;border:1px solid #cfd8e6;border-radius:10px;padding:11px 12px;font-size:14px;background:#fff;color:#17233d}
-textarea{min-height:80px;resize:vertical}
-.toolbar .field{min-width:150px;flex:1}
-.toolbar .field.year{max-width:120px}
-.toolbar .field.month{max-width:160px}
-.toolbar .field.status{max-width:170px}
-table{width:100%;border-collapse:collapse}
-th{background:#0e162b;color:#fff;padding:11px;text-align:left;font-size:13px}
-td{padding:11px;border-bottom:1px solid #e5e7eb;font-size:13px;vertical-align:middle}
-.numero{text-align:right;font-weight:700}
-.center{text-align:center}
-.muted{color:#667085}
-.status-badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:800}
-.status-planejado{background:#fff0c7;color:#8a5b00}
-.status-realizado{background:#d9f7e8;color:#087443}
-.status-cancelado{background:#fee4e2;color:#b42318}
-.mes-total{background:#f7faff;font-weight:800}
-.mensagem{color:#667085;padding:22px 0;text-align:center}
-.matriz-wrap{overflow:auto;border:1px solid #d9e0ec;border-radius:12px}
-.matriz{min-width:980px}
-.matriz th:first-child,.matriz td:first-child{position:sticky;left:0;z-index:2;background:#fff}
-.matriz th:first-child{background:#0e162b}
-.matriz td{padding:10px}
-.total-row td{font-weight:800;background:#f4f7fb}
-.total-row td:first-child{background:#f4f7fb}
-.month-head{font-size:12px;text-align:center}
-.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
-.modal.open{display:flex}
-.modal-box{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:24px}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.modal-head h2{margin:0;color:#17367d}
-.close{background:#eef3fb;color:#475467;padding:8px 12px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-grid .full{grid-column:1/-1}
-.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-.alert{display:none;margin:0 0 16px;padding:12px 14px;border-radius:10px;font-size:14px}
-.alert.show{display:block}
-.alert.error{background:#fee4e2;color:#b42318}
-.alert.ok{background:#d9f7e8;color:#087443}
-.empty{padding:25px;text-align:center;color:#667085}
-@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){header{flex-direction:column;align-items:flex-start}h1{font-size:30px}.cards{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+textarea{min-height:80px;resize:vertical}.toolbar .field{min-width:150px;flex:1}.toolbar .year{max-width:120px}.toolbar .month{max-width:160px}.toolbar .status{max-width:170px}
+table{width:100%;border-collapse:collapse}th{background:#0e162b;color:#fff;padding:11px;text-align:left;font-size:13px}td{padding:11px;border-bottom:1px solid #e5e7eb;font-size:13px;vertical-align:middle}
+.numero{text-align:right;font-weight:700}.center{text-align:center}.muted{color:#667085}
+.status-badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:800}.status-planejado{background:#fff0c7;color:#8a5b00}.status-realizado{background:#d9f7e8;color:#087443}.status-cancelado{background:#fee4e2;color:#b42318}
+.matriz-wrap{overflow:auto;border:1px solid #d9e0ec;border-radius:12px}.matriz{min-width:1080px}
+.matriz th:first-child,.matriz td:first-child{position:sticky;left:0;z-index:2;background:#fff}.matriz th:first-child{background:#0e162b}.matriz td{padding:10px}
+.total-row td{font-weight:800;background:#f4f7fb}.month-head{font-size:12px;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}.modal.open{display:flex}
+.modal-box{background:#fff;width:min(850px,100%);max-height:92vh;overflow:auto;border-radius:18px;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{margin:0;color:#17367d}.close{background:#eef3fb;color:#475467;padding:8px 12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.alert{display:none;margin:0 0 16px;padding:12px 14px;border-radius:10px;font-size:14px}.alert.show{display:block}.alert.error{background:#fee4e2;color:#b42318}.alert.ok{background:#d9f7e8;color:#087443}
+.participantes{border:1px solid #d9e0ec;border-radius:12px;padding:12px;max-height:240px;overflow:auto}.participantes-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.check-actions{display:flex;gap:8px}
+.participante-item{display:flex;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #edf1f6}.participante-item:last-child{border-bottom:0}.participante-item input{width:auto}
+.resumo{background:#f7faff;border:1px solid #dce6f2;border-radius:12px;padding:13px;margin-top:14px}.resumo strong{color:#17367d}
+.acoes{display:flex;gap:6px;flex-wrap:wrap}.empty{padding:24px;text-align:center;color:#667085}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}}@media(max-width:600px){header{flex-direction:column;align-items:flex-start}h1{font-size:30px}.cards{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 
 <header>
-  <div>
-    <h1>📚 Treinamentos</h1>
-    <div class="sub">Matriz anual de treinamentos — Insight | Gerenciamento SGQ</div>
-  </div>
-  <div class="actions">
-    <button class="white" onclick="window.location.href='../menu/'">☰ Menu</button>
-    <button class="white" onclick="abrirModal()">＋ Novo Treinamento</button>
-    <button class="white" onclick="carregar()">↻ Atualizar</button>
-    <button class="white" onclick="sair()">↪ Sair</button>
-  </div>
+<div><h1>📚 Treinamentos</h1><div class="sub">Matriz anual de treinamentos — Insight | Gerenciamento SGQ</div></div>
+<div class="actions">
+<button class="white" onclick="window.location.href='../menu/'">☰ Menu</button>
+<button class="white" onclick="abrirFuncionario()">＋ Funcionário</button>
+<button class="white" onclick="abrirTreinamento()">＋ Treinamento</button>
+<button class="white" onclick="carregar()">↻ Atualizar</button>
+<button class="white" onclick="sair()">↪ Sair</button>
+</div>
 </header>
 
 <main>
-
 <div id="alerta" class="alert"></div>
 
 <section class="cards">
-  <div class="card">
-    <span>TREINAMENTOS CADASTRADOS</span>
-    <strong id="totalTreinamentos">0</strong>
-    <small>Planejados + realizados</small>
-  </div>
-  <div class="card">
-    <span>HORAS PLANEJADAS</span>
-    <strong id="horasPlanejadas">0 h</strong>
-    <small>Plano anual</small>
-  </div>
-  <div class="card">
-    <span>HORAS REALIZADAS</span>
-    <strong id="horasRealizadas">0 h</strong>
-    <small>Treinamentos concluídos</small>
-  </div>
-  <div class="card">
-    <span>COLABORADORES</span>
-    <strong id="colaboradores">0</strong>
-    <small>Participantes cadastrados</small>
-  </div>
+<div class="card"><span>TREINAMENTOS</span><strong id="totalTreinamentos">0</strong><small>Programações do ano</small></div>
+<div class="card"><span>HORAS DE TREINAMENTO</span><strong id="horasTreinamento">0 h</strong><small>Carga horária programada</small></div>
+<div class="card"><span>HORAS-HOMEM</span><strong id="horasHomem">0 h</strong><small>Carga × participantes</small></div>
+<div class="card"><span>PARTICIPAÇÕES</span><strong id="participacoes">0</strong><small>Participações registradas</small></div>
+<div class="card"><span>REALIZADOS</span><strong id="realizados">0</strong><small>Treinamentos concluídos</small></div>
 </section>
 
 <section class="panel">
-  <h2>Matriz anual de treinamentos</h2>
-
-  <div class="toolbar">
-    <div class="field year">
-      <label for="filtroAno">Ano</label>
-      <select id="filtroAno" onchange="carregar()"></select>
-    </div>
-    <div class="field month">
-      <label for="filtroMes">Mês</label>
-      <select id="filtroMes" onchange="renderizar()">
-        <option value="">Todos</option>
-        <option value="1">Janeiro</option>
-        <option value="2">Fevereiro</option>
-        <option value="3">Março</option>
-        <option value="4">Abril</option>
-        <option value="5">Maio</option>
-        <option value="6">Junho</option>
-        <option value="7">Julho</option>
-        <option value="8">Agosto</option>
-        <option value="9">Setembro</option>
-        <option value="10">Outubro</option>
-        <option value="11">Novembro</option>
-        <option value="12">Dezembro</option>
-      </select>
-    </div>
-    <div class="field status">
-      <label for="filtroStatus">Status</label>
-      <select id="filtroStatus" onchange="renderizar()">
-        <option value="">Todos</option>
-        <option value="PLANEJADO">Planejado</option>
-        <option value="REALIZADO">Realizado</option>
-        <option value="CANCELADO">Cancelado</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="busca">Pesquisar</label>
-      <input id="busca" placeholder="Treinamento ou funcionário..." oninput="renderizar()">
-    </div>
-  </div>
-
-  <div class="matriz-wrap" style="margin-top:18px">
-    <table class="matriz">
-      <thead>
-        <tr>
-          <th>Funcionário</th>
-          <th class="month-head">JAN</th>
-          <th class="month-head">FEV</th>
-          <th class="month-head">MAR</th>
-          <th class="month-head">ABR</th>
-          <th class="month-head">MAI</th>
-          <th class="month-head">JUN</th>
-          <th class="month-head">JUL</th>
-          <th class="month-head">AGO</th>
-          <th class="month-head">SET</th>
-          <th class="month-head">OUT</th>
-          <th class="month-head">NOV</th>
-          <th class="month-head">DEZ</th>
-          <th class="month-head">TOTAL</th>
-        </tr>
-      </thead>
-      <tbody id="matrizTabela"></tbody>
-    </table>
-  </div>
+<h2>Funcionários</h2>
+<div class="toolbar">
+<div class="field"><label>Pesquisar</label><input id="buscaFuncionario" placeholder="Nome do funcionário..." oninput="renderFuncionarios()"></div>
+<div class="field status"><label>Status</label><select id="filtroFuncionario" onchange="renderFuncionarios()"><option value="ATIVO">Ativos</option><option value="INATIVO">Inativos</option><option value="">Todos</option></select></div>
+</div>
+<div style="overflow:auto;margin-top:14px">
+<table><thead><tr><th>Funcionário</th><th>Status</th><th>Entrada</th><th>Saída</th><th class="center">Ações</th></tr></thead><tbody id="tabelaFuncionarios"></tbody></table>
+</div>
 </section>
 
 <section class="panel">
-  <h2>Cadastro e acompanhamento</h2>
-  <div style="overflow:auto">
-    <table>
-      <thead>
-        <tr>
-          <th>Mês</th>
-          <th>Treinamento</th>
-          <th>Funcionário</th>
-          <th class="numero">Carga Horária</th>
-          <th>Data</th>
-          <th>Status</th>
-          <th>Observação</th>
-          <th class="center">Ações</th>
-        </tr>
-      </thead>
-      <tbody id="listaTreinamentos"></tbody>
-    </table>
-  </div>
+<h2>Matriz anual de treinamentos</h2>
+<div class="toolbar">
+<div class="field year"><label>Ano</label><select id="filtroAno" onchange="carregar()"></select></div>
+<div class="field month"><label>Mês</label><select id="filtroMes" onchange="renderizar()"><option value="">Todos</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
+<div class="field status"><label>Status</label><select id="filtroStatus" onchange="renderizar()"><option value="">Todos</option><option value="PLANEJADO">Planejado</option><option value="REALIZADO">Realizado</option><option value="CANCELADO">Cancelado</option></select></div>
+<div class="field"><label>Pesquisar</label><input id="busca" placeholder="Treinamento ou funcionário..." oninput="renderizar()"></div>
+</div>
+<div class="matriz-wrap" style="margin-top:18px">
+<table class="matriz"><thead><tr><th>Funcionário</th><th class="month-head">JAN</th><th class="month-head">FEV</th><th class="month-head">MAR</th><th class="month-head">ABR</th><th class="month-head">MAI</th><th class="month-head">JUN</th><th class="month-head">JUL</th><th class="month-head">AGO</th><th class="month-head">SET</th><th class="month-head">OUT</th><th class="month-head">NOV</th><th class="month-head">DEZ</th><th class="month-head">TOTAL</th></tr></thead><tbody id="matrizTabela"></tbody></table>
+</div>
 </section>
 
 <section class="panel">
-  <h2>Resumo mensal</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Mês</th>
-        <th class="numero">Treinamentos</th>
-        <th class="numero">Horas Planejadas</th>
-        <th class="numero">Horas Realizadas</th>
-        <th class="numero">Colaboradores</th>
-      </tr>
-    </thead>
-    <tbody id="resumoMensal"></tbody>
-  </table>
+<h2>Programação de treinamentos</h2>
+<div style="overflow:auto">
+<table><thead><tr><th>Mês</th><th>Treinamento</th><th class="numero">Carga</th><th>Participantes</th><th class="numero">H-Homem</th><th>Data</th><th>Status</th><th class="center">Ações</th></tr></thead><tbody id="listaTreinamentos"></tbody></table>
+</div>
 </section>
 
+<section class="panel">
+<h2>Resumo mensal</h2>
+<table><thead><tr><th>Mês</th><th class="numero">Treinamentos</th><th class="numero">Horas</th><th class="numero">Horas-Homem</th><th class="numero">Participações</th><th class="numero">Colaboradores</th></tr></thead><tbody id="resumoMensal"></tbody></table>
+</section>
 </main>
 
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h2 id="modalTitulo">Novo Treinamento</h2>
-      <button class="close" onclick="fecharModal()">✕</button>
-    </div>
+<!-- MODAL FUNCIONÁRIO -->
+<div class="modal" id="modalFuncionario">
+<div class="modal-box" style="max-width:600px">
+<div class="modal-head"><h2 id="tituloFuncionario">Novo Funcionário</h2><button class="close" onclick="fecharFuncionario()">✕</button></div>
+<form onsubmit="salvarFuncionario(event)">
+<input type="hidden" id="funcionarioId">
+<div class="form-grid">
+<div class="field full"><label>Nome completo *</label><input id="nomeFuncionario" maxlength="200" required></div>
+<div class="field"><label>Data de entrada</label><input type="date" id="entradaFuncionario"></div>
+<div class="field"><label>Data de saída</label><input type="date" id="saidaFuncionario"></div>
+<div class="field"><label>Status *</label><select id="statusFuncionario"><option value="ATIVO">Ativo</option><option value="INATIVO">Inativo</option></select></div>
+</div>
+<div class="modal-actions"><button type="button" class="secondary" onclick="fecharFuncionario()">Cancelar</button><button class="primary">Salvar Funcionário</button></div>
+</form>
+</div>
+</div>
 
-    <form id="formTreinamento" onsubmit="salvar(event)">
-      <input type="hidden" id="registroId">
-
-      <div class="form-grid">
-
-        <div class="field">
-          <label>Ano *</label>
-          <input type="number" id="ano" min="2020" max="2100" required>
-        </div>
-
-        <div class="field">
-          <label>Mês *</label>
-          <select id="mes" required>
-            <option value="">Selecione</option>
-            <option value="1">Janeiro</option>
-            <option value="2">Fevereiro</option>
-            <option value="3">Março</option>
-            <option value="4">Abril</option>
-            <option value="5">Maio</option>
-            <option value="6">Junho</option>
-            <option value="7">Julho</option>
-            <option value="8">Agosto</option>
-            <option value="9">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
-          </select>
-        </div>
-
-        <div class="field full">
-          <label>Treinamento *</label>
-          <input type="text" id="treinamento" maxlength="200" placeholder="Ex.: NR-35 — Trabalho em Altura" required>
-        </div>
-
-        <div class="field">
-          <label>Funcionário *</label>
-          <input type="text" id="funcionario" maxlength="200" placeholder="Nome do funcionário" required>
-        </div>
-
-        <div class="field">
-          <label>Carga horária (horas) *</label>
-          <input type="number" id="cargaHoraria" min="0" step="0.5" placeholder="Ex.: 8" required>
-        </div>
-
-        <div class="field">
-          <label>Data do treinamento</label>
-          <input type="date" id="dataTreinamento">
-        </div>
-
-        <div class="field">
-          <label>Status *</label>
-          <select id="status" required>
-            <option value="PLANEJADO">Planejado</option>
-            <option value="REALIZADO">Realizado</option>
-            <option value="CANCELADO">Cancelado</option>
-          </select>
-        </div>
-
-        <div class="field full">
-          <label>Observação</label>
-          <textarea id="observacao" placeholder="Observações, turma, instrutor, evidência etc."></textarea>
-        </div>
-
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="secondary" onclick="fecharModal()">Cancelar</button>
-        <button type="submit" class="primary">Salvar Treinamento</button>
-      </div>
-    </form>
-  </div>
+<!-- MODAL TREINAMENTO -->
+<div class="modal" id="modalTreinamento">
+<div class="modal-box">
+<div class="modal-head"><h2 id="tituloTreinamento">Novo Treinamento</h2><button class="close" onclick="fecharTreinamento()">✕</button></div>
+<form onsubmit="salvarTreinamento(event)">
+<input type="hidden" id="treinamentoId">
+<div class="form-grid">
+<div class="field"><label>Ano *</label><input type="number" id="ano" required></div>
+<div class="field"><label>Mês *</label><select id="mes" required><option value="">Selecione</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
+<div class="field full"><label>Treinamento *</label><input id="treinamento" maxlength="200" placeholder="Ex.: NR-35 — Trabalho em Altura" required></div>
+<div class="field"><label>Carga horária *</label><input type="number" id="cargaHoraria" min="0" step="0.5" required></div>
+<div class="field"><label>Data</label><input type="date" id="dataTreinamento"></div>
+<div class="field"><label>Status *</label><select id="statusTreinamento"><option value="PLANEJADO">Planejado</option><option value="REALIZADO">Realizado</option><option value="CANCELADO">Cancelado</option></select></div>
+<div class="field full">
+<label>Participantes *</label>
+<div class="participantes">
+<div class="participantes-head"><strong id="contadorParticipantes">0 selecionados</strong><div class="check-actions"><button type="button" class="secondary" onclick="selecionarTodos()">Todos ativos</button><button type="button" class="secondary" onclick="limparParticipantes()">Limpar</button></div></div>
+<div id="listaParticipantes"></div>
+</div>
+</div>
+<div class="field full"><label>Observação</label><textarea id="observacao" placeholder="Instrutor, local, evidência, turma etc."></textarea></div>
+</div>
+<div class="resumo"><strong>Resumo:</strong> <span id="resumoCadastro">selecione os participantes.</span></div>
+<div class="modal-actions"><button type="button" class="secondary" onclick="fecharTreinamento()">Cancelar</button><button class="primary">Salvar Treinamento</button></div>
+</form>
+</div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://sayeyuyampbsmhhdukzv.supabase.co";
+const SUPABASE_URL="https://sayeyuyampbsmhhdukzv.supabase.co";
+/* MANTENHA A MESMA CHAVE PUBLICÁVEL JÁ USADA NAS OUTRAS PÁGINAS. */
+const SUPABASE_KEY="COLE_AQUI_A_MESMA_CHAVE_PUBLICAVEL_DO_SEU_SISTEMA";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-/*
-  IMPORTANTE:
-  Mantenha aqui a mesma CHAVE PUBLICÁVEL que já está sendo usada
-  nas demais páginas da Insight. Não utilize Secret Key.
-*/
-const SUPABASE_KEY = "sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+const nomesMeses=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+let funcionarios=[];
+let registros=[];
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const meses = [
-  "JAN","FEV","MAR","ABR","MAI","JUN",
-  "JUL","AGO","SET","OUT","NOV","DEZ"
-];
-
-const nomesMeses = [
-  "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
-];
-
-let registros = [];
-
-function moedaHoras(v){
-  return Number(v || 0).toLocaleString("pt-BR",{
-    minimumFractionDigits:0,
-    maximumFractionDigits:2
-  }) + " h";
-}
-
-function escapeHtml(valor){
-  return String(valor ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-function formatarData(data){
-  if(!data) return "—";
-  const p = String(data).split("-");
-  if(p.length !== 3) return data;
-  return `${p[2]}/${p[1]}/${p[0]}`;
-}
-
-function mostrarAlerta(msg,tipo="ok"){
-  const el = document.getElementById("alerta");
-  el.textContent = msg;
-  el.className = "alert show " + tipo;
-  setTimeout(()=>el.className="alert",4000);
-}
+function horas(v){return Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})+" h"}
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function dataBR(v){if(!v)return"—";let p=String(v).split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v}
+function alerta(msg,tipo="ok"){let e=document.getElementById("alerta");e.textContent=msg;e.className="alert show "+tipo;setTimeout(()=>e.className="alert",4500)}
 
 function prepararAnos(){
-  const select = document.getElementById("filtroAno");
-  const atual = new Date().getFullYear();
-  select.innerHTML = "";
-
-  for(let ano=atual-1;ano<=atual+3;ano++){
-    const opt = document.createElement("option");
-    opt.value = ano;
-    opt.textContent = ano;
-    if(ano === atual) opt.selected = true;
-    select.appendChild(opt);
-  }
-
-  document.getElementById("ano").value = atual;
+ const s=document.getElementById("filtroAno"),atual=new Date().getFullYear();s.innerHTML="";
+ for(let a=atual-1;a<=atual+3;a++){let o=document.createElement("option");o.value=a;o.textContent=a;if(a===atual)o.selected=true;s.appendChild(o)}
+ document.getElementById("ano").value=atual;
 }
 
-function abrirModal(id=null){
-  document.getElementById("modal").classList.add("open");
-
-  if(id){
-    const r = registros.find(x => x.id === id);
-    if(!r) return;
-
-    document.getElementById("modalTitulo").textContent = "Editar Treinamento";
-    document.getElementById("registroId").value = r.id;
-    document.getElementById("ano").value = r.ano;
-    document.getElementById("mes").value = r.mes;
-    document.getElementById("treinamento").value = r.treinamento || "";
-    document.getElementById("funcionario").value = r.funcionario || "";
-    document.getElementById("cargaHoraria").value = r.carga_horaria ?? 0;
-    document.getElementById("dataTreinamento").value = r.data_treinamento || "";
-    document.getElementById("status").value = r.status || "PLANEJADO";
-    document.getElementById("observacao").value = r.observacao || "";
-  }else{
-    document.getElementById("modalTitulo").textContent = "Novo Treinamento";
-    document.getElementById("formTreinamento").reset();
-    document.getElementById("registroId").value = "";
-    document.getElementById("ano").value = document.getElementById("filtroAno").value;
-    document.getElementById("status").value = "PLANEJADO";
-  }
+async function sessao(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){window.location.href="../";return null}
+ return session;
 }
 
-function fecharModal(){
-  document.getElementById("modal").classList.remove("open");
+async function carregarFuncionarios(){
+ const session=await sessao();if(!session)return;
+ const {data,error}=await sb.from("funcionarios").select("*").eq("user_id",session.user.id).order("nome",{ascending:true});
+ if(error){alerta("Erro ao carregar funcionários: "+error.message,"error");return}
+ funcionarios=data||[];
+ renderFuncionarios();
 }
 
-async function salvar(event){
-  event.preventDefault();
-
-  const { data:{ session } } = await sb.auth.getSession();
-
-  if(!session){
-    window.location.href = "../";
-    return;
-  }
-
-  const payload = {
-    ano:Number(document.getElementById("ano").value),
-    mes:Number(document.getElementById("mes").value),
-    treinamento:document.getElementById("treinamento").value.trim(),
-    funcionario:document.getElementById("funcionario").value.trim(),
-    carga_horaria:Number(document.getElementById("cargaHoraria").value || 0),
-    data_treinamento:document.getElementById("dataTreinamento").value || null,
-    status:document.getElementById("status").value,
-    observacao:document.getElementById("observacao").value.trim(),
-    user_id:session.user.id
-  };
-
-  const id = document.getElementById("registroId").value;
-
-  let resposta;
-
-  if(id){
-    resposta = await sb
-      .from("treinamentos")
-      .update(payload)
-      .eq("id",id)
-      .eq("user_id",session.user.id);
-  }else{
-    resposta = await sb
-      .from("treinamentos")
-      .insert(payload);
-  }
-
-  if(resposta.error){
-    console.error(resposta.error);
-    mostrarAlerta("Não foi possível salvar o treinamento: " + resposta.error.message,"error");
-    return;
-  }
-
-  fecharModal();
-  mostrarAlerta("Treinamento salvo com sucesso.");
-  await carregar();
+function renderFuncionarios(){
+ const busca=(document.getElementById("buscaFuncionario").value||"").toLowerCase();
+ const filtro=document.getElementById("filtroFuncionario").value;
+ const lista=funcionarios.filter(f=>
+   (!filtro||f.status===filtro) &&
+   (!busca||(f.nome||"").toLowerCase().includes(busca))
+ );
+ const tb=document.getElementById("tabelaFuncionarios");
+ if(!lista.length){tb.innerHTML='<tr><td colspan="5" class="empty">Nenhum funcionário encontrado.</td></tr>';return}
+ tb.innerHTML=lista.map(f=>`
+ <tr>
+ <td><strong>${esc(f.nome)}</strong></td>
+ <td><span class="status-badge ${f.status==="ATIVO"?"status-realizado":"status-cancelado"}">${esc(f.status)}</span></td>
+ <td>${dataBR(f.data_entrada)}</td><td>${dataBR(f.data_saida)}</td>
+ <td class="center"><div class="acoes">
+ <button class="secondary" onclick="editarFuncionario('${f.id}')">Editar</button>
+ ${f.status==="ATIVO"?`<button class="danger" onclick="inativarFuncionario('${f.id}')">Inativar</button>`:""}
+ </div></td>
+ </tr>`).join("");
 }
 
-async function excluir(id){
-  if(!confirm("Deseja realmente excluir este treinamento?")) return;
+function abrirFuncionario(id=null){
+ document.getElementById("modalFuncionario").classList.add("open");
+ document.querySelector("#modalFuncionario form").reset();
+ document.getElementById("funcionarioId").value="";
+ document.getElementById("statusFuncionario").value="ATIVO";
+ document.getElementById("tituloFuncionario").textContent=id?"Editar Funcionário":"Novo Funcionário";
+ if(id){
+  const f=funcionarios.find(x=>x.id===id);if(!f)return;
+  document.getElementById("funcionarioId").value=f.id;
+  document.getElementById("nomeFuncionario").value=f.nome||"";
+  document.getElementById("entradaFuncionario").value=f.data_entrada||"";
+  document.getElementById("saidaFuncionario").value=f.data_saida||"";
+  document.getElementById("statusFuncionario").value=f.status||"ATIVO";
+ }
+}
+function fecharFuncionario(){document.getElementById("modalFuncionario").classList.remove("open")}
 
-  const { data:{ session } } = await sb.auth.getSession();
+async function salvarFuncionario(e){
+ e.preventDefault();const session=await sessao();if(!session)return;
+ const id=document.getElementById("funcionarioId").value;
+ const payload={
+   nome:document.getElementById("nomeFuncionario").value.trim(),
+   data_entrada:document.getElementById("entradaFuncionario").value||null,
+   data_saida:document.getElementById("saidaFuncionario").value||null,
+   status:document.getElementById("statusFuncionario").value,
+   user_id:session.user.id
+ };
+ let r=id?await sb.from("funcionarios").update(payload).eq("id",id).eq("user_id",session.user.id):await sb.from("funcionarios").insert(payload);
+ if(r.error){alerta("Erro ao salvar funcionário: "+r.error.message,"error");return}
+ fecharFuncionario();alerta("Funcionário salvo com sucesso.");await carregarFuncionarios();
+}
 
-  if(!session){
-    window.location.href = "../";
-    return;
-  }
+async function editarFuncionario(id){abrirFuncionario(id)}
+async function inativarFuncionario(id){
+ if(!confirm("Inativar este funcionário? O histórico de treinamentos será preservado."))return;
+ const session=await sessao();if(!session)return;
+ const r=await sb.from("funcionarios").update({status:"INATIVO",data_saida:new Date().toISOString().slice(0,10)}).eq("id",id).eq("user_id",session.user.id);
+ if(r.error){alerta("Erro ao inativar: "+r.error.message,"error");return}
+ alerta("Funcionário inativado. Histórico preservado.");await carregarFuncionarios();
+}
 
-  const { error } = await sb
-    .from("treinamentos")
-    .delete()
-    .eq("id",id)
-    .eq("user_id",session.user.id);
+function renderParticipantes(selecionados=[]){
+ const box=document.getElementById("listaParticipantes");
+ const ativos=funcionarios.filter(f=>f.status==="ATIVO");
+ if(!ativos.length){box.innerHTML='<div class="muted">Cadastre pelo menos um funcionário ativo.</div>';atualizarResumo();return}
+ box.innerHTML=ativos.map(f=>`
+ <label class="participante-item">
+ <input type="checkbox" value="${esc(f.id)}" data-nome="${esc(f.nome)}" ${selecionados.includes(f.id)?"checked":""} onchange="atualizarResumo()">
+ <span>${esc(f.nome)}</span>
+ </label>`).join("");
+ atualizarResumo();
+}
+function selecionarTodos(){document.querySelectorAll("#listaParticipantes input").forEach(x=>x.checked=true);atualizarResumo()}
+function limparParticipantes(){document.querySelectorAll("#listaParticipantes input").forEach(x=>x.checked=false);atualizarResumo()}
+function selecionados(){return[...document.querySelectorAll("#listaParticipantes input:checked")].map(x=>({id:x.value,nome:x.dataset.nome}))}
+function atualizarResumo(){
+ const ps=selecionados(),c=Number(document.getElementById("cargaHoraria").value||0);
+ document.getElementById("contadorParticipantes").textContent=`${ps.length} selecionado(s)`;
+ document.getElementById("resumoCadastro").textContent=ps.length?`${ps.length} participante(s) × ${horas(c)} = ${horas(ps.length*c)} horas-homem.`:"selecione os participantes.";
+}
 
-  if(error){
-    console.error(error);
-    mostrarAlerta("Não foi possível excluir o treinamento.","error");
-    return;
-  }
+function abrirTreinamento(id=null){
+ document.getElementById("modalTreinamento").classList.add("open");
+ document.querySelector("#modalTreinamento form").reset();
+ document.getElementById("treinamentoId").value="";
+ document.getElementById("ano").value=document.getElementById("filtroAno").value;
+ document.getElementById("statusTreinamento").value="PLANEJADO";
+ let selecionadosEdicao=[];
+ if(id){
+  const r=registros.find(x=>x.id===id);if(!r)return;
+  document.getElementById("tituloTreinamento").textContent="Editar Treinamento";
+  document.getElementById("treinamentoId").value=r.id;
+  document.getElementById("ano").value=r.ano;
+  document.getElementById("mes").value=r.mes;
+  document.getElementById("treinamento").value=r.treinamento||"";
+  document.getElementById("cargaHoraria").value=r.carga_horaria||0;
+  document.getElementById("dataTreinamento").value=r.data_treinamento||"";
+  document.getElementById("statusTreinamento").value=r.status||"PLANEJADO";
+  document.getElementById("observacao").value=r.observacao||"";
+  selecionadosEdicao=(r.participantes||[]).map(p=>p.id);
+ }else document.getElementById("tituloTreinamento").textContent="Novo Treinamento";
+ renderParticipantes(selecionadosEdicao);
+}
+function fecharTreinamento(){document.getElementById("modalTreinamento").classList.remove("open")}
 
-  mostrarAlerta("Treinamento excluído.");
-  await carregar();
+async function salvarTreinamento(e){
+ e.preventDefault();const session=await sessao();if(!session)return;
+ const ps=selecionados();if(!ps.length){alerta("Selecione pelo menos um participante.","error");return}
+ const payload={
+  ano:Number(document.getElementById("ano").value),
+  mes:Number(document.getElementById("mes").value),
+  treinamento:document.getElementById("treinamento").value.trim(),
+  carga_horaria:Number(document.getElementById("cargaHoraria").value||0),
+  data_treinamento:document.getElementById("dataTreinamento").value||null,
+  status:document.getElementById("statusTreinamento").value,
+  observacao:document.getElementById("observacao").value.trim(),
+  participantes:ps,
+  user_id:session.user.id
+ };
+ const id=document.getElementById("treinamentoId").value;
+ const r=id?await sb.from("treinamentos").update(payload).eq("id",id).eq("user_id",session.user.id):await sb.from("treinamentos").insert(payload);
+ if(r.error){alerta("Erro ao salvar treinamento: "+r.error.message,"error");return}
+ fecharTreinamento();alerta("Treinamento salvo com sucesso.");await carregar();
+}
+
+async function excluirTreinamento(id){
+ if(!confirm("Excluir este treinamento?"))return;
+ const session=await sessao();if(!session)return;
+ const r=await sb.from("treinamentos").delete().eq("id",id).eq("user_id",session.user.id);
+ if(r.error){alerta("Erro ao excluir: "+r.error.message,"error");return}
+ alerta("Treinamento excluído.");await carregar();
 }
 
 async function carregar(){
-  const ano = Number(document.getElementById("filtroAno").value);
-
-  const { data:{ session } } = await sb.auth.getSession();
-
-  if(!session){
-    window.location.href = "../";
-    return;
-  }
-
-  const { data,error } = await sb
-    .from("treinamentos")
-    .select("*")
-    .eq("user_id",session.user.id)
-    .eq("ano",ano)
-    .order("mes",{ascending:true})
-    .order("funcionario",{ascending:true})
-    .order("treinamento",{ascending:true});
-
-  if(error){
-    console.error(error);
-    mostrarAlerta("Erro ao carregar os treinamentos: " + error.message,"error");
-    registros = [];
-  }else{
-    registros = data || [];
-  }
-
-  atualizarCards();
-  renderizar();
+ const session=await sessao();if(!session)return;
+ const ano=Number(document.getElementById("filtroAno").value);
+ const r=await sb.from("treinamentos").select("*").eq("user_id",session.user.id).eq("ano",ano).order("mes",{ascending:true}).order("treinamento",{ascending:true});
+ if(r.error){alerta("Erro ao carregar treinamentos: "+r.error.message,"error");registros=[]}else registros=r.data||[];
+ atualizarCards();renderizar();
 }
 
-function registrosFiltrados(){
-  const mes = document.getElementById("filtroMes").value;
-  const status = document.getElementById("filtroStatus").value;
-  const busca = document.getElementById("busca").value.trim().toLowerCase();
-
-  return registros.filter(r=>{
-    if(mes && String(r.mes) !== String(mes)) return false;
-    if(status && r.status !== status) return false;
-
-    if(busca){
-      const texto = `${r.treinamento || ""} ${r.funcionario || ""}`.toLowerCase();
-      if(!texto.includes(busca)) return false;
-    }
-
-    return true;
-  });
+function filtrados(){
+ const mes=document.getElementById("filtroMes").value,status=document.getElementById("filtroStatus").value,b=(document.getElementById("busca").value||"").toLowerCase();
+ return registros.filter(r=>{
+  if(mes&&String(r.mes)!==mes)return false;if(status&&r.status!==status)return false;
+  if(b){let p=(r.participantes||[]).map(x=>x.nome||"").join(" ");if(!`${r.treinamento||""} ${p}`.toLowerCase().includes(b))return false}
+  return true;
+ });
 }
-
 function atualizarCards(){
-  const validos = registros.filter(r=>r.status !== "CANCELADO");
-
-  const horasPlanejadas = validos.reduce((s,r)=>s + Number(r.carga_horaria || 0),0);
-
-  const horasRealizadas = validos
-    .filter(r=>r.status === "REALIZADO")
-    .reduce((s,r)=>s + Number(r.carga_horaria || 0),0);
-
-  const colaboradores = new Set(
-    validos.map(r=>(r.funcionario || "").trim()).filter(Boolean)
-  );
-
-  document.getElementById("totalTreinamentos").textContent = validos.length;
-  document.getElementById("horasPlanejadas").textContent = moedaHoras(horasPlanejadas);
-  document.getElementById("horasRealizadas").textContent = moedaHoras(horasRealizadas);
-  document.getElementById("colaboradores").textContent = colaboradores.size;
+ const v=registros.filter(r=>r.status!=="CANCELADO");
+ const ht=v.reduce((s,r)=>s+Number(r.carga_horaria||0),0);
+ const part=v.reduce((s,r)=>s+(r.participantes||[]).length,0);
+ const hh=v.reduce((s,r)=>s+Number(r.carga_horaria||0)*(r.participantes||[]).length,0);
+ document.getElementById("totalTreinamentos").textContent=v.length;
+ document.getElementById("horasTreinamento").textContent=horas(ht);
+ document.getElementById("horasHomem").textContent=horas(hh);
+ document.getElementById("participacoes").textContent=part;
+ document.getElementById("realizados").textContent=v.filter(r=>r.status==="REALIZADO").length;
 }
 
-function renderizar(){
-  const lista = registrosFiltrados();
-
-  renderizarMatriz(lista);
-  renderizarLista(lista);
-  renderizarResumo();
+function renderizar(){const l=filtrados();renderMatriz(l);renderLista(l);renderResumo()}
+function renderMatriz(l){
+ const mapa={};
+ l.filter(r=>r.status!=="CANCELADO").forEach(r=>(r.participantes||[]).forEach(p=>{
+  if(!mapa[p.nome])mapa[p.nome]=Array(12).fill(0);
+  const m=Number(r.mes)-1;if(m>=0&&m<12)mapa[p.nome][m]+=Number(r.carga_horaria||0);
+ }));
+ const nomes=Object.keys(mapa).sort((a,b)=>a.localeCompare(b,"pt-BR"));let h="";
+ nomes.forEach(n=>{let v=mapa[n],t=v.reduce((a,b)=>a+b,0);h+=`<tr><td><strong>${esc(n)}</strong></td>`;v.forEach(x=>h+=`<td class="numero">${x?horas(x):"—"}</td>`);h+=`<td class="numero">${horas(t)}</td></tr>`});
+ const tot=Array(12).fill(0);Object.values(mapa).forEach(v=>v.forEach((x,i)=>tot[i]+=x));h+=`<tr class="total-row"><td>TOTAL</td>`;tot.forEach(x=>h+=`<td class="numero">${x?horas(x):"—"}</td>`);h+=`<td class="numero">${horas(tot.reduce((a,b)=>a+b,0))}</td></tr>`;
+ document.getElementById("matrizTabela").innerHTML=h||'<tr><td colspan="14" class="empty">Nenhum treinamento encontrado.</td></tr>';
 }
-
-function renderizarMatriz(lista){
-  const tbody = document.getElementById("matrizTabela");
-
-  const funcionarios = [...new Set(
-    lista
-      .filter(r=>r.status !== "CANCELADO")
-      .map(r=>(r.funcionario || "").trim())
-      .filter(Boolean)
-  )].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-
-  if(!funcionarios.length){
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="14" class="empty">Nenhum treinamento encontrado para os filtros selecionados.</td>
-      </tr>`;
-    return;
-  }
-
-  let html = "";
-
-  funcionarios.forEach(funcionario=>{
-    const porMes = Array(12).fill(0);
-
-    lista
-      .filter(r=>r.status !== "CANCELADO" && r.funcionario === funcionario)
-      .forEach(r=>{
-        const m = Number(r.mes) - 1;
-        if(m >= 0 && m < 12){
-          porMes[m] += Number(r.carga_horaria || 0);
-        }
-      });
-
-    const total = porMes.reduce((a,b)=>a+b,0);
-
-    html += `<tr>`;
-    html += `<td><strong>${escapeHtml(funcionario)}</strong></td>`;
-
-    porMes.forEach(v=>{
-      html += `<td class="numero">${v ? moedaHoras(v) : "—"}</td>`;
-    });
-
-    html += `<td class="numero">${moedaHoras(total)}</td>`;
-    html += `</tr>`;
-  });
-
-  const totais = Array(12).fill(0);
-
-  lista
-    .filter(r=>r.status !== "CANCELADO")
-    .forEach(r=>{
-      const m = Number(r.mes)-1;
-      if(m>=0 && m<12) totais[m] += Number(r.carga_horaria || 0);
-    });
-
-  const totalAno = totais.reduce((a,b)=>a+b,0);
-
-  html += `<tr class="total-row">`;
-  html += `<td>TOTAL</td>`;
-  totais.forEach(v=>{
-    html += `<td class="numero">${v ? moedaHoras(v) : "—"}</td>`;
-  });
-  html += `<td class="numero">${moedaHoras(totalAno)}</td>`;
-  html += `</tr>`;
-
-  tbody.innerHTML = html;
+function renderLista(l){
+ const tb=document.getElementById("listaTreinamentos");if(!l.length){tb.innerHTML='<tr><td colspan="8" class="empty">Nenhum treinamento encontrado.</td></tr>';return}
+ tb.innerHTML=l.map(r=>{
+  const p=r.participantes||[],hh=Number(r.carga_horaria||0)*p.length,c=r.status==="REALIZADO"?"status-realizado":r.status==="CANCELADO"?"status-cancelado":"status-planejado";
+  return `<tr><td>${nomesMeses[Number(r.mes)-1]}</td><td><strong>${esc(r.treinamento)}</strong></td><td class="numero">${horas(r.carga_horaria)}</td><td>${p.length} participante(s)</td><td class="numero">${horas(hh)}</td><td>${dataBR(r.data_treinamento)}</td><td><span class="status-badge ${c}">${esc(r.status)}</span></td><td class="center"><div class="acoes"><button class="secondary" onclick="abrirTreinamento('${r.id}')">Editar</button><button class="danger" onclick="excluirTreinamento('${r.id}')">Excluir</button></div></td></tr>`
+ }).join("");
 }
-
-function renderizarLista(lista){
-  const tbody = document.getElementById("listaTreinamentos");
-
-  if(!lista.length){
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8" class="empty">
-          Nenhum treinamento encontrado.
-        </td>
-      </tr>`;
-    return;
-  }
-
-  tbody.innerHTML = lista.map(r=>{
-    const classe =
-      r.status === "REALIZADO" ? "status-realizado" :
-      r.status === "CANCELADO" ? "status-cancelado" :
-      "status-planejado";
-
-    return `
-      <tr>
-        <td>${nomesMeses[Number(r.mes)-1] || "—"}</td>
-        <td><strong>${escapeHtml(r.treinamento)}</strong></td>
-        <td>${escapeHtml(r.funcionario)}</td>
-        <td class="numero">${moedaHoras(r.carga_horaria)}</td>
-        <td>${formatarData(r.data_treinamento)}</td>
-        <td>
-          <span class="status-badge ${classe}">
-            ${escapeHtml(r.status)}
-          </span>
-        </td>
-        <td class="muted">${escapeHtml(r.observacao || "—")}</td>
-        <td class="center">
-          <button class="secondary" onclick="abrirModal('${r.id}')">Editar</button>
-          <button class="danger" onclick="excluir('${r.id}')">Excluir</button>
-        </td>
-      </tr>`;
-  }).join("");
+function renderResumo(){
+ let h="",tt=0,ht=0,hh=0,tp=0;
+ for(let m=1;m<=12;m++){
+  const l=registros.filter(r=>Number(r.mes)===m&&r.status!=="CANCELADO"),a=l.reduce((s,r)=>s+Number(r.carga_horaria||0),0),p=l.reduce((s,r)=>s+(r.participantes||[]).length,0),x=l.reduce((s,r)=>s+Number(r.carga_horaria||0)*(r.participantes||[]).length,0),u=new Set();l.forEach(r=>(r.participantes||[]).forEach(p=>u.add(p.nome)));
+  tt+=l.length;ht+=a;hh+=x;tp+=p;h+=`<tr><td>${nomesMeses[m-1]}</td><td class="numero">${l.length}</td><td class="numero">${horas(a)}</td><td class="numero">${horas(x)}</td><td class="numero">${p}</td><td class="numero">${u.size}</td></tr>`;
+ }
+ document.getElementById("resumoMensal").innerHTML=h+`<tr class="total-row"><td>TOTAL</td><td class="numero">${tt}</td><td class="numero">${horas(ht)}</td><td class="numero">${horas(hh)}</td><td class="numero">${tp}</td><td class="numero">—</td></tr>`;
 }
+async function sair(){await sb.auth.signOut();window.location.href="../"}
+document.getElementById("cargaHoraria").addEventListener("input",atualizarResumo);
+document.getElementById("modalFuncionario").addEventListener("click",e=>{if(e.target===e.currentTarget)fecharFuncionario()});
+document.getElementById("modalTreinamento").addEventListener("click",e=>{if(e.target===e.currentTarget)fecharTreinamento()});
 
-function renderizarResumo(){
-  const tbody = document.getElementById("resumoMensal");
-
-  let html = "";
-  let totalTreinamentos = 0;
-  let totalPlanejado = 0;
-  let totalRealizado = 0;
-
-  for(let mes=1;mes<=12;mes++){
-    const lista = registros.filter(r=>
-      Number(r.mes) === mes &&
-      r.status !== "CANCELADO"
-    );
-
-    const planejado = lista.reduce((s,r)=>s+Number(r.carga_horaria || 0),0);
-    const realizado = lista
-      .filter(r=>r.status === "REALIZADO")
-      .reduce((s,r)=>s+Number(r.carga_horaria || 0),0);
-
-    const colaboradores = new Set(
-      lista.map(r=>(r.funcionario || "").trim()).filter(Boolean)
-    ).size;
-
-    totalTreinamentos += lista.length;
-    totalPlanejado += planejado;
-    totalRealizado += realizado;
-
-    html += `
-      <tr>
-        <td>${nomesMeses[mes-1]}</td>
-        <td class="numero">${lista.length}</td>
-        <td class="numero">${moedaHoras(planejado)}</td>
-        <td class="numero">${moedaHoras(realizado)}</td>
-        <td class="numero">${colaboradores}</td>
-      </tr>`;
-  }
-
-  html += `
-    <tr class="total-row">
-      <td>TOTAL</td>
-      <td class="numero">${totalTreinamentos}</td>
-      <td class="numero">${moedaHoras(totalPlanejado)}</td>
-      <td class="numero">${moedaHoras(totalRealizado)}</td>
-      <td class="numero">—</td>
-    </tr>`;
-
-  tbody.innerHTML = html;
-}
-
-async function sair(){
-  await sb.auth.signOut();
-  window.location.href = "../";
-}
-
-async function iniciar(){
-  prepararAnos();
-
-  const { data:{ session } } = await sb.auth.getSession();
-
-  if(!session){
-    window.location.href = "../";
-    return;
-  }
-
-  await carregar();
-}
-
-document.getElementById("modal").addEventListener("click",function(e){
-  if(e.target === this) fecharModal();
-});
-
+async function iniciar(){prepararAnos();const s=await sessao();if(!s)return;await carregarFuncionarios();await carregar()}
 iniciar();
 </script>
-
 </body>
 </html>
