@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Indicadores | Insight</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f4f7fb;
+  color:#17233d;
+  font-family:Arial,Helvetica,sans-serif
+}
+
+header{
+  margin:10px 12px 20px;
+  background:linear-gradient(110deg,#17367d,#2863e6);
+  color:#fff;
+  border-radius:20px;
+  padding:28px 34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px
+}
+
+h1{margin:0;font-size:40px}
+
+.sub{
+  margin-top:8px;
+  font-size:18px;
+  opacity:.9
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:12px 18px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer
+}
+
+.white{
+  background:#fff;
+  color:#17367d
+}
+
+main{
+  padding:0 12px 35px
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #d9e0ec;
+  border-radius:18px;
+  padding:22px
+}
+
+.card span{
+  display:block;
+  color:#667085;
+  font-size:14px;
+  font-weight:700
+}
+
+.card strong{
+  display:block;
+  margin-top:9px;
+  font-size:30px;
+  color:#17367d
+}
+
+.card small{
+  display:block;
+  margin-top:7px;
+  color:#98a2b3
+}
+
+.panel{
+  margin-top:18px;
+  background:#fff;
+  border:1px solid #d9e0ec;
+  border-radius:18px;
+  padding:22px
+}
+
+.panel h2{
+  margin:0 0 18px;
+  color:#17367d
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px
+}
+
+table{
+  width:100%;
+  border-collapse:collapse
+}
+
+th{
+  background:#0e162b;
+  color:#fff;
+  padding:12px;
+  text-align:left
+}
+
+td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb
+}
+
+.numero{
+  text-align:right;
+  font-weight:700
+}
+
+.status{
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#d1fae5;
+  color:#047857
+}
+
+.mensagem{
+  color:#667085;
+  padding:20px 0
+}
+
+@media(max-width:1000px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  header{
+    flex-direction:column;
+    align-items:flex-start
+  }
+
+  h1{font-size:30px}
+
+  .cards{
+    grid-template-columns:1fr
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div>
+    <h1>📈 Indicadores</h1>
+
+    <div class="sub">
+      Painel de desempenho — Insight | Gerenciamento SGQ
+    </div>
+  </div>
+
+  <div class="actions">
+
+    <button class="white"
+      onclick="window.location.href='../menu/'">
+      ☰ Menu
+    </button>
+
+    <button class="white"
+      onclick="carregar()">
+      ↻ Atualizar
+    </button>
+
+    <button class="white"
+      onclick="sair()">
+      ↪ Sair
+    </button>
+
+  </div>
+
+</header>
+
+<main>
+
+  <section class="cards">
+
+    <div class="card">
+      <span>RECEITA BRUTA ANUAL</span>
+      <strong id="receita">R$ 0,00</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>EBITDA ANUAL</span>
+      <strong id="ebitda">R$ 0,00</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>MARGEM LÍQUIDA</span>
+      <strong id="margem">0,00%</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>CLIENTES</span>
+      <strong id="clientes">0</strong>
+      <small>Base de clientes</small>
+    </div>
+
+    <div class="card">
+      <span>CONTRATOS ATIVOS</span>
+      <strong id="contratosAtivos">0</strong>
+      <small>Contratos</small>
+    </div>
+
+    <div class="card">
+      <span>CONTRATOS CADASTRADOS</span>
+      <strong id="contratosTotal">0</strong>
+      <small>Contratos</small>
+    </div>
+
+    <div class="card">
+      <span>LEADS CRM</span>
+      <strong id="leads">0</strong>
+      <small>Pipeline comercial</small>
+    </div>
+
+    <div class="card">
+      <span>PIPELINE CRM</span>
+      <strong id="pipeline">R$ 0,00</strong>
+      <small>Oportunidades abertas</small>
+    </div>
+
+  </section>
+
+
+  <section class="panel">
+
+    <h2>Desempenho mensal da DRE</h2>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th class="numero">Receita Bruta</th>
+          <th class="numero">EBITDA</th>
+          <th class="numero">Resultado Líquido</th>
+        </tr>
+      </thead>
+
+      <tbody id="dreTabela"></tbody>
+
+    </table>
+
+  </section>
+
+
+  <section class="grid2">
+
+    <section class="panel">
+
+      <h2>Indicadores comerciais</h2>
+
+      <table>
+
+        <tbody>
+
+          <tr>
+            <td>Clientes cadastrados</td>
+            <td class="numero" id="clientes2">0</td>
+          </tr>
+
+          <tr>
+            <td>Contratos ativos</td>
+            <td class="numero" id="ativos2">0</td>
+          </tr>
+
+          <tr>
+            <td>Contratos a renovar</td>
+            <td class="numero" id="renovar">0</td>
+          </tr>
+
+          <tr>
+            <td>Leads no CRM</td>
+            <td class="numero" id="leads2">0</td>
+          </tr>
+
+          <tr>
+            <td>Pipeline aberto</td>
+            <td class="numero" id="pipeline2">R$ 0,00</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+
+    <section class="panel">
+
+      <h2>Resumo de desempenho</h2>
+
+      <table>
+
+        <tbody>
+
+          <tr>
+            <td>Receita Bruta</td>
+            <td class="numero" id="resReceita">R$ 0,00</td>
+          </tr>
+
+          <tr>
+            <td>EBITDA</td>
+            <td class="numero" id="resEbitda">R$ 0,00</td>
+          </tr>
+
+          <tr>
+            <td>Margem EBITDA</td>
+            <td class="numero" id="margemEbitda">0,00%</td>
+          </tr>
+
+          <tr>
+            <td>Resultado Líquido</td>
+            <td class="numero" id="resLiquido">R$ 0,00</td>
+          </tr>
+
+          <tr>
+            <td>Margem Líquida</td>
+            <td class="numero" id="resMargem">0,00%</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </section>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://sayeyuyampbsmhhdukzv.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+
+const sb =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+const meses = [
+  "JAN","FEV","MAR","ABR","MAI","JUN",
+  "JUL","AGO","SET","OUT","NOV","DEZ"
+];
+
+
+function moeda(v){
+
+  return Number(v || 0)
+    .toLocaleString(
+      "pt-BR",
+      {
+        style:"currency",
+        currency:"BRL"
+      }
+    );
+}
+
+
+function percentual(v){
+
+  return Number(v || 0)
+    .toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    ) + "%";
+}
+
+
+function soma(arr){
+
+  return (arr || [])
+    .reduce(
+      (a,b)=>a + Number(b || 0),
+      0
+    );
+}
+
+
+async function iniciar(){
+
+  const {
+    data:{session}
+  } = await sb.auth.getSession();
+
+  if(!session){
+
+    window.location.href="../";
+
+    return;
+  }
+
+  await carregar();
+
+}
+
+
+async function carregar(){
+
+  await carregarDRE();
+
+  await carregarClientes();
+
+  await carregarContratos();
+
+  carregarCRM();
+
+}
+
+
+async function carregarDRE(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from("dre_dados")
+    .select("dados")
+    .maybeSingle();
+
+
+  if(error){
+
+    console.error(error);
+
+    return;
+  }
+
+
+  const d =
+    data?.dados;
+
+
+  if(!d){
+
+    document.getElementById("dreTabela").innerHTML =
+      `<tr>
+        <td colspan="4" class="mensagem">
+          Nenhum dado da DRE encontrado.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  const realizado =
+    d.realizado || d.orcado || {};
+
+
+  const receita =
+    realizado.rb || [];
+
+  const ebitda =
+    realizado.ebitda || [];
+
+  const liquido =
+    realizado.rl2 || [];
+
+
+  const totalReceita =
+    soma(receita);
+
+  const totalEbitda =
+    soma(ebitda);
+
+  const totalLiquido =
+    soma(liquido);
+
+
+  const margemLiquida =
+    totalReceita
+      ? (totalLiquido / totalReceita) * 100
+      : 0;
+
+
+  const margemEbitda =
+    totalReceita
+      ? (totalEbitda / totalReceita) * 100
+      : 0;
+
+
+  document.getElementById("receita").textContent =
+    moeda(totalReceita);
+
+  document.getElementById("ebitda").textContent =
+    moeda(totalEbitda);
+
+  document.getElementById("margem").textContent =
+    percentual(margemLiquida);
+
+
+  document.getElementById("resReceita").textContent =
+    moeda(totalReceita);
+
+  document.getElementById("resEbitda").textContent =
+    moeda(totalEbitda);
+
+  document.getElementById("resLiquido").textContent =
+    moeda(totalLiquido);
+
+  document.getElementById("margemEbitda").textContent =
+    percentual(margemEbitda);
+
+  document.getElementById("resMargem").textContent =
+    percentual(margemLiquida);
+
+
+  let html = "";
+
+
+  for(let i=0;i<12;i++){
+
+    html += `
+      <tr>
+
+        <td>${meses[i]}</td>
+
+        <td class="numero">
+          ${moeda(receita[i])}
+        </td>
+
+        <td class="numero">
+          ${moeda(ebitda[i])}
+        </td>
+
+        <td class="numero">
+          ${moeda(liquido[i])}
+        </td>
+
+      </tr>
+    `;
+
+  }
+
+
+  document.getElementById("dreTabela").innerHTML =
+    html;
+
+}
+
+
+async function carregarClientes(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from("clientes")
+    .select("id", {count:"exact"});
+
+
+  if(error){
+
+    console.error(error);
+
+    return;
+  }
+
+
+  const total =
+    data?.length || 0;
+
+
+  document.getElementById("clientes")
+    .textContent = total;
+
+  document.getElementById("clientes2")
+    .textContent = total;
+
+}
+
+
+async function carregarContratos(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from("contratos")
+    .select("status");
+
+
+  if(error){
+
+    console.error(error);
+
+    return;
+  }
+
+
+  const contratos =
+    data || [];
+
+
+  const ativos =
+    contratos.filter(
+      x => x.status === "ATIVO"
+    ).length;
+
+
+  const renovar =
+    contratos.filter(
+      x => x.status === "RENOVAR"
+    ).length;
+
+
+  document.getElementById("contratosAtivos")
+    .textContent = ativos;
+
+  document.getElementById("contratosTotal")
+    .textContent = contratos.length;
+
+  document.getElementById("ativos2")
+    .textContent = ativos;
+
+  document.getElementById("renovar")
+    .textContent = renovar;
+
+}
+
+
+function carregarCRM(){
+
+  let dados = [];
+
+
+  try{
+
+    dados =
+      JSON.parse(
+        localStorage.getItem("insight_crm")
+        || "[]"
+      );
+
+  }catch(e){
+
+    dados = [];
+
+  }
+
+
+  document.getElementById("leads")
+    .textContent = dados.length;
+
+  document.getElementById("leads2")
+    .textContent = dados.length;
+
+
+  const pipeline =
+    dados
+      .filter(x => x.etapa !== "ganho")
+      .reduce(
+        (s,x) => s + Number(x.valor || 0),
+        0
+      );
+
+
+  document.getElementById("pipeline")
+    .textContent = moeda(pipeline);
+
+  document.getElementById("pipeline2")
+    .textContent = moeda(pipeline);
+
+}
+
+
+async function sair(){
+
+  await sb.auth.signOut();
+
+  window.location.href="../";
+
+}
+
+
+iniciar();
+
+</script>
+
+</body>
+</html>
