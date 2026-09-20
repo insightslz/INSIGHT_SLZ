@@ -1,420 +1,703 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Clientes | Insight</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Clientes | Insight Consultoria e Gestão</title>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
+    padding:0;
     background:#f4f7fb;
     color:#17233d;
-    font-family:Arial,sans-serif
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 header{
-    margin:14px;
-    padding:25px 32px;
-    border-radius:20px;
-    background:linear-gradient(110deg,#17367d,#2863e6);
-    color:#fff;
+    margin:10px 16px 20px;
+    padding:34px 48px;
+    border-radius:22px;
+    background:linear-gradient(110deg,#1c3d85,#2864e5);
+    color:white;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:20px
+    gap:20px;
 }
 
-h1{margin:0;font-size:38px}
-h2{margin-top:0}
-h3{color:#17367d}
-
-.sub{
-    margin-top:8px;
-    font-size:17px
+header h1{
+    margin:0;
+    font-size:58px;
+    line-height:1;
 }
 
-.actions{
+header p{
+    margin:14px 0 0;
+    font-size:20px;
+}
+
+.header-actions{
     display:flex;
-    gap:9px;
-    flex-wrap:wrap
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 button{
     border:0;
-    border-radius:10px;
-    padding:11px 16px;
-    font-weight:700;
+    border-radius:11px;
+    padding:12px 18px;
     font-size:14px;
-    cursor:pointer
+    font-weight:700;
+    cursor:pointer;
 }
 
-button:hover{opacity:.9}
+button:hover{
+    opacity:.9;
+}
 
-.white{
+.btn-white{
     background:#fff;
-    color:#17367d
+    color:#123a86;
 }
 
-.primary{
+.btn-primary{
     background:#173f91;
-    color:#fff
+    color:#fff;
 }
 
-.secondary{
+.btn-secondary{
     background:#e8eef8;
-    color:#17367d
+    color:#173f91;
 }
 
-.danger{
+.btn-danger{
     background:#b42318;
-    color:#fff
+    color:#fff;
 }
 
 main{
-    padding:0 14px 40px
+    padding:0 16px 40px;
 }
 
-.msg{
+.alert{
     display:none;
-    margin:12px 0;
-    padding:14px 16px;
-    border-radius:10px;
-    background:#fff1f1;
-    color:#9d001d;
-    border:1px solid #e6aab4
+    padding:15px 18px;
+    border-radius:12px;
+    margin-bottom:15px;
+    font-size:15px;
 }
 
-.ok{
-    background:#e9f8ef;
-    color:#087344;
-    border-color:#b7e4c7
+.alert.error{
+    display:block;
+    background:#fff0f1;
+    border:1px solid #efb0b6;
+    color:#a4001a;
 }
+
+.alert.success{
+    display:block;
+    background:#ecf9f1;
+    border:1px solid #b6e3c7;
+    color:#08733f;
+}
+
+/* KPIs */
 
 .kpis{
     display:grid;
     grid-template-columns:repeat(5,1fr);
     gap:14px;
-    margin:14px 0
+    margin-bottom:16px;
 }
 
 .kpi{
     background:#fff;
-    border:1px solid #d9e2ef;
-    border-radius:17px;
-    padding:20px
+    border:1px solid #d7e1ef;
+    border-radius:18px;
+    padding:22px;
 }
 
-.kpi span{
-    font-size:12px;
+.kpi-title{
+    color:#65748c;
+    font-size:13px;
     font-weight:700;
-    color:#68758c
 }
 
-.kpi b{
+.kpi-value{
     display:block;
-    font-size:30px;
-    color:#173f91;
-    margin-top:8px
+    color:#16469b;
+    font-size:38px;
+    font-weight:800;
+    margin-top:8px;
 }
+
+/* TOOLBAR */
 
 .toolbar{
-    display:flex;
+    display:grid;
+    grid-template-columns:1fr 230px auto;
     gap:10px;
-    margin:15px 0
+    margin-bottom:15px;
 }
 
 .toolbar input,
 .toolbar select{
     width:100%;
-    padding:13px;
-    border:1px solid #cdd8e8;
-    border-radius:10px;
+    padding:14px;
+    border:1px solid #ccd7e7;
+    border-radius:11px;
     background:#fff;
-    font-size:15px
+    font-size:15px;
 }
 
-.toolbar select{max-width:240px}
+/* TABLE */
 
-.tablewrap{
+.table-container{
+    background:#fff;
+    border:1px solid #d7e1ef;
+    border-radius:18px;
     overflow:auto;
-    background:#fff;
-    border-radius:17px;
-    border:1px solid #d9e2ef
 }
 
-.table{
+table{
     width:100%;
     border-collapse:collapse;
-    min-width:1100px
+    min-width:1200px;
 }
 
-.table th{
-    background:#0e1830;
+thead{
+    background:#0d1830;
     color:#fff;
+}
+
+th{
+    padding:15px;
     text-align:left;
-    padding:14px
+    font-size:14px;
+    white-space:nowrap;
 }
 
-.table td{
-    padding:13px;
-    border-bottom:1px solid #e7edf5
+td{
+    padding:14px;
+    border-bottom:1px solid #e7edf5;
+    font-size:14px;
 }
 
-.tag{
+tbody tr:hover{
+    background:#f7faff;
+}
+
+.status{
     display:inline-block;
+    padding:6px 10px;
+    border-radius:50px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.status.ativo{
     background:#d9f7e8;
     color:#087344;
-    border-radius:99px;
-    padding:6px 10px;
-    font-weight:700;
-    font-size:11px
+}
+
+.status.inativo{
+    background:#eceff3;
+    color:#5d6878;
+}
+
+.status.prospect{
+    background:#fff0c7;
+    color:#8a5b00;
 }
 
 .empty{
+    padding:40px;
     text-align:center;
-    padding:35px;
-    color:#68758c
+    color:#68758c;
 }
+
+/* MODAL */
 
 .modal{
     display:none;
     position:fixed;
     inset:0;
-    background:#0008;
+    background:rgba(0,0,0,.55);
+    z-index:1000;
+    padding:20px;
     align-items:center;
     justify-content:center;
-    padding:15px;
-    z-index:10
 }
 
-.modal.open{display:flex}
+.modal.open{
+    display:flex;
+}
 
-.box{
+.modal-box{
+    width:min(1200px,100%);
+    max-height:95vh;
+    overflow:auto;
     background:#fff;
     border-radius:20px;
-    width:min(1200px,100%);
-    max-height:94vh;
-    overflow:auto;
-    padding:26px
+    padding:28px;
 }
 
-.boxhead{
+.modal-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:20px
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    margin:0;
+    color:#173f91;
 }
 
 .grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:12px
+    gap:14px;
 }
 
 .field label{
     display:block;
     font-size:12px;
-    font-weight:700;
-    color:#5e6c83;
-    margin-bottom:5px
+    font-weight:800;
+    color:#5f6d83;
+    margin-bottom:6px;
 }
 
 .field input,
 .field select,
 .field textarea{
     width:100%;
-    padding:10px;
-    border:1px solid #cdd8e8;
-    border-radius:8px;
-    font-family:Arial
+    border:1px solid #cbd6e6;
+    border-radius:9px;
+    padding:11px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:14px;
 }
 
 .field textarea{
-    min-height:80px;
-    resize:vertical
+    min-height:90px;
+    resize:vertical;
 }
 
-.full{grid-column:1/-1}
+.full{
+    grid-column:1/-1;
+}
+
+.modal-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:22px;
+}
+
+/* SECTIONS */
 
 .section{
-    margin-top:25px;
-    padding-top:20px;
-    border-top:1px solid #e2e8f0
+    border-top:1px solid #e1e7ef;
+    margin-top:28px;
+    padding-top:22px;
 }
 
-.trace{
-    border:1px solid #d8e1ee;
-    border-radius:15px;
-    padding:17px;
-    margin:12px 0;
-    background:#fbfcfe
-}
-
-.trace-head{
+.section-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:15px
+    gap:15px;
 }
 
-.code{
-    font-size:20px;
-    font-weight:800;
-    color:#173f91
+.section h3{
+    color:#173f91;
+    margin:0 0 7px;
 }
 
-.trace-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-    margin-top:14px
-}
-
-.trace-item{
-    background:#fff;
-    border:1px solid #e3e9f2;
-    border-radius:9px;
-    padding:10px
-}
-
-.trace-item small{
-    display:block;
+.section-description{
     color:#68758c;
+    margin-top:0;
+}
+
+/* TRACEABILITY */
+
+.trace-card{
+    background:#fbfcfe;
+    border:1px solid #d9e2ef;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:13px;
+}
+
+.trace-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.trace-code{
+    font-size:21px;
+    font-weight:800;
+    color:#17469c;
+}
+
+.trace-service{
+    font-size:15px;
     font-weight:700;
-    margin-bottom:4px
+    margin-top:5px;
 }
 
 .timeline{
     display:flex;
     align-items:center;
-    gap:5px;
-    margin:15px 0;
-    flex-wrap:wrap
+    gap:6px;
+    flex-wrap:wrap;
+    margin:17px 0;
 }
 
-.step{
-    background:#e8eef8;
-    color:#173f91;
-    padding:8px 11px;
+.timeline-step{
+    padding:8px 12px;
     border-radius:8px;
-    font-size:12px;
-    font-weight:700
+    background:#e9eff8;
+    color:#173f91;
+    font-size:11px;
+    font-weight:800;
 }
 
-.arrow{color:#8b98aa}
-
-.foot{
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-    margin-top:20px
+.timeline-arrow{
+    color:#8995a7;
+    font-weight:bold;
 }
 
-.hidden{display:none}
-
-@media(max-width:1000px){
-    .kpis{grid-template-columns:repeat(2,1fr)}
-    .grid{grid-template-columns:1fr}
-    .trace-grid{grid-template-columns:repeat(2,1fr)}
+.trace-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
 }
 
-@media(max-width:650px){
-    .kpis{grid-template-columns:1fr}
-    .trace-grid{grid-template-columns:1fr}
-    header{flex-direction:column;align-items:flex-start}
+.trace-item{
+    background:#fff;
+    border:1px solid #e3e8f0;
+    border-radius:9px;
+    padding:10px;
 }
+
+.trace-item small{
+    display:block;
+    color:#68758c;
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.trace-item div{
+    font-size:13px;
+}
+
+/* CONTRATOS */
+
+.contract-card{
+    background:#fbfcfe;
+    border:1px solid #d9e2ef;
+    border-radius:13px;
+    padding:15px;
+    margin-bottom:10px;
+}
+
+.contract-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.contract-item small{
+    display:block;
+    color:#68758c;
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:4px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1050px){
+
+    .kpis{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .trace-grid,
+    .contract-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+        padding:25px;
+    }
+
+    header h1{
+        font-size:42px;
+    }
+
+    .toolbar{
+        grid-template-columns:1fr;
+    }
+
+    .kpis{
+        grid-template-columns:1fr;
+    }
+
+    .grid,
+    .trace-grid,
+    .contract-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<header>
-    <div>
-        <h1>Clientes</h1>
-        <div class="sub">
-            Cadastro, serviços e rastreabilidade da relação com o cliente
-        </div>
-    </div>
 
-    <div class="actions">
-        <button class="white" id="btnAtualizar">↻ Atualizar</button>
-        <button class="white" id="btnInicio">⌂ Início</button>
-        <button class="white" id="btnSair">↪ Sair</button>
-    </div>
+<header>
+
+<div>
+
+<h1>Clientes</h1>
+
+<p>
+Cadastro, serviços e rastreabilidade da relação com o cliente
+</p>
+
+</div>
+
+
+<div class="header-actions">
+
+<button
+class="btn-white"
+id="btnNovoCliente">
+＋ Novo Cliente
+</button>
+
+<button
+class="btn-white"
+id="btnAtualizar">
+↻ Atualizar
+</button>
+
+<button
+class="btn-white"
+id="btnInicio">
+⌂ Início
+</button>
+
+<button
+class="btn-white"
+id="btnSair">
+↪ Sair
+</button>
+
+</div>
+
 </header>
+
 
 <main>
 
-<div id="msg" class="msg"></div>
+
+<div
+id="alert"
+class="alert">
+</div>
+
+
+<!-- KPIs -->
 
 <div class="kpis">
-    <div class="kpi">
-        <span>CLIENTES ATIVOS</span>
-        <b id="kAtivos">0</b>
-    </div>
 
-    <div class="kpi">
-        <span>CLIENTES CADASTRADOS</span>
-        <b id="kTotal">0</b>
-    </div>
+<div class="kpi">
 
-    <div class="kpi">
-        <span>PROSPECTS</span>
-        <b id="kProspects">0</b>
-    </div>
-
-    <div class="kpi">
-        <span>CONTRATOS ATIVOS</span>
-        <b id="kContratos">0</b>
-    </div>
-
-    <div class="kpi">
-        <span>SERVIÇOS / PROJETOS</span>
-        <b id="kServicos">0</b>
-    </div>
+<div class="kpi-title">
+CLIENTES ATIVOS
 </div>
+
+<span
+class="kpi-value"
+id="kAtivos">
+0
+</span>
+
+</div>
+
+
+<div class="kpi">
+
+<div class="kpi-title">
+CLIENTES CADASTRADOS
+</div>
+
+<span
+class="kpi-value"
+id="kTotal">
+0
+</span>
+
+</div>
+
+
+<div class="kpi">
+
+<div class="kpi-title">
+PROSPECTS
+</div>
+
+<span
+class="kpi-value"
+id="kProspects">
+0
+</span>
+
+</div>
+
+
+<div class="kpi">
+
+<div class="kpi-title">
+CONTRATOS ATIVOS
+</div>
+
+<span
+class="kpi-value"
+id="kContratos">
+0
+</span>
+
+</div>
+
+
+<div class="kpi">
+
+<div class="kpi-title">
+SERVIÇOS / PROJETOS
+</div>
+
+<span
+class="kpi-value"
+id="kServicos">
+0
+</span>
+
+</div>
+
+</div>
+
+
+<!-- PESQUISA -->
 
 <div class="toolbar">
 
-    <input
-        id="busca"
-        placeholder="Pesquisar cliente, CNPJ, contato ou código INS-2026-001..."
-    >
+<input
+id="busca"
+type="text"
+placeholder="Pesquisar cliente, CNPJ, contato ou código INS-2026-001..."
+>
 
-    <select id="filtro">
-        <option value="">Todos os status</option>
-        <option>ATIVO</option>
-        <option>INATIVO</option>
-        <option>PROSPECT</option>
-    </select>
+<select id="filtro">
+
+<option value="">
+Todos os status
+</option>
+
+<option value="ATIVO">
+ATIVO
+</option>
+
+<option value="PROSPECT">
+PROSPECT
+</option>
+
+<option value="INATIVO">
+INATIVO
+</option>
+
+</select>
+
+
+<button
+class="btn-primary"
+id="btnLimparFiltro">
+Limpar
+</button>
 
 </div>
 
-<div class="tablewrap">
 
-<table class="table">
+<!-- TABELA -->
+
+<div class="table-container">
+
+<table>
 
 <thead>
+
 <tr>
+
 <th>ID CLIENTE</th>
+
 <th>RAZÃO SOCIAL</th>
+
 <th>CNPJ</th>
+
 <th>NOME FANTASIA</th>
+
 <th>CONTATO</th>
+
 <th>E-MAIL</th>
+
 <th>RESPONSÁVEL</th>
+
 <th>STATUS</th>
+
 <th>AÇÃO</th>
+
 </tr>
+
 </thead>
 
-<tbody id="corpo"></tbody>
+
+<tbody
+id="corpo">
+</tbody>
 
 </table>
 
@@ -423,1324 +706,2511 @@ main{
 </main>
 
 
-<!-- MODAL CLIENTE -->
 
-<div class="modal" id="modalCliente">
+<!-- =====================================================
+     MODAL NOVO CLIENTE
+===================================================== -->
 
-<div class="box">
+<div
+class="modal"
+id="modalNovoCliente">
 
-<div class="boxhead">
+<div class="modal-box">
 
-<h2>Ficha do Cliente</h2>
+<div class="modal-header">
 
-<button class="secondary" id="btnFecharCliente">✕</button>
+<h2>
+Novo Cliente
+</h2>
+
+<button
+class="btn-secondary"
+id="btnFecharNovoCliente">
+✕
+</button>
 
 </div>
+
 
 <div class="grid">
 
+
 <div class="field">
-<label>ID CLIENTE</label>
-<input id="fId" readonly>
+
+<label>
+RAZÃO SOCIAL / NOME *
+</label>
+
+<input
+id="nRazao"
+type="text"
+>
+
 </div>
 
+
 <div class="field">
-<label>RAZÃO SOCIAL</label>
-<input id="fRazao">
+
+<label>
+CNPJ / CPF
+</label>
+
+<input
+id="nCnpj"
+type="text"
+>
+
 </div>
 
+
 <div class="field">
-<label>CNPJ</label>
-<input id="fCnpj">
+
+<label>
+NOME FANTASIA
+</label>
+
+<input
+id="nFantasia"
+type="text"
+>
+
 </div>
 
+
 <div class="field">
-<label>NOME FANTASIA</label>
-<input id="fFantasia">
+
+<label>
+CONTATO PRINCIPAL
+</label>
+
+<input
+id="nContato"
+type="text"
+>
+
 </div>
 
+
 <div class="field">
-<label>CONTATO</label>
-<input id="fContato">
+
+<label>
+E-MAIL
+</label>
+
+<input
+id="nEmail"
+type="email"
+>
+
 </div>
 
+
 <div class="field">
-<label>E-MAIL</label>
-<input id="fEmail">
+
+<label>
+RESPONSÁVEL PELO CLIENTE
+</label>
+
+<input
+id="nResponsavel"
+type="text"
+>
+
 </div>
 
-<div class="field">
-<label>RESPONSÁVEL</label>
-<input id="fResponsavel">
-</div>
 
 <div class="field">
-<label>STATUS</label>
 
-<select id="fStatus">
-<option>ATIVO</option>
-<option>INATIVO</option>
-<option>PROSPECT</option>
+<label>
+STATUS
+</label>
+
+<select id="nStatus">
+
+<option value="ATIVO">
+ATIVO
+</option>
+
+<option value="PROSPECT">
+PROSPECT
+</option>
+
+<option value="INATIVO">
+INATIVO
+</option>
+
 </select>
 
 </div>
 
 </div>
 
-<div class="foot">
 
-<button class="primary" id="btnSalvarCliente">
-Salvar cliente
+<div class="modal-footer">
+
+<button
+class="btn-secondary"
+id="btnCancelarNovoCliente">
+Cancelar
+</button>
+
+<button
+class="btn-primary"
+id="btnCadastrarCliente">
+Cadastrar Cliente
 </button>
 
 </div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MODAL FICHA DO CLIENTE
+===================================================== -->
+
+<div
+class="modal"
+id="modalCliente">
+
+<div class="modal-box">
+
+
+<div class="modal-header">
+
+<h2>
+Ficha do Cliente
+</h2>
+
+<button
+class="btn-secondary"
+id="btnFecharCliente">
+✕
+</button>
+
+</div>
+
+
+<div class="grid">
+
+
+<div class="field">
+
+<label>
+ID CLIENTE
+</label>
+
+<input
+id="fId"
+readonly
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+RAZÃO SOCIAL
+</label>
+
+<input
+id="fRazao"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+CNPJ / CPF
+</label>
+
+<input
+id="fCnpj"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+NOME FANTASIA
+</label>
+
+<input
+id="fFantasia"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+CONTATO
+</label>
+
+<input
+id="fContato"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+E-MAIL
+</label>
+
+<input
+id="fEmail"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+RESPONSÁVEL
+</label>
+
+<input
+id="fResponsavel"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+STATUS
+</label>
+
+<select id="fStatus">
+
+<option value="ATIVO">
+ATIVO
+</option>
+
+<option value="PROSPECT">
+PROSPECT
+</option>
+
+<option value="INATIVO">
+INATIVO
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="modal-footer">
+
+<button
+class="btn-primary"
+id="btnSalvarCliente">
+Salvar alterações
+</button>
+
+</div>
+
 
 
 <!-- SERVIÇOS -->
 
 <div class="section">
 
-<div class="boxhead">
+<div class="section-header">
 
 <div>
-<h2>Rastreabilidade dos Serviços</h2>
 
-<p>
-Cada serviço recebe um código único que acompanha proposta,
-contrato, execução, registros e entrega.
+<h3>
+Rastreabilidade dos Serviços
+</h3>
+
+<p class="section-description">
+
+Cada serviço recebe um código único que acompanha:
+
+<strong>
+cliente → proposta → contrato → execução → registros → entrega
+</strong>
+
 </p>
+
 </div>
 
-<button class="primary" id="btnNovoServico">
-＋ Novo serviço
+
+<button
+class="btn-primary"
+id="btnNovoServico">
+＋ Novo Serviço
 </button>
 
 </div>
 
-<div id="listaServicos">
-Carregando...
+
+<div
+id="listaServicos">
 </div>
 
 </div>
+
 
 
 <!-- CONTRATOS -->
 
 <div class="section">
 
-<h3>Contratos vinculados</h3>
+<h3>
+Contratos vinculados
+</h3>
 
-<div id="listaContratos">
-Carregando...
+<div
+id="listaContratos">
 </div>
 
 </div>
 
-</div>
 
 </div>
 
+</div>
 
-<!-- MODAL SERVIÇO -->
 
-<div class="modal" id="modalServico">
 
-<div class="box">
+<!-- =====================================================
+     MODAL SERVIÇO
+===================================================== -->
 
-<div class="boxhead">
+<div
+class="modal"
+id="modalServico">
+
+<div class="modal-box">
+
+
+<div class="modal-header">
 
 <h2 id="tituloServico">
 Novo Serviço / Projeto
 </h2>
 
-<button class="secondary" id="btnFecharServico">
+<button
+class="btn-secondary"
+id="btnFecharServico">
 ✕
 </button>
 
 </div>
 
-<input type="hidden" id="servicoId">
+
+<input
+type="hidden"
+id="servicoId"
+>
+
 
 <div class="grid">
 
-<div class="field">
-<label>CÓDIGO ÚNICO</label>
-<input
-    id="sCodigo"
-    placeholder="INS-2026-001"
->
-</div>
 
 <div class="field">
-<label>SERVIÇO / PROJETO</label>
+
+<label>
+CÓDIGO ÚNICO *
+</label>
+
 <input
-    id="sServico"
-    placeholder="Ex.: Consultoria em SST"
+id="sCodigo"
+placeholder="INS-2026-001"
 >
+
 </div>
 
-<div class="field">
-<label>PROPOSTA</label>
-<input
-    id="sProposta"
-    placeholder="PROP-INS-2026-001"
->
-</div>
 
 <div class="field">
-<label>CONTRATO</label>
+
+<label>
+SERVIÇO / PROJETO *
+</label>
+
+<input
+id="sServico"
+placeholder="Ex.: Consultoria em SST"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+PROPOSTA
+</label>
+
+<input
+id="sProposta"
+placeholder="PROP-INS-2026-001"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+CONTRATO
+</label>
+
 <select id="sContrato">
-<option value="">Sem contrato vinculado</option>
+
+<option value="">
+Sem contrato vinculado
+</option>
+
 </select>
+
 </div>
 
-<div class="field">
-<label>RESPONSÁVEL</label>
-<input id="sResponsavel">
-</div>
 
 <div class="field">
-<label>STATUS</label>
+
+<label>
+RESPONSÁVEL
+</label>
+
+<input
+id="sResponsavel"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+STATUS
+</label>
 
 <select id="sStatus">
 
-<option>PLANEJADO</option>
-<option>EM EXECUÇÃO</option>
-<option>AGUARDANDO CLIENTE</option>
-<option>CONCLUÍDO</option>
-<option>CANCELADO</option>
+<option value="PLANEJADO">
+PLANEJADO
+</option>
+
+<option value="EM EXECUÇÃO">
+EM EXECUÇÃO
+</option>
+
+<option value="AGUARDANDO CLIENTE">
+AGUARDANDO CLIENTE
+</option>
+
+<option value="CONCLUÍDO">
+CONCLUÍDO
+</option>
+
+<option value="CANCELADO">
+CANCELADO
+</option>
 
 </select>
 
 </div>
 
-<div class="field">
-<label>DATA DE INÍCIO</label>
-<input type="date" id="sInicio">
-</div>
 
 <div class="field">
-<label>PREVISÃO DE TÉRMINO</label>
-<input type="date" id="sPrevisao">
-</div>
 
-<div class="field">
-<label>DATA DE TÉRMINO</label>
-<input type="date" id="sTermino">
-</div>
-
-<div class="field full">
-<label>LOCAL DOS DOCUMENTOS</label>
+<label>
+DATA DE INÍCIO
+</label>
 
 <input
-    id="sLocal"
-    placeholder="Ex.: Drive / Clientes / INS-2026-001"
+type="date"
+id="sInicio"
 >
 
 </div>
 
-<div class="field full">
-<label>EXECUÇÃO / OBSERVAÇÕES</label>
-
-<textarea id="sExecucao"></textarea>
-
-</div>
-
-<div class="field full">
-<label>REGISTROS</label>
-
-<textarea
-    id="sRegistros"
-    placeholder="Relatórios, listas, certificados, evidências etc."
-></textarea>
-
-</div>
-
-<div class="field full">
-<label>ENTREGA</label>
-
-<textarea
-    id="sEntrega"
-    placeholder="Descrição da entrega realizada"
-></textarea>
-
-</div>
 
 <div class="field">
-<label>DATA DA ENTREGA</label>
-<input type="date" id="sEntregaData">
-</div>
+
+<label>
+PREVISÃO DE TÉRMINO
+</label>
+
+<input
+type="date"
+id="sPrevisao"
+>
 
 </div>
 
-<div class="foot">
 
-<button class="secondary" id="btnCancelarServico">
+<div class="field">
+
+<label>
+DATA DE TÉRMINO
+</label>
+
+<input
+type="date"
+id="sTermino"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+LOCAL DOS DOCUMENTOS
+</label>
+
+<input
+id="sLocal"
+placeholder="Drive / Clientes / INS-2026-001"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+EXECUÇÃO / OBSERVAÇÕES
+</label>
+
+<textarea
+id="sExecucao">
+</textarea>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+REGISTROS / EVIDÊNCIAS
+</label>
+
+<textarea
+id="sRegistros"
+placeholder="Relatórios, listas, certificados, documentos etc.">
+</textarea>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+ENTREGA
+</label>
+
+<textarea
+id="sEntrega"
+placeholder="Descrição da entrega realizada">
+</textarea>
+
+</div>
+
+
+<div class="field">
+
+<label>
+DATA DA ENTREGA
+</label>
+
+<input
+type="date"
+id="sEntregaData"
+>
+
+</div>
+
+
+</div>
+
+
+<div class="modal-footer">
+
+<button
+class="btn-secondary"
+id="btnCancelarServico">
 Cancelar
 </button>
 
-<button class="primary" id="btnSalvarServico">
-Salvar serviço
+<button
+class="btn-primary"
+id="btnSalvarServico">
+Salvar Serviço
 </button>
 
 </div>
 
+
 </div>
 
 </div>
+
 
 
 <script>
 
-(function(){
-
 'use strict';
 
+
+/* =====================================================
+   CONFIGURAÇÃO SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 'https://sayeyuyampbsmhhdukzv.supabase.co';
 
-const SUPABASE_KEY =
-'sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA';
 
-window.SUPABASE_CLIENT =
+/*
+ IMPORTANTE:
+
+ COLE ABAIXO A SUA PUBLISHABLE KEY ATUAL.
+
+ NÃO USE A SECRET KEY.
+
+ NÃO COMPARTILHE A CHAVE NO CHAT.
+*/
+
+const SUPABASE_KEY =
+'COLE_AQUI_SUA_PUBLISHABLE_KEY';
+
+
+const sb =
 window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
 
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
+
 let usuario = null;
+
 let clientes = [];
+
 let contratos = [];
+
 let servicos = [];
+
 let clienteSelecionado = null;
 
 
-const $ = id =>
-document.getElementById(id);
 
+/* =====================================================
+   UTILITÁRIOS
+===================================================== */
 
-const esc = value =>
-String(value ?? '')
-.replace(/[&<>"']/g,m=>({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#039;'
-}[m]));
+function $(id){
 
-
-function mensagem(texto,ok=false){
-
-const el=$('msg');
-
-el.textContent=texto;
-
-el.className=ok
-? 'msg ok'
-: 'msg';
-
-el.style.display='block';
-
-setTimeout(()=>{
-el.style.display='none';
-},5000);
+    return document.getElementById(id);
 
 }
 
+
+function escapeHTML(valor){
+
+    return String(valor ?? '')
+        .replace(/[&<>"']/g,function(m){
+
+            return {
+
+                '&':'&amp;',
+                '<':'&lt;',
+                '>':'&gt;',
+                '"':'&quot;',
+                "'":'&#039;'
+
+            }[m];
+
+        });
+
+}
+
+
+function mostrarAlerta(texto,tipo='error'){
+
+    const el=$('alert');
+
+    el.textContent=texto;
+
+    el.className='alert '+tipo;
+
+    setTimeout(function(){
+
+        el.className='alert';
+
+    },5000);
+
+}
+
+
+
+/* =====================================================
+   CARREGAMENTO PRINCIPAL
+===================================================== */
 
 async function carregar(){
 
-const sb=window.SUPABASE_CLIENT;
+    try{
 
-const sess=await sb.auth.getUser();
+        const resultadoUsuario =
+            await sb.auth.getUser();
 
-if(sess.error)
-throw sess.error;
 
-usuario=sess.data.user;
+        if(resultadoUsuario.error){
 
-if(!usuario){
+            throw resultadoUsuario.error;
 
-window.location.href='../';
+        }
 
-return;
+
+        usuario =
+            resultadoUsuario.data.user;
+
+
+        if(!usuario){
+
+            window.location.href='../';
+
+            return;
+
+        }
+
+
+        /* CLIENTES */
+
+        const resultadoClientes =
+            await sb
+                .from('clientes')
+                .select('*')
+                .eq('user_id',usuario.id)
+                .order('id_cliente');
+
+
+        if(resultadoClientes.error){
+
+            throw new Error(
+                'Clientes: '+
+                resultadoClientes.error.message
+            );
+
+        }
+
+
+        clientes =
+            resultadoClientes.data || [];
+
+
+        /* CONTRATOS */
+
+        const resultadoContratos =
+            await sb
+                .from('contratos')
+                .select('*')
+                .eq('user_id',usuario.id);
+
+
+        if(resultadoContratos.error){
+
+            throw new Error(
+                'Contratos: '+
+                resultadoContratos.error.message
+            );
+
+        }
+
+
+        contratos =
+            resultadoContratos.data || [];
+
+
+        /* SERVIÇOS */
+
+        const resultadoServicos =
+            await sb
+                .from('servicos_clientes')
+                .select('*')
+                .eq('user_id',usuario.id)
+                .order(
+                    'created_at',
+                    {
+                        ascending:false
+                    }
+                );
+
+
+        if(resultadoServicos.error){
+
+            /*
+             Caso a tabela ainda não tenha sido criada,
+             não impede a exibição dos clientes.
+            */
+
+            console.warn(
+                'Serviços:',
+                resultadoServicos.error.message
+            );
+
+            servicos=[];
+
+        }else{
+
+            servicos =
+                resultadoServicos.data || [];
+
+        }
+
+
+        render();
+
+    }catch(erro){
+
+        console.error(erro);
+
+        mostrarAlerta(
+            'Erro ao carregar o módulo: '+
+            (erro.message || erro)
+        );
+
+    }
 
 }
 
 
-const cr=await sb
-.from('clientes')
-.select('*')
-.eq('user_id',usuario.id)
-.order('id_cliente');
 
-if(cr.error)
-throw new Error(
-'Clientes: '+cr.error.message
-);
-
-clientes=cr.data||[];
-
-
-const tr=await sb
-.from('contratos')
-.select('*')
-.eq('user_id',usuario.id);
-
-if(tr.error)
-throw new Error(
-'Contratos: '+tr.error.message
-);
-
-contratos=tr.data||[];
-
-
-const sr=await sb
-.from('servicos_clientes')
-.select('*')
-.eq('user_id',usuario.id)
-.order('created_at',{ascending:false});
-
-if(sr.error)
-throw new Error(
-'Serviços: '+sr.error.message
-);
-
-servicos=sr.data||[];
-
-
-render();
-
-}
-
+/* =====================================================
+   RENDERIZAÇÃO
+===================================================== */
 
 function render(){
 
-const q=
-$('busca').value
-.trim()
-.toLowerCase();
-
-const filtro=
-$('filtro').value;
+    const busca =
+        $('busca')
+            .value
+            .trim()
+            .toLowerCase();
 
 
-const lista=
-clientes.filter(cliente=>{
-
-const servicosCliente=
-servicos.filter(
-s=>s.cliente_id===cliente.id
-);
-
-const texto=[
-cliente.id_cliente,
-cliente.razao_social,
-cliente.cnpj,
-cliente.nome_fantasia,
-cliente.contato,
-cliente.email,
-cliente.responsavel,
-...servicosCliente.map(
-s=>s.codigo_unico+' '+s.servico
-)
-]
-.join(' ')
-.toLowerCase();
+    const filtro =
+        $('filtro').value;
 
 
-return
-(!filtro || cliente.status===filtro)
-&&
-(!q || texto.includes(q));
+    const lista =
+        clientes.filter(function(cliente){
 
-});
+            const servicosCliente =
+                servicos.filter(function(servico){
 
+                    return servico.cliente_id === cliente.id;
 
-$('kAtivos').textContent=
-clientes.filter(
-x=>x.status==='ATIVO'
-).length;
-
-$('kTotal').textContent=
-clientes.length;
-
-$('kProspects').textContent=
-clientes.filter(
-x=>x.status==='PROSPECT'
-).length;
-
-$('kContratos').textContent=
-contratos.filter(
-x=>x.status==='ATIVO'
-).length;
-
-$('kServicos').textContent=
-servicos.length;
+                });
 
 
-$('corpo').innerHTML=
-lista.length
-?
-lista.map(x=>`
+            const texto = [
 
-<tr>
+                cliente.id_cliente,
 
-<td>${esc(x.id_cliente)}</td>
+                cliente.razao_social,
 
-<td>
-<b>${esc(x.razao_social)}</b>
-</td>
+                cliente.cnpj,
 
-<td>${esc(x.cnpj)}</td>
+                cliente.nome_fantasia,
 
-<td>${esc(x.nome_fantasia)}</td>
+                cliente.contato,
 
-<td>${esc(x.contato)}</td>
+                cliente.email,
 
-<td>${esc(x.email)}</td>
+                cliente.responsavel,
 
-<td>${esc(x.responsavel)}</td>
+                ...servicosCliente.map(function(s){
 
-<td>
-<span class="tag">
-${esc(x.status)}
-</span>
-</td>
+                    return (
+                        (s.codigo_unico || '')+
+                        ' '+
+                        (s.servico || '')
+                    );
 
-<td>
+                })
 
-<button
-class="primary abrir"
-data-id="${esc(x.id)}">
-
-Abrir ficha
-
-</button>
-
-</td>
-
-</tr>
-
-`).join('')
-
-:
-
-`
-<tr>
-<td colspan="9" class="empty">
-Nenhum cliente encontrado.
-</td>
-</tr>
-`;
+            ]
+            .join(' ')
+            .toLowerCase();
 
 
-document
-.querySelectorAll('.abrir')
-.forEach(btn=>{
+            return (
 
-btn.addEventListener(
-'click',
-()=>{
-abrirCliente(btn.dataset.id)
+                (!filtro ||
+                 cliente.status === filtro)
+
+                &&
+
+                (!busca ||
+                 texto.includes(busca))
+
+            );
+
+        });
+
+
+
+    /* KPIs */
+
+    $('kAtivos').textContent =
+        clientes.filter(function(x){
+
+            return x.status === 'ATIVO';
+
+        }).length;
+
+
+    $('kTotal').textContent =
+        clientes.length;
+
+
+    $('kProspects').textContent =
+        clientes.filter(function(x){
+
+            return x.status === 'PROSPECT';
+
+        }).length;
+
+
+    $('kContratos').textContent =
+        contratos.filter(function(x){
+
+            return x.status === 'ATIVO';
+
+        }).length;
+
+
+    $('kServicos').textContent =
+        servicos.length;
+
+
+
+    /* TABELA */
+
+    if(!lista.length){
+
+        $('corpo').innerHTML=`
+
+            <tr>
+
+                <td
+                    colspan="9"
+                    class="empty">
+
+                    Nenhum cliente encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    $('corpo').innerHTML =
+        lista.map(function(cliente){
+
+            let classeStatus =
+                String(
+                    cliente.status || ''
+                ).toLowerCase();
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.id_cliente
+                        )}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHTML(
+                                cliente.razao_social
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.cnpj
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.nome_fantasia
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.contato
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.email
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            cliente.responsavel
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="status ${classeStatus}">
+
+                            ${escapeHTML(
+                                cliente.status
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn-primary btnAbrirCliente"
+                            data-id="${cliente.id}">
+
+                            Abrir ficha
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join('');
+
+
+    document
+        .querySelectorAll('.btnAbrirCliente')
+        .forEach(function(botao){
+
+            botao.addEventListener(
+                'click',
+                function(){
+
+                    abrirCliente(
+                        botao.dataset.id
+                    );
+
+                }
+            );
+
+        });
+
 }
-);
 
-});
+
+
+/* =====================================================
+   NOVO CLIENTE
+===================================================== */
+
+function abrirNovoCliente(){
+
+    $('nRazao').value='';
+    $('nCnpj').value='';
+    $('nFantasia').value='';
+    $('nContato').value='';
+    $('nEmail').value='';
+    $('nResponsavel').value='';
+    $('nStatus').value='ATIVO';
+
+
+    $('modalNovoCliente')
+        .classList
+        .add('open');
 
 }
 
+
+async function cadastrarCliente(){
+
+    const razao =
+        $('nRazao')
+            .value
+            .trim();
+
+
+    if(!razao){
+
+        alert(
+            'Informe a Razão Social ou Nome do cliente.'
+        );
+
+        return;
+
+    }
+
+
+    const dados={
+
+        user_id:usuario.id,
+
+        razao_social:razao,
+
+        cnpj:
+            $('nCnpj')
+                .value
+                .trim() || null,
+
+        nome_fantasia:
+            $('nFantasia')
+                .value
+                .trim() || null,
+
+        contato:
+            $('nContato')
+                .value
+                .trim() || null,
+
+        email:
+            $('nEmail')
+                .value
+                .trim() || null,
+
+        responsavel:
+            $('nResponsavel')
+                .value
+                .trim() || null,
+
+        status:
+            $('nStatus').value
+
+    };
+
+
+    const resultado =
+        await sb
+            .from('clientes')
+            .insert(dados)
+            .select()
+            .single();
+
+
+    if(resultado.error){
+
+        alert(
+            'Erro ao cadastrar cliente:\n\n'+
+            resultado.error.message
+        );
+
+        return;
+
+    }
+
+
+    $('modalNovoCliente')
+        .classList
+        .remove('open');
+
+
+    await carregar();
+
+
+    mostrarAlerta(
+        'Cliente cadastrado com sucesso.',
+        'success'
+    );
+
+}
+
+
+
+/* =====================================================
+   ABRIR CLIENTE
+===================================================== */
 
 function abrirCliente(id){
 
-clienteSelecionado=
-clientes.find(x=>x.id===id);
+    clienteSelecionado =
+        clientes.find(function(cliente){
 
-if(!clienteSelecionado)
-return;
+            return String(cliente.id) === String(id);
 
-
-$('fId').value=
-clienteSelecionado.id_cliente||'';
-
-$('fRazao').value=
-clienteSelecionado.razao_social||'';
-
-$('fCnpj').value=
-clienteSelecionado.cnpj||'';
-
-$('fFantasia').value=
-clienteSelecionado.nome_fantasia||'';
-
-$('fContato').value=
-clienteSelecionado.contato||'';
-
-$('fEmail').value=
-clienteSelecionado.email||'';
-
-$('fResponsavel').value=
-clienteSelecionado.responsavel||'';
-
-$('fStatus').value=
-clienteSelecionado.status||'ATIVO';
+        });
 
 
-carregarContratos();
+    if(!clienteSelecionado){
 
-carregarServicos();
+        alert(
+            'Cliente não encontrado.'
+        );
+
+        return;
+
+    }
 
 
-$('modalCliente')
-.classList.add('open');
+    $('fId').value =
+        clienteSelecionado.id_cliente || '';
+
+
+    $('fRazao').value =
+        clienteSelecionado.razao_social || '';
+
+
+    $('fCnpj').value =
+        clienteSelecionado.cnpj || '';
+
+
+    $('fFantasia').value =
+        clienteSelecionado.nome_fantasia || '';
+
+
+    $('fContato').value =
+        clienteSelecionado.contato || '';
+
+
+    $('fEmail').value =
+        clienteSelecionado.email || '';
+
+
+    $('fResponsavel').value =
+        clienteSelecionado.responsavel || '';
+
+
+    $('fStatus').value =
+        clienteSelecionado.status || 'ATIVO';
+
+
+    carregarContratos();
+
+    carregarServicos();
+
+
+    $('modalCliente')
+        .classList
+        .add('open');
 
 }
 
+
+
+/* =====================================================
+   SALVAR ALTERAÇÕES DO CLIENTE
+===================================================== */
+
+async function salvarCliente(){
+
+    if(!clienteSelecionado){
+
+        return;
+
+    }
+
+
+    const dados={
+
+        razao_social:
+            $('fRazao')
+                .value
+                .trim(),
+
+        cnpj:
+            $('fCnpj')
+                .value
+                .trim() || null,
+
+        nome_fantasia:
+            $('fFantasia')
+                .value
+                .trim() || null,
+
+        contato:
+            $('fContato')
+                .value
+                .trim() || null,
+
+        email:
+            $('fEmail')
+                .value
+                .trim() || null,
+
+        responsavel:
+            $('fResponsavel')
+                .value
+                .trim() || null,
+
+        status:
+            $('fStatus').value
+
+    };
+
+
+    const resultado =
+        await sb
+            .from('clientes')
+            .update(dados)
+            .eq(
+                'id',
+                clienteSelecionado.id
+            )
+            .eq(
+                'user_id',
+                usuario.id
+            );
+
+
+    if(resultado.error){
+
+        alert(
+            'Erro ao salvar cliente:\n\n'+
+            resultado.error.message
+        );
+
+        return;
+
+    }
+
+
+    const id =
+        clienteSelecionado.id;
+
+
+    await carregar();
+
+
+    abrirCliente(id);
+
+
+    mostrarAlerta(
+        'Cliente atualizado com sucesso.',
+        'success'
+    );
+
+}
+
+
+
+/* =====================================================
+   CONTRATOS
+===================================================== */
 
 function carregarContratos(){
 
-const lista=
-contratos.filter(
-c=>c.cliente_id===
-clienteSelecionado.id
-);
+    if(!clienteSelecionado){
+
+        return;
+
+    }
 
 
-$('listaContratos').innerHTML=
-lista.length
+    const lista =
+        contratos.filter(function(contrato){
 
-?
+            return String(
+                contrato.cliente_id
+            ) === String(
+                clienteSelecionado.id
+            );
 
-lista.map(c=>`
+        });
 
-<div class="trace">
 
-<b>
-${esc(c.numero_contrato||'Sem número')}
-</b>
+    if(!lista.length){
 
-<div class="trace-grid">
+        $('listaContratos').innerHTML=`
 
-<div class="trace-item">
-<small>SERVIÇO</small>
-${esc(c.servico)}
-</div>
+            <div class="empty">
 
-<div class="trace-item">
-<small>STATUS</small>
-${esc(c.status)}
-</div>
+                Nenhum contrato vinculado a este cliente.
 
-<div class="trace-item">
-<small>INÍCIO</small>
-${esc(c.inicio_vigencia)}
-</div>
+            </div>
 
-<div class="trace-item">
-<small>FIM</small>
-${esc(c.fim_vigencia)}
-</div>
+        `;
 
-</div>
+        return;
 
-</div>
+    }
 
-`).join('')
 
-:
+    $('listaContratos').innerHTML =
+        lista.map(function(contrato){
 
-'<p>Nenhum contrato vinculado.</p>';
+            return `
+
+                <div class="contract-card">
+
+                    <strong>
+                        ${escapeHTML(
+                            contrato.numero_contrato ||
+                            'Contrato'
+                        )}
+                    </strong>
+
+                    <div class="contract-grid">
+
+                        <div class="contract-item">
+
+                            <small>SERVIÇO</small>
+
+                            ${escapeHTML(
+                                contrato.servico ||
+                                '—'
+                            )}
+
+                        </div>
+
+
+                        <div class="contract-item">
+
+                            <small>STATUS</small>
+
+                            ${escapeHTML(
+                                contrato.status ||
+                                '—'
+                            )}
+
+                        </div>
+
+
+                        <div class="contract-item">
+
+                            <small>INÍCIO</small>
+
+                            ${escapeHTML(
+                                contrato.inicio_vigencia ||
+                                '—'
+                            )}
+
+                        </div>
+
+
+                        <div class="contract-item">
+
+                            <small>FIM</small>
+
+                            ${escapeHTML(
+                                contrato.fim_vigencia ||
+                                '—'
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join('');
 
 }
 
+
+
+/* =====================================================
+   SERVIÇOS
+===================================================== */
 
 function carregarServicos(){
 
-const lista=
-servicos.filter(
-s=>s.cliente_id===
-clienteSelecionado.id
-);
+    if(!clienteSelecionado){
+
+        return;
+
+    }
 
 
-$('listaServicos').innerHTML=
-lista.length
+    const lista =
+        servicos.filter(function(servico){
 
-?
+            return String(
+                servico.cliente_id
+            ) === String(
+                clienteSelecionado.id
+            );
 
-lista.map(s=>`
-
-<div class="trace">
-
-<div class="trace-head">
-
-<div>
-
-<div class="code">
-${esc(s.codigo_unico)}
-</div>
-
-<strong>
-${esc(s.servico)}
-</strong>
-
-</div>
-
-<span class="tag">
-${esc(s.status)}
-</span>
-
-</div>
+        });
 
 
-<div class="timeline">
+    if(!lista.length){
 
-<span class="step">
-CLIENTE
-</span>
+        $('listaServicos').innerHTML=`
 
-<span class="arrow">→</span>
+            <div class="empty">
 
-<span class="step">
-PROPOSTA
-</span>
+                Nenhum serviço/projeto cadastrado para este cliente.
 
-<span class="arrow">→</span>
+            </div>
 
-<span class="step">
-CONTRATO
-</span>
+        `;
 
-<span class="arrow">→</span>
+        return;
 
-<span class="step">
-EXECUÇÃO
-</span>
-
-<span class="arrow">→</span>
-
-<span class="step">
-REGISTROS
-</span>
-
-<span class="arrow">→</span>
-
-<span class="step">
-ENTREGA
-</span>
-
-</div>
+    }
 
 
-<div class="trace-grid">
+    $('listaServicos').innerHTML =
+        lista.map(function(servico){
 
-<div class="trace-item">
-<small>PROPOSTA</small>
-${esc(s.proposta_codigo)||'—'}
-</div>
+            return `
 
-<div class="trace-item">
-<small>RESPONSÁVEL</small>
-${esc(s.responsavel)||'—'}
-</div>
+                <div class="trace-card">
 
-<div class="trace-item">
-<small>INÍCIO</small>
-${esc(s.data_inicio)||'—'}
-</div>
+                    <div class="trace-header">
 
-<div class="trace-item">
-<small>PREVISÃO</small>
-${esc(s.data_previsao_termino)||'—'}
-</div>
+                        <div>
 
-<div class="trace-item">
-<small>CONTRATO</small>
-${getContratoNumero(s.contrato_id)}
-</div>
+                            <div class="trace-code">
 
-<div class="trace-item">
-<small>ENTREGA</small>
-${esc(s.data_entrega)||'—'}
-</div>
+                                ${escapeHTML(
+                                    servico.codigo_unico
+                                )}
 
-<div class="trace-item">
-<small>DOCUMENTOS</small>
-${esc(s.local_documentos)||'—'}
-</div>
+                            </div>
 
-<div class="trace-item">
-<small>RESPONSÁVEL</small>
-${esc(s.responsavel)||'—'}
-</div>
+                            <div class="trace-service">
 
-</div>
+                                ${escapeHTML(
+                                    servico.servico
+                                )}
+
+                            </div>
+
+                        </div>
 
 
-<div class="foot">
+                        <span class="status">
 
-<button
-class="secondary editarServico"
-data-id="${esc(s.id)}">
-Editar
-</button>
+                            ${escapeHTML(
+                                servico.status
+                            )}
 
-</div>
+                        </span>
 
-</div>
-
-`).join('')
-
-:
-
-`
-<div class="empty">
-Nenhum serviço/projeto cadastrado para este cliente.
-</div>
-`;
+                    </div>
 
 
+                    <div class="timeline">
 
-document
-.querySelectorAll('.editarServico')
-.forEach(btn=>{
+                        <span class="timeline-step">
+                            CLIENTE
+                        </span>
 
-btn.addEventListener(
-'click',
-()=>{
-editarServico(btn.dataset.id)
+                        <span class="timeline-arrow">→</span>
+
+                        <span class="timeline-step">
+                            PROPOSTA
+                        </span>
+
+                        <span class="timeline-arrow">→</span>
+
+                        <span class="timeline-step">
+                            CONTRATO
+                        </span>
+
+                        <span class="timeline-arrow">→</span>
+
+                        <span class="timeline-step">
+                            EXECUÇÃO
+                        </span>
+
+                        <span class="timeline-arrow">→</span>
+
+                        <span class="timeline-step">
+                            REGISTROS
+                        </span>
+
+                        <span class="timeline-arrow">→</span>
+
+                        <span class="timeline-step">
+                            ENTREGA
+                        </span>
+
+                    </div>
+
+
+                    <div class="trace-grid">
+
+
+                        <div class="trace-item">
+
+                            <small>PROPOSTA</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.proposta_codigo ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>CONTRATO</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    obterNumeroContrato(
+                                        servico.contrato_id
+                                    )
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>RESPONSÁVEL</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.responsavel ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>STATUS</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.status ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>INÍCIO</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.data_inicio ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>PREVISÃO</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.data_previsao_termino ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>ENTREGA</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.entrega_data ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>DOCUMENTOS</small>
+
+                            <div>
+                                ${escapeHTML(
+                                    servico.local_documentos ||
+                                    '—'
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button
+                            class="btn-secondary btnEditarServico"
+                            data-id="${servico.id}">
+
+                            Editar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join('');
+
+
+    document
+        .querySelectorAll('.btnEditarServico')
+        .forEach(function(botao){
+
+            botao.addEventListener(
+                'click',
+                function(){
+
+                    editarServico(
+                        botao.dataset.id
+                    );
+
+                }
+            );
+
+        });
+
 }
-);
 
-});
+
+
+/* =====================================================
+   CONTRATO DO SERVIÇO
+===================================================== */
+
+function obterNumeroContrato(id){
+
+    if(!id){
+
+        return '—';
+
+    }
+
+
+    const contrato =
+        contratos.find(function(item){
+
+            return String(item.id) === String(id);
+
+        });
+
+
+    if(!contrato){
+
+        return 'Contrato';
+
+    }
+
+
+    return contrato.numero_contrato ||
+        'Contrato';
 
 }
 
 
-function getContratoNumero(id){
 
-if(!id)
-return '—';
+/* =====================================================
+   NOVO SERVIÇO
+===================================================== */
 
-const c=
-contratos.find(
-x=>x.id===id
-);
+function gerarCodigoServico(){
 
-return esc(
-c?.numero_contrato||'Contrato'
-);
+    const ano =
+        new Date()
+            .getFullYear();
+
+
+    const prefixo =
+        'INS-'+ano+'-';
+
+
+    const numeros =
+        servicos
+            .filter(function(servico){
+
+                return String(
+                    servico.codigo_unico || ''
+                ).startsWith(prefixo);
+
+            })
+            .map(function(servico){
+
+                return parseInt(
+                    String(
+                        servico.codigo_unico
+                    ).replace(
+                        prefixo,
+                        ''
+                    ),
+                    10
+                );
+
+            })
+            .filter(function(numero){
+
+                return !isNaN(numero);
+
+            });
+
+
+    const proximo =
+        numeros.length
+        ? Math.max(...numeros)+1
+        : 1;
+
+
+    return prefixo+
+        String(proximo)
+            .padStart(3,'0');
 
 }
+
 
 
 function abrirNovoServico(){
 
-limparFormularioServico();
+    if(!clienteSelecionado){
 
-$('sCodigo').value=
-gerarCodigo();
+        return;
 
-carregarSelectContratos();
-
-$('modalServico')
-.classList.add('open');
-
-}
+    }
 
 
-function gerarCodigo(){
-
-const ano=
-new Date().getFullYear();
-
-const prefix=
-`INS-${ano}-`;
-
-const numeros=
-servicos
-.filter(
-s=>String(s.codigo_unico||'')
-.startsWith(prefix)
-)
-.map(
-s=>parseInt(
-String(s.codigo_unico)
-.replace(prefix,''),
-10
-)
-)
-.filter(
-n=>!isNaN(n)
-);
+    limparFormularioServico();
 
 
-const proximo=
-numeros.length
-?
-Math.max(...numeros)+1
-:1;
+    $('sCodigo').value =
+        gerarCodigoServico();
 
 
-return prefix+
-String(proximo).padStart(3,'0');
+    carregarSelectContratos();
+
+
+    $('modalServico')
+        .classList
+        .add('open');
 
 }
 
 
-function carregarSelectContratos(){
 
-const lista=
-contratos.filter(
-c=>c.cliente_id===
-clienteSelecionado.id
-);
-
-
-$('sContrato').innerHTML=
-`
-<option value="">
-Sem contrato vinculado
-</option>
-`
-+
-lista.map(c=>`
-
-<option value="${esc(c.id)}">
-
-${esc(c.numero_contrato||'Sem número')}
--
-${esc(c.servico||'Serviço')}
-
-</option>
-
-`).join('');
-
-}
-
+/* =====================================================
+   LIMPAR SERVIÇO
+===================================================== */
 
 function limparFormularioServico(){
 
-$('servicoId').value='';
+    $('servicoId').value='';
 
-$('sCodigo').value='';
+    $('sCodigo').value='';
 
-$('sServico').value='';
+    $('sServico').value='';
 
-$('sProposta').value='';
+    $('sProposta').value='';
 
-$('sContrato').value='';
+    $('sContrato').value='';
 
-$('sResponsavel').value='';
+    $('sResponsavel').value='';
 
-$('sStatus').value='PLANEJADO';
+    $('sStatus').value='PLANEJADO';
 
-$('sInicio').value='';
+    $('sInicio').value='';
 
-$('sPrevisao').value='';
+    $('sPrevisao').value='';
 
-$('sTermino').value='';
+    $('sTermino').value='';
 
-$('sLocal').value='';
+    $('sLocal').value='';
 
-$('sExecucao').value='';
+    $('sExecucao').value='';
 
-$('sRegistros').value='';
+    $('sRegistros').value='';
 
-$('sEntrega').value='';
+    $('sEntrega').value='';
 
-$('sEntregaData').value='';
+    $('sEntregaData').value='';
 
-$('tituloServico').textContent=
-'Novo Serviço / Projeto';
+
+    $('tituloServico').textContent =
+        'Novo Serviço / Projeto';
 
 }
 
+
+
+/* =====================================================
+   CONTRATOS NO SELECT
+===================================================== */
+
+function carregarSelectContratos(){
+
+    const lista =
+        contratos.filter(function(contrato){
+
+            return String(
+                contrato.cliente_id
+            ) === String(
+                clienteSelecionado.id
+            );
+
+        });
+
+
+    $('sContrato').innerHTML = `
+
+        <option value="">
+            Sem contrato vinculado
+        </option>
+
+    `;
+
+
+    lista.forEach(function(contrato){
+
+        const option =
+            document.createElement('option');
+
+
+        option.value =
+            contrato.id;
+
+
+        option.textContent =
+            (
+                contrato.numero_contrato ||
+                'Contrato'
+            )+
+            ' - '+
+            (
+                contrato.servico ||
+                'Serviço'
+            );
+
+
+        $('sContrato')
+            .appendChild(option);
+
+    });
+
+}
+
+
+
+/* =====================================================
+   EDITAR SERVIÇO
+===================================================== */
 
 function editarServico(id){
 
-const s=
-servicos.find(
-x=>x.id===id
-);
+    const servico =
+        servicos.find(function(item){
 
-if(!s)
-return;
+            return String(item.id) === String(id);
 
-
-carregarSelectContratos();
-
-$('servicoId').value=s.id;
-
-$('sCodigo').value=s.codigo_unico||'';
-
-$('sServico').value=s.servico||'';
-
-$('sProposta').value=s.proposta_codigo||'';
-
-$('sContrato').value=s.contrato_id||'';
-
-$('sResponsavel').value=s.responsavel||'';
-
-$('sStatus').value=s.status||'PLANEJADO';
-
-$('sInicio').value=s.data_inicio||'';
-
-$('sPrevisao').value=
-s.data_previsao_termino||'';
-
-$('sTermino').value=
-s.data_termino||'';
-
-$('sLocal').value=
-s.local_documentos||'';
-
-$('sExecucao').value=
-s.execucao_observacoes||'';
-
-$('sRegistros').value=
-s.registros_observacoes||'';
-
-$('sEntrega').value=
-s.entrega_descricao||'';
-
-$('sEntregaData').value=
-s.entrega_data||'';
-
-$('tituloServico').textContent=
-'Editar Serviço / Projeto';
+        });
 
 
-$('modalServico')
-.classList.add('open');
+    if(!servico){
+
+        return;
+
+    }
+
+
+    carregarSelectContratos();
+
+
+    $('servicoId').value =
+        servico.id;
+
+
+    $('sCodigo').value =
+        servico.codigo_unico || '';
+
+
+    $('sServico').value =
+        servico.servico || '';
+
+
+    $('sProposta').value =
+        servico.proposta_codigo || '';
+
+
+    $('sContrato').value =
+        servico.contrato_id || '';
+
+
+    $('sResponsavel').value =
+        servico.responsavel || '';
+
+
+    $('sStatus').value =
+        servico.status || 'PLANEJADO';
+
+
+    $('sInicio').value =
+        servico.data_inicio || '';
+
+
+    $('sPrevisao').value =
+        servico.data_previsao_termino || '';
+
+
+    $('sTermino').value =
+        servico.data_termino || '';
+
+
+    $('sLocal').value =
+        servico.local_documentos || '';
+
+
+    $('sExecucao').value =
+        servico.execucao_observacoes || '';
+
+
+    $('sRegistros').value =
+        servico.registros_observacoes || '';
+
+
+    $('sEntrega').value =
+        servico.entrega_descricao || '';
+
+
+    $('sEntregaData').value =
+        servico.entrega_data || '';
+
+
+    $('tituloServico').textContent =
+        'Editar Serviço / Projeto';
+
+
+    $('modalServico')
+        .classList
+        .add('open');
 
 }
 
+
+
+/* =====================================================
+   SALVAR SERVIÇO
+===================================================== */
 
 async function salvarServico(){
 
-if(!clienteSelecionado)
-return;
+    if(!clienteSelecionado){
+
+        return;
+
+    }
 
 
-const codigo=
-$('sCodigo').value.trim();
+    const codigo =
+        $('sCodigo')
+            .value
+            .trim();
 
-const servico=
-$('sServico').value.trim();
+
+    const servico =
+        $('sServico')
+            .value
+            .trim();
 
 
-if(!codigo || !servico){
+    if(!codigo || !servico){
 
-alert(
-'Informe o código único e o serviço.'
-);
+        alert(
+            'Informe o Código Único e o Serviço.'
+        );
 
-return;
+        return;
+
+    }
+
+
+    const dados={
+
+        user_id:
+            usuario.id,
+
+        cliente_id:
+            clienteSelecionado.id,
+
+        codigo_unico:
+            codigo,
+
+        servico:
+            servico,
+
+        proposta_codigo:
+            $('sProposta')
+                .value
+                .trim() || null,
+
+        contrato_id:
+            $('sContrato')
+                .value || null,
+
+        responsavel:
+            $('sResponsavel')
+                .value
+                .trim() || null,
+
+        data_inicio:
+            $('sInicio')
+                .value || null,
+
+        data_previsao_termino:
+            $('sPrevisao')
+                .value || null,
+
+        data_termino:
+            $('sTermino')
+                .value || null,
+
+        status:
+            $('sStatus').value,
+
+        local_documentos:
+            $('sLocal')
+                .value
+                .trim() || null,
+
+        execucao_observacoes:
+            $('sExecucao')
+                .value
+                .trim() || null,
+
+        registros_observacoes:
+            $('sRegistros')
+                .value
+                .trim() || null,
+
+        entrega_descricao:
+            $('sEntrega')
+                .value
+                .trim() || null,
+
+        entrega_data:
+            $('sEntregaData')
+                .value || null
+
+    };
+
+
+    const id =
+        $('servicoId').value;
+
+
+    let resultado;
+
+
+    if(id){
+
+        resultado =
+            await sb
+                .from('servicos_clientes')
+                .update(dados)
+                .eq('id',id)
+                .eq('user_id',usuario.id);
+
+    }else{
+
+        resultado =
+            await sb
+                .from('servicos_clientes')
+                .insert(dados);
+
+    }
+
+
+    if(resultado.error){
+
+        alert(
+            'Erro ao salvar serviço:\n\n'+
+            resultado.error.message
+        );
+
+        return;
+
+    }
+
+
+    $('modalServico')
+        .classList
+        .remove('open');
+
+
+    await carregar();
+
+
+    const clienteId =
+        clienteSelecionado.id;
+
+
+    abrirCliente(clienteId);
+
+
+    mostrarAlerta(
+        'Serviço salvo com sucesso.',
+        'success'
+    );
 
 }
 
 
-const obj={
 
-user_id:usuario.id,
+/* =====================================================
+   EVENTOS
+===================================================== */
 
-cliente_id:
-clienteSelecionado.id,
 
-codigo_unico:codigo,
+/* Novo cliente */
 
-servico:servico,
+$('btnNovoCliente')
+    .addEventListener(
+        'click',
+        abrirNovoCliente
+    );
 
-proposta_codigo:
-$('sProposta').value.trim()||null,
 
-contrato_id:
-$('sContrato').value||null,
+$('btnFecharNovoCliente')
+    .addEventListener(
+        'click',
+        function(){
 
-responsavel:
-$('sResponsavel').value.trim()||null,
+            $('modalNovoCliente')
+                .classList
+                .remove('open');
 
-data_inicio:
-$('sInicio').value||null,
+        }
+    );
 
-data_previsao_termino:
-$('sPrevisao').value||null,
 
-data_termino:
-$('sTermino').value||null,
+$('btnCancelarNovoCliente')
+    .addEventListener(
+        'click',
+        function(){
 
-status:
-$('sStatus').value,
+            $('modalNovoCliente')
+                .classList
+                .remove('open');
 
-local_documentos:
-$('sLocal').value.trim()||null,
+        }
+    );
 
-execucao_observacoes:
-$('sExecucao').value.trim()||null,
 
-registros_observacoes:
-$('sRegistros').value.trim()||null,
+$('btnCadastrarCliente')
+    .addEventListener(
+        'click',
+        cadastrarCliente
+    );
 
-entrega_descricao:
-$('sEntrega').value.trim()||null,
 
-entrega_data:
-$('sEntregaData').value||null
 
-};
-
-
-const id=
-$('servicoId').value;
-
-
-let r;
-
-
-if(id){
-
-r=
-await window.SUPABASE_CLIENT
-.from('servicos_clientes')
-.update(obj)
-.eq('id',id)
-.eq('user_id',usuario.id);
-
-}else{
-
-r=
-await window.SUPABASE_CLIENT
-.from('servicos_clientes')
-.insert(obj);
-
-}
-
-
-if(r.error){
-
-alert(
-'Erro ao salvar: '+
-r.error.message
-);
-
-return;
-
-}
-
-
-$('modalServico')
-.classList.remove('open');
-
-
-await carregar();
-
-abrirCliente(
-clienteSelecionado.id
-);
-
-
-mensagem(
-'Serviço salvo com sucesso.',
-true
-);
-
-}
-
-
-async function salvarCliente(){
-
-if(!clienteSelecionado)
-return;
-
-
-const obj={
-
-razao_social:
-$('fRazao').value.trim(),
-
-cnpj:
-$('fCnpj').value.trim(),
-
-nome_fantasia:
-$('fFantasia').value.trim(),
-
-contato:
-$('fContato').value.trim(),
-
-email:
-$('fEmail').value.trim(),
-
-responsavel:
-$('fResponsavel').value.trim(),
-
-status:
-$('fStatus').value
-
-};
-
-
-const r=
-await window.SUPABASE_CLIENT
-.from('clientes')
-.update(obj)
-.eq('id',clienteSelecionado.id)
-.eq('user_id',usuario.id);
-
-
-if(r.error){
-
-alert(
-r.error.message
-);
-
-return;
-
-}
-
-
-await carregar();
-
-clienteSelecionado=
-clientes.find(
-x=>x.id===clienteSelecionado.id
-);
-
-
-abrirCliente(
-clienteSelecionado.id
-);
-
-
-mensagem(
-'Cliente atualizado.',
-true
-);
-
-}
-
+/* Atualizar */
 
 $('btnAtualizar')
-.addEventListener(
-'click',
-carregar
-);
+    .addEventListener(
+        'click',
+        carregar
+    );
 
+
+
+/* Limpar filtro */
+
+$('btnLimparFiltro')
+    .addEventListener(
+        'click',
+        function(){
+
+            $('busca').value='';
+
+            $('filtro').value='';
+
+            render();
+
+        }
+    );
+
+
+
+/* Pesquisa */
 
 $('busca')
-.addEventListener(
-'input',
-render
-);
+    .addEventListener(
+        'input',
+        render
+    );
 
 
 $('filtro')
-.addEventListener(
-'change',
-render
-);
+    .addEventListener(
+        'change',
+        render
+    );
 
+
+
+/* Cliente */
 
 $('btnFecharCliente')
-.addEventListener(
-'click',
-()=>{
-$('modalCliente')
-.classList.remove('open')
-}
-);
+    .addEventListener(
+        'click',
+        function(){
 
+            $('modalCliente')
+                .classList
+                .remove('open');
 
-$('btnFecharServico')
-.addEventListener(
-'click',
-()=>{
-$('modalServico')
-.classList.remove('open')
-}
-);
-
-
-$('btnCancelarServico')
-.addEventListener(
-'click',
-()=>{
-$('modalServico')
-.classList.remove('open')
-}
-);
-
-
-$('btnNovoServico')
-.addEventListener(
-'click',
-abrirNovoServico
-);
-
-
-$('btnSalvarServico')
-.addEventListener(
-'click',
-salvarServico
-);
+        }
+    );
 
 
 $('btnSalvarCliente')
-.addEventListener(
-'click',
-salvarCliente
-);
+    .addEventListener(
+        'click',
+        salvarCliente
+    );
 
+
+
+/* Serviço */
+
+$('btnNovoServico')
+    .addEventListener(
+        'click',
+        abrirNovoServico
+    );
+
+
+$('btnFecharServico')
+    .addEventListener(
+        'click',
+        function(){
+
+            $('modalServico')
+                .classList
+                .remove('open');
+
+        }
+    );
+
+
+$('btnCancelarServico')
+    .addEventListener(
+        'click',
+        function(){
+
+            $('modalServico')
+                .classList
+                .remove('open');
+
+        }
+    );
+
+
+$('btnSalvarServico')
+    .addEventListener(
+        'click',
+        salvarServico
+    );
+
+
+
+/* Navegação */
 
 $('btnInicio')
-.addEventListener(
-'click',
-()=>{
-window.location.href='../'
-}
-);
+    .addEventListener(
+        'click',
+        function(){
+
+            window.location.href='../';
+
+        }
+    );
 
 
 $('btnSair')
-.addEventListener(
-'click',
-async()=>{
+    .addEventListener(
+        'click',
+        async function(){
 
-await window.SUPABASE_CLIENT
-.auth.signOut();
+            await sb.auth.signOut();
 
-window.location.href='../';
+            window.location.href='../';
 
-}
-);
+        }
+    );
 
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
 window.addEventListener(
-'DOMContentLoaded',
-async()=>{
+    'DOMContentLoaded',
+    async function(){
 
-try{
+        await carregar();
 
-await carregar();
-
-}catch(e){
-
-console.error(e);
-
-mensagem(
-'Erro ao carregar o módulo: '+
-(e.message||e)
+    }
 );
-
-}
-
-});
-
-})();
 
 </script>
 
 </body>
+
 </html>
