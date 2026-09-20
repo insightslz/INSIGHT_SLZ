@@ -436,10 +436,16 @@ function novoLead(){
   const oportunidade =
     prompt("Oportunidade:");
 
-  const valor =
-    Number(
-      prompt("Valor estimado:","0")
-    ) || 0;
+ const valorDigitado =
+  prompt("Valor estimado:", "0");
+
+const valor =
+  Number(
+    String(valorDigitado || "0")
+      .trim()
+      .replace(/\./g, "")
+      .replace(",", ".")
+  ) || 0;
 
   const origem =
     prompt(
