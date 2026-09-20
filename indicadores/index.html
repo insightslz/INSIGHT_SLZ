@@ -615,6 +615,36 @@ async function carregarDRE(){
       ? (totalLiquido / totalReceita) * 100
       : 0;
 
+  const orcado = d.orcado || {};
+const receitaOrcada = orcado.rb || [];
+
+let ultimoMes = -1;
+
+for(let i = 0; i < 12; i++){
+  if((receita[i] || 0) > 0){
+    ultimoMes = i;
+  }
+}
+
+let crescimentoReceita = 0;
+
+if(ultimoMes >= 0){
+
+  let realAcum = 0;
+  let orcAcum = 0;
+
+  for(let i = 0; i <= ultimoMes; i++){
+
+    realAcum += receita[i] || 0;
+    orcAcum += receitaOrcada[i] || 0;
+
+  }
+
+  crescimentoReceita =
+    orcAcum > 0
+      ? ((realAcum - orcAcum) / orcAcum) * 100
+      : 0;
+}
 
   const margemEbitda =
     totalReceita
@@ -634,6 +664,9 @@ async function carregarDRE(){
   document.getElementById("kpiMargemLiquida").textContent =
   percentual(margemLiquida);
 
+  document.getElementById("crescimentoReceita").textContent =
+  percentual(crescimentoReceita);
+  
   document.getElementById("resReceita").textContent =
     moeda(totalReceita);
 
