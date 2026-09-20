@@ -3,196 +3,1744 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Clientes | Insight</title>
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,sans-serif}
-header{margin:14px;padding:25px 32px;border-radius:20px;background:linear-gradient(110deg,#17367d,#2863e6);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:20px}
-h1{margin:0;font-size:40px}.sub{margin-top:8px;font-size:18px}.actions{display:flex;gap:9px;flex-wrap:wrap}
-button{border:0;border-radius:11px;padding:12px 17px;font-weight:700;font-size:15px;cursor:pointer}.white{background:#fff;color:#17367d}
-main{padding:0 14px 35px}.msg{display:none;margin:12px 0;padding:14px 16px;border-radius:10px;background:#fff1f1;color:#9d001d;border:1px solid #e6aab4}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0}.kpi{background:#fff;border:1px solid #d9e2ef;border-radius:17px;padding:20px}.kpi span{font-size:13px;font-weight:700;color:#68758c}.kpi b{display:block;font-size:32px;color:#173f91;margin-top:8px}
-.toolbar{display:flex;gap:10px;margin:15px 0}.toolbar input,.toolbar select{width:100%;padding:13px;border:1px solid #cdd8e8;border-radius:10px;background:#fff;font-size:16px}.toolbar input{flex:1}.toolbar select{max-width:260px}
-.tablewrap{overflow:auto;background:#fff;border-radius:17px;border:1px solid #d9e2ef}.table{width:100%;border-collapse:collapse;min-width:1000px}.table th{background:#0e1830;color:#fff;text-align:left;padding:14px}.table td{padding:13px;border-bottom:1px solid #e7edf5}.tag{display:inline-block;background:#d9f7e8;color:#087344;border-radius:99px;padding:6px 10px;font-weight:700;font-size:12px}
-.empty{text-align:center;padding:35px;color:#68758c}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.open{display:flex}.box{background:#fff;border-radius:20px;width:min(1100px,100%);max-height:94vh;overflow:auto;padding:25px}.boxhead{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field label{display:block;font-size:12px;font-weight:700;color:#5e6c83;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #cdd8e8;border-radius:8px}.field textarea{min-height:75px}.full{grid-column:1/-1}.section{margin-top:22px;padding-top:16px;border-top:1px solid #e2e8f0}.contract{border:1px solid #dce4ef;border-radius:12px;padding:14px;margin:10px 0}.contractgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:13px;margin-top:10px}.contractgrid b{display:block;color:#68758c;font-size:11px;margin-bottom:3px}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.contractgrid{grid-template-columns:repeat(2,1fr)}}
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#f4f7fb;
+    color:#17233d;
+    font-family:Arial,sans-serif
+}
+
+header{
+    margin:14px;
+    padding:25px 32px;
+    border-radius:20px;
+    background:linear-gradient(110deg,#17367d,#2863e6);
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px
+}
+
+h1{margin:0;font-size:38px}
+h2{margin-top:0}
+h3{color:#17367d}
+
+.sub{
+    margin-top:8px;
+    font-size:17px
+}
+
+.actions{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:11px 16px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer
+}
+
+button:hover{opacity:.9}
+
+.white{
+    background:#fff;
+    color:#17367d
+}
+
+.primary{
+    background:#173f91;
+    color:#fff
+}
+
+.secondary{
+    background:#e8eef8;
+    color:#17367d
+}
+
+.danger{
+    background:#b42318;
+    color:#fff
+}
+
+main{
+    padding:0 14px 40px
+}
+
+.msg{
+    display:none;
+    margin:12px 0;
+    padding:14px 16px;
+    border-radius:10px;
+    background:#fff1f1;
+    color:#9d001d;
+    border:1px solid #e6aab4
+}
+
+.ok{
+    background:#e9f8ef;
+    color:#087344;
+    border-color:#b7e4c7
+}
+
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    margin:14px 0
+}
+
+.kpi{
+    background:#fff;
+    border:1px solid #d9e2ef;
+    border-radius:17px;
+    padding:20px
+}
+
+.kpi span{
+    font-size:12px;
+    font-weight:700;
+    color:#68758c
+}
+
+.kpi b{
+    display:block;
+    font-size:30px;
+    color:#173f91;
+    margin-top:8px
+}
+
+.toolbar{
+    display:flex;
+    gap:10px;
+    margin:15px 0
+}
+
+.toolbar input,
+.toolbar select{
+    width:100%;
+    padding:13px;
+    border:1px solid #cdd8e8;
+    border-radius:10px;
+    background:#fff;
+    font-size:15px
+}
+
+.toolbar select{max-width:240px}
+
+.tablewrap{
+    overflow:auto;
+    background:#fff;
+    border-radius:17px;
+    border:1px solid #d9e2ef
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1100px
+}
+
+.table th{
+    background:#0e1830;
+    color:#fff;
+    text-align:left;
+    padding:14px
+}
+
+.table td{
+    padding:13px;
+    border-bottom:1px solid #e7edf5
+}
+
+.tag{
+    display:inline-block;
+    background:#d9f7e8;
+    color:#087344;
+    border-radius:99px;
+    padding:6px 10px;
+    font-weight:700;
+    font-size:11px
+}
+
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#68758c
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#0008;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:10
+}
+
+.modal.open{display:flex}
+
+.box{
+    background:#fff;
+    border-radius:20px;
+    width:min(1200px,100%);
+    max-height:94vh;
+    overflow:auto;
+    padding:26px
+}
+
+.boxhead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px
+}
+
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:#5e6c83;
+    margin-bottom:5px
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:10px;
+    border:1px solid #cdd8e8;
+    border-radius:8px;
+    font-family:Arial
+}
+
+.field textarea{
+    min-height:80px;
+    resize:vertical
+}
+
+.full{grid-column:1/-1}
+
+.section{
+    margin-top:25px;
+    padding-top:20px;
+    border-top:1px solid #e2e8f0
+}
+
+.trace{
+    border:1px solid #d8e1ee;
+    border-radius:15px;
+    padding:17px;
+    margin:12px 0;
+    background:#fbfcfe
+}
+
+.trace-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px
+}
+
+.code{
+    font-size:20px;
+    font-weight:800;
+    color:#173f91
+}
+
+.trace-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:14px
+}
+
+.trace-item{
+    background:#fff;
+    border:1px solid #e3e9f2;
+    border-radius:9px;
+    padding:10px
+}
+
+.trace-item small{
+    display:block;
+    color:#68758c;
+    font-weight:700;
+    margin-bottom:4px
+}
+
+.timeline{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin:15px 0;
+    flex-wrap:wrap
+}
+
+.step{
+    background:#e8eef8;
+    color:#173f91;
+    padding:8px 11px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:700
+}
+
+.arrow{color:#8b98aa}
+
+.foot{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:20px
+}
+
+.hidden{display:none}
+
+@media(max-width:1000px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr}
+    .trace-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:650px){
+    .kpis{grid-template-columns:1fr}
+    .trace-grid{grid-template-columns:1fr}
+    header{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<div><h1>Clientes</h1><div class="sub">Cadastro e ficha integrada de gestão do cliente</div></div>
-<div class="actions">
-<button class="white" id="btnNovo">＋ Novo cliente</button>
-<button class="white" id="btnAtualizar">↻ Atualizar</button>
-<button class="white" id="btnInicio">⌂ Início</button>
-<button class="white" id="btnSair">↪ Sair</button>
-</div>
+    <div>
+        <h1>Clientes</h1>
+        <div class="sub">
+            Cadastro, serviços e rastreabilidade da relação com o cliente
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="white" id="btnAtualizar">↻ Atualizar</button>
+        <button class="white" id="btnInicio">⌂ Início</button>
+        <button class="white" id="btnSair">↪ Sair</button>
+    </div>
 </header>
+
 <main>
+
 <div id="msg" class="msg"></div>
+
 <div class="kpis">
-<div class="kpi"><span>CLIENTES ATIVOS</span><b id="kAtivos">0</b></div>
-<div class="kpi"><span>CLIENTES CADASTRADOS</span><b id="kTotal">0</b></div>
-<div class="kpi"><span>PROSPECTS</span><b id="kProspects">0</b></div>
-<div class="kpi"><span>CONTRATOS ATIVOS</span><b id="kContratos">0</b></div>
+    <div class="kpi">
+        <span>CLIENTES ATIVOS</span>
+        <b id="kAtivos">0</b>
+    </div>
+
+    <div class="kpi">
+        <span>CLIENTES CADASTRADOS</span>
+        <b id="kTotal">0</b>
+    </div>
+
+    <div class="kpi">
+        <span>PROSPECTS</span>
+        <b id="kProspects">0</b>
+    </div>
+
+    <div class="kpi">
+        <span>CONTRATOS ATIVOS</span>
+        <b id="kContratos">0</b>
+    </div>
+
+    <div class="kpi">
+        <span>SERVIÇOS / PROJETOS</span>
+        <b id="kServicos">0</b>
+    </div>
 </div>
+
 <div class="toolbar">
-<input id="busca" placeholder="Pesquisar razão social, nome fantasia, CNPJ, contato ou responsável...">
-<select id="filtro"><option value="">Todos os status</option><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select>
+
+    <input
+        id="busca"
+        placeholder="Pesquisar cliente, CNPJ, contato ou código INS-2026-001..."
+    >
+
+    <select id="filtro">
+        <option value="">Todos os status</option>
+        <option>ATIVO</option>
+        <option>INATIVO</option>
+        <option>PROSPECT</option>
+    </select>
+
 </div>
-<div class="tablewrap"><table class="table"><thead><tr>
-<th>ID CLIENTE</th><th>RAZÃO SOCIAL</th><th>CNPJ</th><th>NOME FANTASIA</th><th>CONTATO</th><th>E-MAIL</th><th>RESPONSÁVEL</th><th>STATUS</th><th>AÇÃO</th>
-</tr></thead><tbody id="corpo"></tbody></table></div>
+
+<div class="tablewrap">
+
+<table class="table">
+
+<thead>
+<tr>
+<th>ID CLIENTE</th>
+<th>RAZÃO SOCIAL</th>
+<th>CNPJ</th>
+<th>NOME FANTASIA</th>
+<th>CONTATO</th>
+<th>E-MAIL</th>
+<th>RESPONSÁVEL</th>
+<th>STATUS</th>
+<th>AÇÃO</th>
+</tr>
+</thead>
+
+<tbody id="corpo"></tbody>
+
+</table>
+
+</div>
+
 </main>
 
-<div class="modal" id="modal">
+
+<!-- MODAL CLIENTE -->
+
+<div class="modal" id="modalCliente">
+
 <div class="box">
-<div class="boxhead"><h2 id="tituloModal">Ficha do Cliente</h2><button id="btnFechar">✕</button></div>
-<input type="hidden" id="clienteId">
+
+<div class="boxhead">
+
+<h2>Ficha do Cliente</h2>
+
+<button class="secondary" id="btnFecharCliente">✕</button>
+
+</div>
+
 <div class="grid">
-<div class="field"><label>ID CLIENTE</label><input id="fId"></div>
-<div class="field"><label>RAZÃO SOCIAL</label><input id="fRazao"></div>
-<div class="field"><label>CNPJ</label><input id="fCnpj"></div>
-<div class="field"><label>NOME FANTASIA</label><input id="fFantasia"></div>
-<div class="field"><label>CONTATO</label><input id="fContato"></div>
-<div class="field"><label>E-MAIL</label><input id="fEmail"></div>
-<div class="field"><label>RESPONSÁVEL</label><input id="fResponsavel"></div>
-<div class="field"><label>STATUS</label><select id="fStatus"><option>ATIVO</option><option>INATIVO</option><option>PROSPECT</option></select></div>
+
+<div class="field">
+<label>ID CLIENTE</label>
+<input id="fId" readonly>
 </div>
-<div class="foot"><button id="btnSalvarCliente">Salvar cliente</button></div>
-<div class="section"><h3>Contratos do cliente</h3><div id="listaContratos">Carregando...</div></div>
+
+<div class="field">
+<label>RAZÃO SOCIAL</label>
+<input id="fRazao">
 </div>
+
+<div class="field">
+<label>CNPJ</label>
+<input id="fCnpj">
 </div>
+
+<div class="field">
+<label>NOME FANTASIA</label>
+<input id="fFantasia">
+</div>
+
+<div class="field">
+<label>CONTATO</label>
+<input id="fContato">
+</div>
+
+<div class="field">
+<label>E-MAIL</label>
+<input id="fEmail">
+</div>
+
+<div class="field">
+<label>RESPONSÁVEL</label>
+<input id="fResponsavel">
+</div>
+
+<div class="field">
+<label>STATUS</label>
+
+<select id="fStatus">
+<option>ATIVO</option>
+<option>INATIVO</option>
+<option>PROSPECT</option>
+</select>
+
+</div>
+
+</div>
+
+<div class="foot">
+
+<button class="primary" id="btnSalvarCliente">
+Salvar cliente
+</button>
+
+</div>
+
+
+<!-- SERVIÇOS -->
+
+<div class="section">
+
+<div class="boxhead">
+
+<div>
+<h2>Rastreabilidade dos Serviços</h2>
+
+<p>
+Cada serviço recebe um código único que acompanha proposta,
+contrato, execução, registros e entrega.
+</p>
+</div>
+
+<button class="primary" id="btnNovoServico">
+＋ Novo serviço
+</button>
+
+</div>
+
+<div id="listaServicos">
+Carregando...
+</div>
+
+</div>
+
+
+<!-- CONTRATOS -->
+
+<div class="section">
+
+<h3>Contratos vinculados</h3>
+
+<div id="listaContratos">
+Carregando...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MODAL SERVIÇO -->
+
+<div class="modal" id="modalServico">
+
+<div class="box">
+
+<div class="boxhead">
+
+<h2 id="tituloServico">
+Novo Serviço / Projeto
+</h2>
+
+<button class="secondary" id="btnFecharServico">
+✕
+</button>
+
+</div>
+
+<input type="hidden" id="servicoId">
+
+<div class="grid">
+
+<div class="field">
+<label>CÓDIGO ÚNICO</label>
+<input
+    id="sCodigo"
+    placeholder="INS-2026-001"
+>
+</div>
+
+<div class="field">
+<label>SERVIÇO / PROJETO</label>
+<input
+    id="sServico"
+    placeholder="Ex.: Consultoria em SST"
+>
+</div>
+
+<div class="field">
+<label>PROPOSTA</label>
+<input
+    id="sProposta"
+    placeholder="PROP-INS-2026-001"
+>
+</div>
+
+<div class="field">
+<label>CONTRATO</label>
+<select id="sContrato">
+<option value="">Sem contrato vinculado</option>
+</select>
+</div>
+
+<div class="field">
+<label>RESPONSÁVEL</label>
+<input id="sResponsavel">
+</div>
+
+<div class="field">
+<label>STATUS</label>
+
+<select id="sStatus">
+
+<option>PLANEJADO</option>
+<option>EM EXECUÇÃO</option>
+<option>AGUARDANDO CLIENTE</option>
+<option>CONCLUÍDO</option>
+<option>CANCELADO</option>
+
+</select>
+
+</div>
+
+<div class="field">
+<label>DATA DE INÍCIO</label>
+<input type="date" id="sInicio">
+</div>
+
+<div class="field">
+<label>PREVISÃO DE TÉRMINO</label>
+<input type="date" id="sPrevisao">
+</div>
+
+<div class="field">
+<label>DATA DE TÉRMINO</label>
+<input type="date" id="sTermino">
+</div>
+
+<div class="field full">
+<label>LOCAL DOS DOCUMENTOS</label>
+
+<input
+    id="sLocal"
+    placeholder="Ex.: Drive / Clientes / INS-2026-001"
+>
+
+</div>
+
+<div class="field full">
+<label>EXECUÇÃO / OBSERVAÇÕES</label>
+
+<textarea id="sExecucao"></textarea>
+
+</div>
+
+<div class="field full">
+<label>REGISTROS</label>
+
+<textarea
+    id="sRegistros"
+    placeholder="Relatórios, listas, certificados, evidências etc."
+></textarea>
+
+</div>
+
+<div class="field full">
+<label>ENTREGA</label>
+
+<textarea
+    id="sEntrega"
+    placeholder="Descrição da entrega realizada"
+></textarea>
+
+</div>
+
+<div class="field">
+<label>DATA DA ENTREGA</label>
+<input type="date" id="sEntregaData">
+</div>
+
+</div>
+
+<div class="foot">
+
+<button class="secondary" id="btnCancelarServico">
+Cancelar
+</button>
+
+<button class="primary" id="btnSalvarServico">
+Salvar serviço
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 
 <script>
+
 (function(){
+
 'use strict';
 
-const SUPABASE_URL = 'https://sayeyuyampbsmhhdukzv.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_ehw8AIkVTS6k6iI2Rh9nJ1w_2S6Au_GA';
-window.SUPABASE_CLIENT = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const SUPABASE_URL =
+'https://sayeyuyampbsmhhdukzv.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_ehw8AIkVTS6k6iI2Rh9nJ1w_2S6Au_GA';
+
+window.SUPABASE_CLIENT =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
 
 let usuario = null;
 let clientes = [];
 let contratos = [];
+let servicos = [];
 let clienteSelecionado = null;
 
-const $ = id => document.getElementById(id);
-const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const moeda = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0));
 
-function erro(texto){
-  const el=$('msg'); el.textContent=texto; el.style.display='block';
+const $ = id =>
+document.getElementById(id);
+
+
+const esc = value =>
+String(value ?? '')
+.replace(/[&<>"']/g,m=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#039;'
+}[m]));
+
+
+function mensagem(texto,ok=false){
+
+const el=$('msg');
+
+el.textContent=texto;
+
+el.className=ok
+? 'msg ok'
+: 'msg';
+
+el.style.display='block';
+
+setTimeout(()=>{
+el.style.display='none';
+},5000);
+
 }
-function limparErro(){ $('msg').style.display='none'; }
+
 
 async function carregar(){
-  limparErro();
-  const sb=window.SUPABASE_CLIENT;
-  const sess=await sb.auth.getUser();
-  if(sess.error) throw sess.error;
-  usuario=sess.data.user;
-  if(!usuario){ window.location.href='../'; return; }
 
-  const cr=await sb.from('clientes').select('*').eq('user_id',usuario.id).order('id_cliente');
-  if(cr.error) throw new Error('Clientes: '+cr.error.message);
-  clientes=cr.data||[];
+const sb=window.SUPABASE_CLIENT;
 
-  const tr=await sb.from('contratos').select('*').eq('user_id',usuario.id);
-  if(tr.error) throw new Error('Contratos: '+tr.error.message);
-  contratos=tr.data||[];
+const sess=await sb.auth.getUser();
 
-  render();
+if(sess.error)
+throw sess.error;
+
+usuario=sess.data.user;
+
+if(!usuario){
+
+window.location.href='../';
+
+return;
+
 }
+
+
+const cr=await sb
+.from('clientes')
+.select('*')
+.eq('user_id',usuario.id)
+.order('id_cliente');
+
+if(cr.error)
+throw new Error(
+'Clientes: '+cr.error.message
+);
+
+clientes=cr.data||[];
+
+
+const tr=await sb
+.from('contratos')
+.select('*')
+.eq('user_id',usuario.id);
+
+if(tr.error)
+throw new Error(
+'Contratos: '+tr.error.message
+);
+
+contratos=tr.data||[];
+
+
+const sr=await sb
+.from('servicos_clientes')
+.select('*')
+.eq('user_id',usuario.id)
+.order('created_at',{ascending:false});
+
+if(sr.error)
+throw new Error(
+'Serviços: '+sr.error.message
+);
+
+servicos=sr.data||[];
+
+
+render();
+
+}
+
 
 function render(){
-  const q=$('busca').value.trim().toLowerCase();
-  const f=$('filtro').value;
-  const lista=clientes.filter(x=>{
-    const texto=[x.id_cliente,x.razao_social,x.cnpj,x.nome_fantasia,x.contato,x.email,x.responsavel].join(' ').toLowerCase();
-    return (!f || x.status===f) && (!q || texto.includes(q));
-  });
 
-  $('kAtivos').textContent=clientes.filter(x=>x.status==='ATIVO').length;
-  $('kTotal').textContent=clientes.length;
-  $('kProspects').textContent=clientes.filter(x=>x.status==='PROSPECT').length;
-  $('kContratos').textContent=contratos.filter(x=>x.status==='ATIVO').length;
+const q=
+$('busca').value
+.trim()
+.toLowerCase();
 
-  $('corpo').innerHTML=lista.length ? lista.map(x=>`
-    <tr>
-      <td>${esc(x.id_cliente)}</td><td><b>${esc(x.razao_social)}</b></td>
-      <td>${esc(x.cnpj)}</td><td>${esc(x.nome_fantasia)}</td><td>${esc(x.contato)}</td>
-      <td>${esc(x.email)}</td><td>${esc(x.responsavel)}</td>
-      <td><span class="tag">${esc(x.status)}</span></td>
-      <td><button data-id="${esc(x.id)}" class="abrir">Abrir ficha</button></td>
-    </tr>`).join('')
-    : '<tr><td colspan="9" class="empty">Nenhum cliente encontrado.</td></tr>';
+const filtro=
+$('filtro').value;
 
-  document.querySelectorAll('.abrir').forEach(b=>b.addEventListener('click',()=>abrirFicha(b.dataset.id)));
+
+const lista=
+clientes.filter(cliente=>{
+
+const servicosCliente=
+servicos.filter(
+s=>s.cliente_id===cliente.id
+);
+
+const texto=[
+cliente.id_cliente,
+cliente.razao_social,
+cliente.cnpj,
+cliente.nome_fantasia,
+cliente.contato,
+cliente.email,
+cliente.responsavel,
+...servicosCliente.map(
+s=>s.codigo_unico+' '+s.servico
+)
+]
+.join(' ')
+.toLowerCase();
+
+
+return
+(!filtro || cliente.status===filtro)
+&&
+(!q || texto.includes(q));
+
+});
+
+
+$('kAtivos').textContent=
+clientes.filter(
+x=>x.status==='ATIVO'
+).length;
+
+$('kTotal').textContent=
+clientes.length;
+
+$('kProspects').textContent=
+clientes.filter(
+x=>x.status==='PROSPECT'
+).length;
+
+$('kContratos').textContent=
+contratos.filter(
+x=>x.status==='ATIVO'
+).length;
+
+$('kServicos').textContent=
+servicos.length;
+
+
+$('corpo').innerHTML=
+lista.length
+?
+lista.map(x=>`
+
+<tr>
+
+<td>${esc(x.id_cliente)}</td>
+
+<td>
+<b>${esc(x.razao_social)}</b>
+</td>
+
+<td>${esc(x.cnpj)}</td>
+
+<td>${esc(x.nome_fantasia)}</td>
+
+<td>${esc(x.contato)}</td>
+
+<td>${esc(x.email)}</td>
+
+<td>${esc(x.responsavel)}</td>
+
+<td>
+<span class="tag">
+${esc(x.status)}
+</span>
+</td>
+
+<td>
+
+<button
+class="primary abrir"
+data-id="${esc(x.id)}">
+
+Abrir ficha
+
+</button>
+
+</td>
+
+</tr>
+
+`).join('')
+
+:
+
+`
+<tr>
+<td colspan="9" class="empty">
+Nenhum cliente encontrado.
+</td>
+</tr>
+`;
+
+
+document
+.querySelectorAll('.abrir')
+.forEach(btn=>{
+
+btn.addEventListener(
+'click',
+()=>{
+abrirCliente(btn.dataset.id)
+}
+);
+
+});
+
 }
 
-function abrirFicha(id){
-  clienteSelecionado=clientes.find(x=>x.id===id);
-  if(!clienteSelecionado) return;
-  $('clienteId').value=clienteSelecionado.id;
-  $('fId').value=clienteSelecionado.id_cliente||'';
-  $('fRazao').value=clienteSelecionado.razao_social||'';
-  $('fCnpj').value=clienteSelecionado.cnpj||'';
-  $('fFantasia').value=clienteSelecionado.nome_fantasia||'';
-  $('fContato').value=clienteSelecionado.contato||'';
-  $('fEmail').value=clienteSelecionado.email||'';
-  $('fResponsavel').value=clienteSelecionado.responsavel||'';
-  $('fStatus').value=clienteSelecionado.status||'ATIVO';
 
-  const cs=contratos.filter(c=>c.cliente_id===clienteSelecionado.id);
-  $('listaContratos').innerHTML=cs.length ? cs.map(c=>`
-    <div class="contract">
-      <b>${esc(c.numero_contrato||'Sem número')} — ${esc(c.servico||'Sem serviço')}</b>
-      <div class="contractgrid">
-        <div><b>TIPO</b>${esc(c.tipo_contrato)}</div>
-        <div><b>STATUS</b>${esc(c.status)}</div>
-        <div><b>INÍCIO</b>${esc(c.inicio_vigencia)}</div>
-        <div><b>FIM</b>${esc(c.fim_vigencia)}</div>
-        <div><b>VALOR MENSAL</b>${moeda(c.valor_mensal)}</div>
-        <div><b>PAGAMENTO</b>${esc(c.forma_pagamento)} — dia ${esc(c.dia_vencimento)}</div>
-        <div><b>ARQUIVO</b>${c.arquivo_url?`<a href="${esc(c.arquivo_url)}" target="_blank">Abrir documento</a>`:'—'}</div>
-        <div><b>PENDÊNCIAS</b>${esc(c.pendencias)||'Nenhuma'}</div>
-        <div><b>PRÓXIMA AÇÃO</b>${esc(c.proxima_acao)||'—'} ${esc(c.proxima_acao_data)||''}</div>
-      </div>
-    </div>`).join('') : '<p>Nenhum contrato vinculado a este cliente.</p>';
+function abrirCliente(id){
 
-  $('modal').classList.add('open');
+clienteSelecionado=
+clientes.find(x=>x.id===id);
+
+if(!clienteSelecionado)
+return;
+
+
+$('fId').value=
+clienteSelecionado.id_cliente||'';
+
+$('fRazao').value=
+clienteSelecionado.razao_social||'';
+
+$('fCnpj').value=
+clienteSelecionado.cnpj||'';
+
+$('fFantasia').value=
+clienteSelecionado.nome_fantasia||'';
+
+$('fContato').value=
+clienteSelecionado.contato||'';
+
+$('fEmail').value=
+clienteSelecionado.email||'';
+
+$('fResponsavel').value=
+clienteSelecionado.responsavel||'';
+
+$('fStatus').value=
+clienteSelecionado.status||'ATIVO';
+
+
+carregarContratos();
+
+carregarServicos();
+
+
+$('modalCliente')
+.classList.add('open');
+
 }
+
+
+function carregarContratos(){
+
+const lista=
+contratos.filter(
+c=>c.cliente_id===
+clienteSelecionado.id
+);
+
+
+$('listaContratos').innerHTML=
+lista.length
+
+?
+
+lista.map(c=>`
+
+<div class="trace">
+
+<b>
+${esc(c.numero_contrato||'Sem número')}
+</b>
+
+<div class="trace-grid">
+
+<div class="trace-item">
+<small>SERVIÇO</small>
+${esc(c.servico)}
+</div>
+
+<div class="trace-item">
+<small>STATUS</small>
+${esc(c.status)}
+</div>
+
+<div class="trace-item">
+<small>INÍCIO</small>
+${esc(c.inicio_vigencia)}
+</div>
+
+<div class="trace-item">
+<small>FIM</small>
+${esc(c.fim_vigencia)}
+</div>
+
+</div>
+
+</div>
+
+`).join('')
+
+:
+
+'<p>Nenhum contrato vinculado.</p>';
+
+}
+
+
+function carregarServicos(){
+
+const lista=
+servicos.filter(
+s=>s.cliente_id===
+clienteSelecionado.id
+);
+
+
+$('listaServicos').innerHTML=
+lista.length
+
+?
+
+lista.map(s=>`
+
+<div class="trace">
+
+<div class="trace-head">
+
+<div>
+
+<div class="code">
+${esc(s.codigo_unico)}
+</div>
+
+<strong>
+${esc(s.servico)}
+</strong>
+
+</div>
+
+<span class="tag">
+${esc(s.status)}
+</span>
+
+</div>
+
+
+<div class="timeline">
+
+<span class="step">
+CLIENTE
+</span>
+
+<span class="arrow">→</span>
+
+<span class="step">
+PROPOSTA
+</span>
+
+<span class="arrow">→</span>
+
+<span class="step">
+CONTRATO
+</span>
+
+<span class="arrow">→</span>
+
+<span class="step">
+EXECUÇÃO
+</span>
+
+<span class="arrow">→</span>
+
+<span class="step">
+REGISTROS
+</span>
+
+<span class="arrow">→</span>
+
+<span class="step">
+ENTREGA
+</span>
+
+</div>
+
+
+<div class="trace-grid">
+
+<div class="trace-item">
+<small>PROPOSTA</small>
+${esc(s.proposta_codigo)||'—'}
+</div>
+
+<div class="trace-item">
+<small>RESPONSÁVEL</small>
+${esc(s.responsavel)||'—'}
+</div>
+
+<div class="trace-item">
+<small>INÍCIO</small>
+${esc(s.data_inicio)||'—'}
+</div>
+
+<div class="trace-item">
+<small>PREVISÃO</small>
+${esc(s.data_previsao_termino)||'—'}
+</div>
+
+<div class="trace-item">
+<small>CONTRATO</small>
+${getContratoNumero(s.contrato_id)}
+</div>
+
+<div class="trace-item">
+<small>ENTREGA</small>
+${esc(s.data_entrega)||'—'}
+</div>
+
+<div class="trace-item">
+<small>DOCUMENTOS</small>
+${esc(s.local_documentos)||'—'}
+</div>
+
+<div class="trace-item">
+<small>RESPONSÁVEL</small>
+${esc(s.responsavel)||'—'}
+</div>
+
+</div>
+
+
+<div class="foot">
+
+<button
+class="secondary editarServico"
+data-id="${esc(s.id)}">
+Editar
+</button>
+
+</div>
+
+</div>
+
+`).join('')
+
+:
+
+`
+<div class="empty">
+Nenhum serviço/projeto cadastrado para este cliente.
+</div>
+`;
+
+
+
+document
+.querySelectorAll('.editarServico')
+.forEach(btn=>{
+
+btn.addEventListener(
+'click',
+()=>{
+editarServico(btn.dataset.id)
+}
+);
+
+});
+
+}
+
+
+function getContratoNumero(id){
+
+if(!id)
+return '—';
+
+const c=
+contratos.find(
+x=>x.id===id
+);
+
+return esc(
+c?.numero_contrato||'Contrato'
+);
+
+}
+
+
+function abrirNovoServico(){
+
+limparFormularioServico();
+
+$('sCodigo').value=
+gerarCodigo();
+
+carregarSelectContratos();
+
+$('modalServico')
+.classList.add('open');
+
+}
+
+
+function gerarCodigo(){
+
+const ano=
+new Date().getFullYear();
+
+const prefix=
+`INS-${ano}-`;
+
+const numeros=
+servicos
+.filter(
+s=>String(s.codigo_unico||'')
+.startsWith(prefix)
+)
+.map(
+s=>parseInt(
+String(s.codigo_unico)
+.replace(prefix,''),
+10
+)
+)
+.filter(
+n=>!isNaN(n)
+);
+
+
+const proximo=
+numeros.length
+?
+Math.max(...numeros)+1
+:1;
+
+
+return prefix+
+String(proximo).padStart(3,'0');
+
+}
+
+
+function carregarSelectContratos(){
+
+const lista=
+contratos.filter(
+c=>c.cliente_id===
+clienteSelecionado.id
+);
+
+
+$('sContrato').innerHTML=
+`
+<option value="">
+Sem contrato vinculado
+</option>
+`
++
+lista.map(c=>`
+
+<option value="${esc(c.id)}">
+
+${esc(c.numero_contrato||'Sem número')}
+-
+${esc(c.servico||'Serviço')}
+
+</option>
+
+`).join('');
+
+}
+
+
+function limparFormularioServico(){
+
+$('servicoId').value='';
+
+$('sCodigo').value='';
+
+$('sServico').value='';
+
+$('sProposta').value='';
+
+$('sContrato').value='';
+
+$('sResponsavel').value='';
+
+$('sStatus').value='PLANEJADO';
+
+$('sInicio').value='';
+
+$('sPrevisao').value='';
+
+$('sTermino').value='';
+
+$('sLocal').value='';
+
+$('sExecucao').value='';
+
+$('sRegistros').value='';
+
+$('sEntrega').value='';
+
+$('sEntregaData').value='';
+
+$('tituloServico').textContent=
+'Novo Serviço / Projeto';
+
+}
+
+
+function editarServico(id){
+
+const s=
+servicos.find(
+x=>x.id===id
+);
+
+if(!s)
+return;
+
+
+carregarSelectContratos();
+
+$('servicoId').value=s.id;
+
+$('sCodigo').value=s.codigo_unico||'';
+
+$('sServico').value=s.servico||'';
+
+$('sProposta').value=s.proposta_codigo||'';
+
+$('sContrato').value=s.contrato_id||'';
+
+$('sResponsavel').value=s.responsavel||'';
+
+$('sStatus').value=s.status||'PLANEJADO';
+
+$('sInicio').value=s.data_inicio||'';
+
+$('sPrevisao').value=
+s.data_previsao_termino||'';
+
+$('sTermino').value=
+s.data_termino||'';
+
+$('sLocal').value=
+s.local_documentos||'';
+
+$('sExecucao').value=
+s.execucao_observacoes||'';
+
+$('sRegistros').value=
+s.registros_observacoes||'';
+
+$('sEntrega').value=
+s.entrega_descricao||'';
+
+$('sEntregaData').value=
+s.entrega_data||'';
+
+$('tituloServico').textContent=
+'Editar Serviço / Projeto';
+
+
+$('modalServico')
+.classList.add('open');
+
+}
+
+
+async function salvarServico(){
+
+if(!clienteSelecionado)
+return;
+
+
+const codigo=
+$('sCodigo').value.trim();
+
+const servico=
+$('sServico').value.trim();
+
+
+if(!codigo || !servico){
+
+alert(
+'Informe o código único e o serviço.'
+);
+
+return;
+
+}
+
+
+const obj={
+
+user_id:usuario.id,
+
+cliente_id:
+clienteSelecionado.id,
+
+codigo_unico:codigo,
+
+servico:servico,
+
+proposta_codigo:
+$('sProposta').value.trim()||null,
+
+contrato_id:
+$('sContrato').value||null,
+
+responsavel:
+$('sResponsavel').value.trim()||null,
+
+data_inicio:
+$('sInicio').value||null,
+
+data_previsao_termino:
+$('sPrevisao').value||null,
+
+data_termino:
+$('sTermino').value||null,
+
+status:
+$('sStatus').value,
+
+local_documentos:
+$('sLocal').value.trim()||null,
+
+execucao_observacoes:
+$('sExecucao').value.trim()||null,
+
+registros_observacoes:
+$('sRegistros').value.trim()||null,
+
+entrega_descricao:
+$('sEntrega').value.trim()||null,
+
+entrega_data:
+$('sEntregaData').value||null
+
+};
+
+
+const id=
+$('servicoId').value;
+
+
+let r;
+
+
+if(id){
+
+r=
+await window.SUPABASE_CLIENT
+.from('servicos_clientes')
+.update(obj)
+.eq('id',id)
+.eq('user_id',usuario.id);
+
+}else{
+
+r=
+await window.SUPABASE_CLIENT
+.from('servicos_clientes')
+.insert(obj);
+
+}
+
+
+if(r.error){
+
+alert(
+'Erro ao salvar: '+
+r.error.message
+);
+
+return;
+
+}
+
+
+$('modalServico')
+.classList.remove('open');
+
+
+await carregar();
+
+abrirCliente(
+clienteSelecionado.id
+);
+
+
+mensagem(
+'Serviço salvo com sucesso.',
+true
+);
+
+}
+
 
 async function salvarCliente(){
-  if(!clienteSelecionado) return;
-  const obj={
-    id_cliente:$('fId').value.trim(),razao_social:$('fRazao').value.trim(),
-    cnpj:$('fCnpj').value.trim(),nome_fantasia:$('fFantasia').value.trim(),
-    contato:$('fContato').value.trim(),email:$('fEmail').value.trim(),
-    responsavel:$('fResponsavel').value.trim(),status:$('fStatus').value
-  };
-  const r=await window.SUPABASE_CLIENT.from('clientes').update(obj).eq('id',clienteSelecionado.id).eq('user_id',usuario.id);
-  if(r.error){alert(r.error.message);return;}
-  $('modal').classList.remove('open');
-  await carregar();
+
+if(!clienteSelecionado)
+return;
+
+
+const obj={
+
+razao_social:
+$('fRazao').value.trim(),
+
+cnpj:
+$('fCnpj').value.trim(),
+
+nome_fantasia:
+$('fFantasia').value.trim(),
+
+contato:
+$('fContato').value.trim(),
+
+email:
+$('fEmail').value.trim(),
+
+responsavel:
+$('fResponsavel').value.trim(),
+
+status:
+$('fStatus').value
+
+};
+
+
+const r=
+await window.SUPABASE_CLIENT
+.from('clientes')
+.update(obj)
+.eq('id',clienteSelecionado.id)
+.eq('user_id',usuario.id);
+
+
+if(r.error){
+
+alert(
+r.error.message
+);
+
+return;
+
 }
 
-$('btnAtualizar').addEventListener('click',carregar);
-$('busca').addEventListener('input',render);
-$('filtro').addEventListener('change',render);
-$('btnFechar').addEventListener('click',()=> $('modal').classList.remove('open'));
-$('btnSalvarCliente').addEventListener('click',salvarCliente);
-$('btnNovo').addEventListener('click',()=>alert('O cadastro de novo cliente será ativado na próxima etapa.'));
-$('btnInicio').addEventListener('click',()=>window.location.href='../');
-$('btnSair').addEventListener('click',async()=>{await window.SUPABASE_CLIENT.auth.signOut();window.location.href='../';});
 
-window.addEventListener('DOMContentLoaded',async()=>{
-  try{await carregar();}
-  catch(e){erro('Erro ao carregar o módulo: '+(e.message||e));console.error(e);}
+await carregar();
+
+clienteSelecionado=
+clientes.find(
+x=>x.id===clienteSelecionado.id
+);
+
+
+abrirCliente(
+clienteSelecionado.id
+);
+
+
+mensagem(
+'Cliente atualizado.',
+true
+);
+
+}
+
+
+$('btnAtualizar')
+.addEventListener(
+'click',
+carregar
+);
+
+
+$('busca')
+.addEventListener(
+'input',
+render
+);
+
+
+$('filtro')
+.addEventListener(
+'change',
+render
+);
+
+
+$('btnFecharCliente')
+.addEventListener(
+'click',
+()=>{
+$('modalCliente')
+.classList.remove('open')
+}
+);
+
+
+$('btnFecharServico')
+.addEventListener(
+'click',
+()=>{
+$('modalServico')
+.classList.remove('open')
+}
+);
+
+
+$('btnCancelarServico')
+.addEventListener(
+'click',
+()=>{
+$('modalServico')
+.classList.remove('open')
+}
+);
+
+
+$('btnNovoServico')
+.addEventListener(
+'click',
+abrirNovoServico
+);
+
+
+$('btnSalvarServico')
+.addEventListener(
+'click',
+salvarServico
+);
+
+
+$('btnSalvarCliente')
+.addEventListener(
+'click',
+salvarCliente
+);
+
+
+$('btnInicio')
+.addEventListener(
+'click',
+()=>{
+window.location.href='../'
+}
+);
+
+
+$('btnSair')
+.addEventListener(
+'click',
+async()=>{
+
+await window.SUPABASE_CLIENT
+.auth.signOut();
+
+window.location.href='../';
+
+}
+);
+
+
+window.addEventListener(
+'DOMContentLoaded',
+async()=>{
+
+try{
+
+await carregar();
+
+}catch(e){
+
+console.error(e);
+
+mensagem(
+'Erro ao carregar o módulo: '+
+(e.message||e)
+);
+
+}
+
 });
+
 })();
+
 </script>
+
 </body>
 </html>
