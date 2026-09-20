@@ -1762,44 +1762,66 @@ function render(){
 
 
     /*
-      CLIENTES SOB DEMANDA
+  CLIENTES SOB DEMANDA
 
-      Conta clientes únicos que possuem
-      pelo menos uma demanda sem contrato.
-    */
+  Conta clientes únicos que:
+  1. possuem status SOB DEMANDA; OU
+  2. possuem pelo menos uma demanda registrada.
+*/
 
-    const clientesDemanda =
-        new Set(
+const clientesDemanda =
+    new Set(
 
-            servicos
+        clientes
 
-                .filter(function(servico){
+            .filter(function(cliente){
 
-                    return (
-                        String(
-                            servico.tipo_atendimento || ''
-                        )
-                        .trim()
-                        .toUpperCase()
-                        === 'DEMANDA'
-                    );
+                return String(
+                    cliente.status || ''
+                )
+                .trim()
+                .toUpperCase()
+                === 'SOB DEMANDA';
 
-                })
+            })
 
-                .map(function(servico){
+            .map(function(cliente){
 
-                    return String(
-                        servico.cliente_id
-                    );
+                return String(
+                    cliente.id
+                );
 
-                })
+            })
 
+    );
+
+
+servicos
+
+    .filter(function(servico){
+
+        return String(
+            servico.tipo_atendimento || ''
+        )
+        .trim()
+        .toUpperCase()
+        === 'DEMANDA';
+
+    })
+
+    .forEach(function(servico){
+
+        clientesDemanda.add(
+            String(
+                servico.cliente_id
+            )
         );
 
+    });
 
-    $('kDemanda').textContent =
-        clientesDemanda.size;
 
+$('kDemanda').textContent =
+    clientesDemanda.size;
 
     /* =================================================
        TABELA
