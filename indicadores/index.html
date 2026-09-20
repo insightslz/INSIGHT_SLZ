@@ -3,1642 +3,510 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Indicadores | Insight</title>
-
+<title>Indicadores Estratégicos | Insight</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:#f4f7fb;
-  color:#17233d;
-  font-family:Arial,Helvetica,sans-serif;
-}
-
-header{
-  margin:10px 12px 20px;
-  background:linear-gradient(110deg,#17367d,#2863e6);
-  color:#fff;
-  border-radius:20px;
-  padding:28px 34px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
-
-h1{
-  margin:0;
-  font-size:40px;
-}
-
-.sub{
-  margin-top:8px;
-  font-size:18px;
-  opacity:.9;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-button{
-  border:0;
-  border-radius:11px;
-  padding:12px 18px;
-  font-weight:700;
-  font-size:15px;
-  cursor:pointer;
-}
-
-.white{
-  background:#fff;
-  color:#17367d;
-}
-
-main{
-  padding:0 12px 35px;
-}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-}
-
-.card{
-  background:#fff;
-  border:1px solid #d9e0ec;
-  border-radius:18px;
-  padding:22px;
-}
-
-.card span{
-  display:block;
-  color:#667085;
-  font-size:14px;
-  font-weight:700;
-}
-
-.card strong{
-  display:block;
-  margin-top:9px;
-  font-size:30px;
-  color:#17367d;
-}
-
-.card small{
-  display:block;
-  margin-top:7px;
-  color:#98a2b3;
-}
-
-.panel{
-  margin-top:18px;
-  background:#fff;
-  border:1px solid #d9e0ec;
-  border-radius:18px;
-  padding:22px;
-}
-
-.panel h2{
-  margin:0 0 18px;
-  color:#17367d;
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th{
-  background:#0e162b;
-  color:#fff;
-  padding:12px;
-  text-align:left;
-}
-
-td{
-  padding:12px;
-  border-bottom:1px solid #e5e7eb;
-}
-
-.numero{
-  text-align:right;
-  font-weight:700;
-}
-
-.mensagem{
-  color:#667085;
-  padding:20px 0;
-}
-
-@media(max-width:1000px){
-
-  .cards{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .grid2{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:600px){
-
-  header{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  h1{
-    font-size:30px;
-  }
-
-  .cards{
-    grid-template-columns:1fr;
-  }
-
-}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7fb;color:#17233d;font-family:Arial,Helvetica,sans-serif}
+header{margin:10px 12px 20px;background:linear-gradient(110deg,#17367d,#2863e6);color:#fff;border-radius:20px;padding:28px 34px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+h1{margin:0;font-size:40px}
+.sub{margin-top:8px;font-size:18px;opacity:.9}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+button{border:0;border-radius:11px;padding:12px 18px;font-weight:700;font-size:15px;cursor:pointer}
+.white{background:#fff;color:#17367d}
+main{padding:0 12px 35px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card,.panel{background:#fff;border:1px solid #d9e0ec;border-radius:18px}
+.card{padding:22px}
+.card span{display:block;color:#667085;font-size:14px;font-weight:700}
+.card strong{display:block;margin-top:9px;font-size:30px;color:#17367d}
+.card small{display:block;margin-top:7px;color:#98a2b3}
+.panel{margin-top:18px;padding:22px}
+.panel h2{margin:0 0 18px;color:#17367d}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+table{width:100%;border-collapse:collapse}
+th{background:#0e162b;color:#fff;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #e5e7eb}
+.numero{text-align:right;font-weight:700}
+.mensagem{color:#667085;padding:20px 0}
+.kpi-ok{color:#087443!important}
+.kpi-wait{color:#667085!important}
+.section-note{margin:-8px 0 18px;color:#667085;font-size:14px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:600px){header{flex-direction:column;align-items:flex-start}h1{font-size:30px}.cards{grid-template-columns:1fr}}
 </style>
-
 </head>
 
 <body>
 
 <header>
-
   <div>
-
     <h1>📈 Indicadores</h1>
-
-    <div class="sub">
-      Painel de desempenho — Insight | Gerenciamento SGQ
-    </div>
-
+    <div class="sub">Painel de desempenho — Insight | Gerenciamento SGQ</div>
   </div>
-
   <div class="actions">
-
-    <button
-      class="white"
-      onclick="window.location.href='../menu/'">
-      ☰ Menu
-    </button>
-
-    <button
-      class="white"
-      onclick="carregar()">
-      ↻ Atualizar
-    </button>
-
-    <button
-      class="white"
-      onclick="sair()">
-      ↪ Sair
-    </button>
-
+    <button class="white" onclick="window.location.href='../menu/'">☰ Menu</button>
+    <button class="white" onclick="carregar()">↻ Atualizar</button>
+    <button class="white" onclick="sair()">↪ Sair</button>
   </div>
-
 </header>
-
 
 <main>
 
-
-<!-- =========================================================
-     CARDS PRINCIPAIS
-========================================================= -->
-
-<section class="cards">
-
-  <div class="card">
-
-    <span>RECEITA BRUTA ANUAL</span>
-
-    <strong id="receita">
-      R$ 0,00
-    </strong>
-
-    <small>DRE</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>EBITDA ANUAL</span>
-
-    <strong id="ebitda">
-      R$ 0,00
-    </strong>
-
-    <small>DRE</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>MARGEM LÍQUIDA</span>
-
-    <strong id="margem">
-      0,00%
-    </strong>
-
-    <small>DRE</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>CLIENTES</span>
-
-    <strong id="clientes">
-      0
-    </strong>
-
-    <small>Base de clientes</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>CONTRATOS ATIVOS</span>
-
-    <strong id="contratosAtivos">
-      0
-    </strong>
-
-    <small>Contratos</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>CONTRATOS CADASTRADOS</span>
-
-    <strong id="contratosTotal">
-      0
-    </strong>
-
-    <small>Contratos</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>LEADS CRM</span>
-
-    <strong id="leads">
-      0
-    </strong>
-
-    <small>Pipeline comercial</small>
-
-  </div>
-
-
-  <div class="card">
-
-    <span>PIPELINE CRM</span>
-
-    <strong id="pipeline">
-      R$ 0,00
-    </strong>
-
-    <small>Oportunidades abertas</small>
-
-  </div>
-
-</section>
-
-
-<!-- =========================================================
-     DRE
-========================================================= -->
-
-<section class="panel">
-
-  <h2>
-    Desempenho mensal da DRE
-  </h2>
-
-  <table>
-
-    <thead>
-
-      <tr>
-
-        <th>Mês</th>
-
-        <th class="numero">
-          Receita Bruta
-        </th>
-
-        <th class="numero">
-          EBITDA
-        </th>
-
-        <th class="numero">
-          Resultado Líquido
-        </th>
-
-      </tr>
-
-    </thead>
-
-    <tbody id="dreTabela"></tbody>
-
-  </table>
-
-</section>
-
-
-<!-- =========================================================
-     INDICADORES COMERCIAIS / RESUMO
-========================================================= -->
-
-<section class="grid2">
-
-
-  <section class="panel">
-
-    <h2>
-      Indicadores comerciais
-    </h2>
-
-    <table>
-
-      <tbody>
-
-        <tr>
-
-          <td>
-            Clientes cadastrados
-          </td>
-
-          <td
-            class="numero"
-            id="clientes2">
-            0
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Contratos ativos
-          </td>
-
-          <td
-            class="numero"
-            id="ativos2">
-            0
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Contratos a renovar
-          </td>
-
-          <td
-            class="numero"
-            id="renovar">
-            0
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Leads no CRM
-          </td>
-
-          <td
-            class="numero"
-            id="leads2">
-            0
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Pipeline aberto
-          </td>
-
-          <td
-            class="numero"
-            id="pipeline2">
-            R$ 0,00
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
+  <!-- CARDS PRINCIPAIS -->
+  <section class="cards">
+    <div class="card">
+      <span>RECEITA BRUTA ANUAL</span>
+      <strong id="receita">R$ 0,00</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>EBITDA ANUAL</span>
+      <strong id="ebitda">R$ 0,00</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>MARGEM LÍQUIDA</span>
+      <strong id="margem">0,00%</strong>
+      <small>DRE</small>
+    </div>
+
+    <div class="card">
+      <span>CLIENTES</span>
+      <strong id="clientes">0</strong>
+      <small>Base de clientes</small>
+    </div>
+
+    <div class="card">
+      <span>CONTRATOS ATIVOS</span>
+      <strong id="contratosAtivos">0</strong>
+      <small>Contratos</small>
+    </div>
+
+    <div class="card">
+      <span>CONTRATOS CADASTRADOS</span>
+      <strong id="contratosTotal">0</strong>
+      <small>Contratos</small>
+    </div>
+
+    <div class="card">
+      <span>LEADS CRM</span>
+      <strong id="leads">0</strong>
+      <small>Pipeline comercial</small>
+    </div>
+
+    <div class="card">
+      <span>PIPELINE CRM</span>
+      <strong id="pipeline">R$ 0,00</strong>
+      <small>Oportunidades abertas</small>
+    </div>
   </section>
 
-
+  <!-- DRE -->
   <section class="panel">
-
-    <h2>
-      Resumo de desempenho
-    </h2>
-
+    <h2>Desempenho mensal da DRE</h2>
     <table>
-
-      <tbody>
-
+      <thead>
         <tr>
-
-          <td>
-            Receita Bruta
-          </td>
-
-          <td
-            class="numero"
-            id="resReceita">
-            R$ 0,00
-          </td>
-
+          <th>Mês</th>
+          <th class="numero">Receita Bruta</th>
+          <th class="numero">EBITDA</th>
+          <th class="numero">Resultado Líquido</th>
         </tr>
-
-
-        <tr>
-
-          <td>
-            EBITDA
-          </td>
-
-          <td
-            class="numero"
-            id="resEbitda">
-            R$ 0,00
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Margem EBITDA
-          </td>
-
-          <td
-            class="numero"
-            id="margemEbitda">
-            0,00%
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Resultado Líquido
-          </td>
-
-          <td
-            class="numero"
-            id="resLiquido">
-            R$ 0,00
-          </td>
-
-        </tr>
-
-
-        <tr>
-
-          <td>
-            Margem Líquida
-          </td>
-
-          <td
-            class="numero"
-            id="resMargem">
-            0,00%
-          </td>
-
-        </tr>
-
-      </tbody>
-
+      </thead>
+      <tbody id="dreTabela"></tbody>
     </table>
-
   </section>
 
-</section>
-
-
-<!-- =========================================================
-     INDICADORES ESTRATÉGICOS
-========================================================= -->
-
-<section class="panel">
-
-  <h2>
-    Indicadores estratégicos
-  </h2>
-
-
-  <div class="grid2">
-
-
-    <!-- FINANCEIRO -->
-
+  <!-- COMERCIAL / RESUMO -->
+  <section class="grid2">
     <section class="panel">
-
-      <h2>
-        Financeiro — integrado à DRE
-      </h2>
-
+      <h2>Indicadores comerciais</h2>
       <table>
-
         <tbody>
-
-          <tr>
-
-            <td>
-              Crescimento da Receita (%)
-            </td>
-
-            <td
-              class="numero"
-              id="crescimentoReceita">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-
-          <tr>
-
-            <td>
-              Margem Líquida (%)
-            </td>
-
-            <td
-              class="numero"
-              id="kpiMargemLiquida">
-              0,00%
-            </td>
-
-          </tr>
-
+          <tr><td>Clientes cadastrados</td><td class="numero" id="clientes2">0</td></tr>
+          <tr><td>Contratos ativos</td><td class="numero" id="ativos2">0</td></tr>
+          <tr><td>Contratos a renovar</td><td class="numero" id="renovar">0</td></tr>
+          <tr><td>Leads no CRM</td><td class="numero" id="leads2">0</td></tr>
+          <tr><td>Pipeline aberto</td><td class="numero" id="pipeline2">R$ 0,00</td></tr>
         </tbody>
-
       </table>
-
     </section>
 
-
-    <!-- CLIENTES -->
-
     <section class="panel">
-
-      <h2>
-        Clientes
-      </h2>
-
+      <h2>Resumo de desempenho</h2>
       <table>
-
         <tbody>
-
-          <tr>
-
-            <td>
-              NPS
-            </td>
-
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-
-          <tr>
-
-            <td>
-              Novos Clientes
-            </td>
-
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
+          <tr><td>Receita Bruta</td><td class="numero" id="resReceita">R$ 0,00</td></tr>
+          <tr><td>EBITDA</td><td class="numero" id="resEbitda">R$ 0,00</td></tr>
+          <tr><td>Margem EBITDA</td><td class="numero" id="margemEbitda">0,00%</td></tr>
+          <tr><td>Resultado Líquido</td><td class="numero" id="resLiquido">R$ 0,00</td></tr>
+          <tr><td>Margem Líquida</td><td class="numero" id="resMargem">0,00%</td></tr>
         </tbody>
-
       </table>
-
     </section>
+  </section>
 
+  <!-- INDICADORES ESTRATÉGICOS -->
+  <section class="panel">
+    <h2>Indicadores estratégicos</h2>
+    <p class="section-note">
+      Os indicadores financeiros permanecem integrados à DRE. Os demais indicadores serão
+      alimentados pelos respectivos módulos do sistema.
+    </p>
 
-    <!-- PROCESSOS -->
+    <div class="grid2">
 
-    <section class="panel">
+      <section class="panel">
+        <h2>Financeiro — integrado à DRE</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td>Crescimento da Receita (%)</td>
+              <td class="numero" id="crescimentoReceita">0,00%</td>
+            </tr>
+            <tr>
+              <td>Margem Líquida (%)</td>
+              <td class="numero" id="kpiMargemLiquida">0,00%</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-      <h2>
-        Processos
-      </h2>
+      <section class="panel">
+        <h2>Clientes</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td>NPS</td>
+              <td class="numero kpi-ok">98,2</td>
+            </tr>
+            <tr>
+              <td>Novos Clientes</td>
+              <td class="numero kpi-wait">Aguardando dados</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-      <table>
+      <section class="panel">
+        <h2>Processos</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td>Taxa de Conversão (%)</td>
+              <td class="numero kpi-wait">Aguardando dados</td>
+            </tr>
+            <tr>
+              <td>Índice de Processos Automatizados (%)</td>
+              <td class="numero kpi-wait">Aguardando dados</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-        <tbody>
+      <section class="panel">
+        <h2>Pessoas e Melhoria</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td>Horas de treinamento/colaborador</td>
+              <td class="numero kpi-wait">Aguardando dados</td>
+            </tr>
+            <tr>
+              <td>Melhorias Implementadas</td>
+              <td class="numero kpi-wait">Aguardando dados</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-          <tr>
+    </div>
+  </section>
 
-            <td>
-              Taxa de Conversão (%)
-            </td>
+  <!-- DADOS DE TREINAMENTOS -->
+  <section class="panel">
+    <h2>Desempenho de Treinamentos</h2>
+    <p class="section-note">
+      Dados informados para 2026.
+    </p>
 
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-
-          <tr>
-
-            <td>
-              Índice de Processos Automatizados (%)
-            </td>
-
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </section>
-
-
-    <!-- PESSOAS -->
-
-    <section class="panel">
-
-      <h2>
-        Pessoas e Melhoria
-      </h2>
-
-      <table>
-
-        <tbody>
-
-          <tr>
-
-            <td>
-              Horas de treinamento/colaborador
-            </td>
-
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-
-          <tr>
-
-            <td>
-              Melhorias Implementadas
-            </td>
-
-            <td class="numero">
-              Aguardando dados
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </section>
-
-
-  </div>
-
-</section>
-
+    <table>
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th class="numero">JUL</th>
+          <th class="numero">AGO</th>
+          <th class="numero">2026</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Treinamento — nota média</td>
+          <td class="numero">9,70</td>
+          <td class="numero">9,94</td>
+          <td class="numero">9,82</td>
+        </tr>
+        <tr>
+          <td>Qts Avaliações</td>
+          <td class="numero">18</td>
+          <td class="numero">17</td>
+          <td class="numero">35</td>
+        </tr>
+        <tr>
+          <td>Qtd Empresas</td>
+          <td class="numero">3</td>
+          <td class="numero">6</td>
+          <td class="numero">9</td>
+        </tr>
+        <tr>
+          <td>Qtd Treinamentos</td>
+          <td class="numero">15</td>
+          <td class="numero">15</td>
+          <td class="numero">30</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
 </main>
 
-
 <script>
+const SUPABASE_URL = "https://sayeyuyampbsmhhdukzv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-"https://sayeyuyampbsmhhdukzv.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
-
-const sb =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-/* =========================================================
-   MESES
-========================================================= */
-
-const meses = [
-
-  "JAN",
-  "FEV",
-  "MAR",
-  "ABR",
-  "MAI",
-  "JUN",
-  "JUL",
-  "AGO",
-  "SET",
-  "OUT",
-  "NOV",
-  "DEZ"
-
-];
-
-
-/* =========================================================
-   FORMATAÇÃO
-========================================================= */
+const meses = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 
 function moeda(v){
-
-  return Number(v || 0)
-    .toLocaleString(
-      "pt-BR",
-      {
-        style:"currency",
-        currency:"BRL"
-      }
-    );
-
+  return Number(v || 0).toLocaleString("pt-BR", {
+    style:"currency",
+    currency:"BRL"
+  });
 }
-
 
 function percentual(v){
-
-  return Number(v || 0)
-    .toLocaleString(
-      "pt-BR",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    ) + "%";
-
+  return Number(v || 0).toLocaleString("pt-BR", {
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  }) + "%";
 }
-
 
 function soma(arr){
-
-  return (arr || [])
-    .reduce(
-      (a,b) =>
-        a + Number(b || 0),
-      0
-    );
-
+  return (arr || []).reduce((a,b) => a + Number(b || 0), 0);
 }
-
-
-/* =========================================================
-   CÁLCULO DA DRE
-   Usa a mesma estrutura gravada no Supabase.
-========================================================= */
 
 function calcularDRE(base){
+  const receita = Array(12).fill(0).map((_,i) =>
+    Object.values(base?.rec || {}).reduce(
+      (s,arr) => s + Number(arr?.[i] || 0), 0
+    )
+  );
 
-  const receita =
-    Array(12)
-      .fill(0)
-      .map(
-        (_,i) =>
+  const impostos = Number(base?.impostos || 0) / 100;
 
-          Object
-            .values(base?.rec || {})
-            .reduce(
-              (s,arr) =>
-                s + Number(
-                  arr?.[i] || 0
-                ),
-              0
-            )
+  const receitaLiquida = receita.map(v => v - (v * impostos));
 
-      );
+  const custos = Array(12).fill(0).map((_,i) =>
+    Object.values(base?.cd || {}).reduce(
+      (s,arr) => s + Number(arr?.[i] || 0), 0
+    )
+  );
 
+  const despesas = Array(12).fill(0).map((_,i) =>
+    Object.values(base?.df || {}).reduce(
+      (s,arr) => s + Number(arr?.[i] || 0), 0
+    )
+  );
 
-  const impostos =
-    Number(base?.impostos || 0) / 100;
+  const folha = base?.folha || Array(12).fill(0);
 
+  const ebitda = receitaLiquida.map((v,i) =>
+    v - custos[i] - Number(folha[i] || 0) - despesas[i]
+  );
 
-  const receitaLiquida =
-    receita.map(
-      v =>
-        v - (v * impostos)
-    );
-
-
-  const custos =
-    Array(12)
-      .fill(0)
-      .map(
-        (_,i) =>
-
-          Object
-            .values(base?.cd || {})
-            .reduce(
-              (s,arr) =>
-                s + Number(
-                  arr?.[i] || 0
-                ),
-              0
-            )
-
-      );
-
-
-  const despesas =
-    Array(12)
-      .fill(0)
-      .map(
-        (_,i) =>
-
-          Object
-            .values(base?.df || {})
-            .reduce(
-              (s,arr) =>
-                s + Number(
-                  arr?.[i] || 0
-                ),
-              0
-            )
-
-      );
-
-
-  const folha =
-    base?.folha ||
-    Array(12).fill(0);
-
-
-  const ebitda =
-    receitaLiquida.map(
-      (v,i) =>
-
-        v
-        - custos[i]
-        - Number(
-            folha[i] || 0
-          )
-        - despesas[i]
-
-    );
-
-
-  return {
-
-    receita,
-
-    ebitda,
-
-    liquido:ebitda
-
-  };
-
+  return { receita, ebitda, liquido:ebitda };
 }
-
-
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
 
 async function iniciar(){
-
-  const {
-
-    data:{
-      session
-
-    }
-
-  } = await sb.auth.getSession();
-
+  const { data:{ session } } = await sb.auth.getSession();
 
   if(!session){
-
-    window.location.href="../";
-
+    window.location.href = "../";
     return;
-
   }
-
 
   await carregar();
-
 }
-
-
-/* =========================================================
-   ATUALIZAR TUDO
-========================================================= */
 
 async function carregar(){
-
   await carregarDRE();
-
   await carregarClientes();
-
   await carregarContratos();
-
   carregarCRM();
-
 }
 
-
-/* =========================================================
-   DRE + INDICADORES FINANCEIROS
-========================================================= */
-
 async function carregarDRE(){
-
-  const {
-
-    data,
-    error
-
-  } =
-
-    await sb
-      .from("dre_dados")
-      .select("dados")
-      .maybeSingle();
-
+  const { data, error } = await sb
+    .from("dre_dados")
+    .select("dados")
+    .maybeSingle();
 
   if(error){
-
-    console.error(
-      "Erro DRE:",
-      error
-    );
-
+    console.error("Erro DRE:", error);
     return;
-
   }
 
-
-  const d =
-    data?.dados;
-
+  const d = data?.dados;
 
   if(!d){
-
-    document
-      .getElementById(
-        "dreTabela"
-      )
-      .innerHTML =
-
-      `
+    document.getElementById("dreTabela").innerHTML = `
       <tr>
-        <td
-          colspan="4"
-          class="mensagem">
+        <td colspan="4" class="mensagem">
           Nenhum dado da DRE encontrado.
         </td>
-      </tr>
-      `;
-
+      </tr>`;
     return;
-
   }
 
+  const realizado = d.realizado || {};
+  const orcado = d.orcado || {};
 
-  /*
-   * IMPORTANTE:
-   * A DRE armazena:
-   *
-   * d.realizado
-   * d.orcado
-   *
-   * e dentro deles:
-   *
-   * rec
-   * cd
-   * df
-   * folha
-   * impostos
-   */
+  const R = calcularDRE(realizado);
+  const O = calcularDRE(orcado);
 
+  const receita = R.receita;
+  const ebitda = R.ebitda;
+  const liquido = R.liquido;
 
-  const realizado =
-    d.realizado || {};
+  const totalReceita = soma(receita);
+  const totalEbitda = soma(ebitda);
+  const totalLiquido = soma(liquido);
 
+  const margemLiquida = totalReceita
+    ? (totalLiquido / totalReceita) * 100
+    : 0;
 
-  const orcado =
-    d.orcado || {};
-
-
-  const R =
-    calcularDRE(
-      realizado
-    );
-
-
-  const O =
-    calcularDRE(
-      orcado
-    );
-
-
-  const receita =
-    R.receita;
-
-
-  const ebitda =
-    R.ebitda;
-
-
-  const liquido =
-    R.liquido;
-
-
-  const totalReceita =
-    soma(receita);
-
-
-  const totalEbitda =
-    soma(ebitda);
-
-
-  const totalLiquido =
-    soma(liquido);
-
-
-  /*
-   * MARGEM LÍQUIDA
-   */
-
-  const margemLiquida =
-
-    totalReceita
-
-      ? (
-          totalLiquido /
-          totalReceita
-        ) * 100
-
-      : 0;
-
-
-  /*
-   * MARGEM EBITDA
-   */
-
-  const margemEbitda =
-
-    totalReceita
-
-      ? (
-          totalEbitda /
-          totalReceita
-        ) * 100
-
-      : 0;
-
-
-  /*
-   * CRESCIMENTO DA RECEITA
-   *
-   * Compara o realizado
-   * acumulado com o orçado
-   * acumulado até o último
-   * mês que possui receita.
-   */
+  const margemEbitda = totalReceita
+    ? (totalEbitda / totalReceita) * 100
+    : 0;
 
   let ultimoMes = -1;
 
-
-  for(
-    let i=0;
-    i<12;
-    i++
-  ){
-
-    if(
-      (receita[i] || 0) > 0
-    ){
-
-      ultimoMes = i;
-
-    }
-
+  for(let i=0;i<12;i++){
+    if((receita[i] || 0) > 0) ultimoMes = i;
   }
-
 
   let crescimentoReceita = 0;
 
-
-  if(
-    ultimoMes >= 0
-  ){
-
+  if(ultimoMes >= 0){
     let realAcum = 0;
-
     let orcAcum = 0;
 
-
-    for(
-      let i=0;
-      i<=ultimoMes;
-      i++
-    ){
-
-      realAcum +=
-        receita[i] || 0;
-
-
-      orcAcum +=
-        O.receita[i] || 0;
-
+    for(let i=0;i<=ultimoMes;i++){
+      realAcum += receita[i] || 0;
+      orcAcum += O.receita[i] || 0;
     }
 
-
-    crescimentoReceita =
-
-      orcAcum > 0
-
-        ? (
-            (
-              realAcum -
-              orcAcum
-            ) /
-            orcAcum
-          ) * 100
-
-        : 0;
-
+    crescimentoReceita = orcAcum > 0
+      ? ((realAcum - orcAcum) / orcAcum) * 100
+      : 0;
   }
 
+  document.getElementById("receita").textContent = moeda(totalReceita);
+  document.getElementById("ebitda").textContent = moeda(totalEbitda);
+  document.getElementById("margem").textContent = percentual(margemLiquida);
 
-  /*
-   * CARDS
-   */
+  document.getElementById("kpiMargemLiquida").textContent = percentual(margemLiquida);
+  document.getElementById("crescimentoReceita").textContent = percentual(crescimentoReceita);
 
-  document
-    .getElementById("receita")
-    .textContent =
-      moeda(
-        totalReceita
-      );
-
-
-  document
-    .getElementById("ebitda")
-    .textContent =
-      moeda(
-        totalEbitda
-      );
-
-
-  document
-    .getElementById("margem")
-    .textContent =
-      percentual(
-        margemLiquida
-      );
-
-
-  /*
-   * FINANCEIRO ESTRATÉGICO
-   */
-
-  document
-    .getElementById(
-      "kpiMargemLiquida"
-    )
-    .textContent =
-      percentual(
-        margemLiquida
-      );
-
-
-  document
-    .getElementById(
-      "crescimentoReceita"
-    )
-    .textContent =
-      percentual(
-        crescimentoReceita
-      );
-
-
-  /*
-   * RESUMO
-   */
-
-  document
-    .getElementById(
-      "resReceita"
-    )
-    .textContent =
-      moeda(
-        totalReceita
-      );
-
-
-  document
-    .getElementById(
-      "resEbitda"
-    )
-    .textContent =
-      moeda(
-        totalEbitda
-      );
-
-
-  document
-    .getElementById(
-      "margemEbitda"
-    )
-    .textContent =
-      percentual(
-        margemEbitda
-      );
-
-
-  document
-    .getElementById(
-      "resLiquido"
-    )
-    .textContent =
-      moeda(
-        totalLiquido
-      );
-
-
-  document
-    .getElementById(
-      "resMargem"
-    )
-    .textContent =
-      percentual(
-        margemLiquida
-      );
-
-
-  /*
-   * TABELA MENSAL
-   */
+  document.getElementById("resReceita").textContent = moeda(totalReceita);
+  document.getElementById("resEbitda").textContent = moeda(totalEbitda);
+  document.getElementById("margemEbitda").textContent = percentual(margemEbitda);
+  document.getElementById("resLiquido").textContent = moeda(totalLiquido);
+  document.getElementById("resMargem").textContent = percentual(margemLiquida);
 
   let html = "";
 
-
-  for(
-    let i=0;
-    i<12;
-    i++
-  ){
-
-    html +=
-
-      `
+  for(let i=0;i<12;i++){
+    html += `
       <tr>
-
-        <td>
-          ${meses[i]}
-        </td>
-
-        <td class="numero">
-          ${moeda(
-            receita[i]
-          )}
-        </td>
-
-        <td class="numero">
-          ${moeda(
-            ebitda[i]
-          )}
-        </td>
-
-        <td class="numero">
-          ${moeda(
-            liquido[i]
-          )}
-        </td>
-
-      </tr>
-      `;
-
+        <td>${meses[i]}</td>
+        <td class="numero">${moeda(receita[i])}</td>
+        <td class="numero">${moeda(ebitda[i])}</td>
+        <td class="numero">${moeda(liquido[i])}</td>
+      </tr>`;
   }
 
-
-  document
-    .getElementById(
-      "dreTabela"
-    )
-    .innerHTML =
-      html;
-
+  document.getElementById("dreTabela").innerHTML = html;
 }
-
-
-/* =========================================================
-   CLIENTES
-========================================================= */
 
 async function carregarClientes(){
-
-  const {
-
-    data,
-    error
-
-  } =
-
-    await sb
-      .from("clientes")
-      .select(
-        "id",
-        {
-          count:"exact"
-        }
-      );
-
+  const { data, error } = await sb
+    .from("clientes")
+    .select("id", { count:"exact" });
 
   if(error){
-
-    console.error(
-      "Erro clientes:",
-      error
-    );
-
+    console.error("Erro clientes:", error);
     return;
-
   }
 
+  const total = data?.length || 0;
 
-  const total =
-    data?.length || 0;
-
-
-  document
-    .getElementById(
-      "clientes"
-    )
-    .textContent =
-      total;
-
-
-  document
-    .getElementById(
-      "clientes2"
-    )
-    .textContent =
-      total;
-
+  document.getElementById("clientes").textContent = total;
+  document.getElementById("clientes2").textContent = total;
 }
-
-
-/* =========================================================
-   CONTRATOS
-========================================================= */
 
 async function carregarContratos(){
-
-  const {
-
-    data,
-    error
-
-  } =
-
-    await sb
-      .from("contratos")
-      .select(
-        "status"
-      );
-
+  const { data, error } = await sb
+    .from("contratos")
+    .select("status");
 
   if(error){
-
-    console.error(
-      "Erro contratos:",
-      error
-    );
-
+    console.error("Erro contratos:", error);
     return;
-
   }
 
+  const contratos = data || [];
 
-  const contratos =
-    data || [];
+  const ativos = contratos.filter(x => x.status === "ATIVO").length;
+  const renovar = contratos.filter(x => x.status === "RENOVAR").length;
 
-
-  const ativos =
-
-    contratos.filter(
-      x =>
-        x.status ===
-        "ATIVO"
-    ).length;
-
-
-  const renovar =
-
-    contratos.filter(
-      x =>
-        x.status ===
-        "RENOVAR"
-    ).length;
-
-
-  document
-    .getElementById(
-      "contratosAtivos"
-    )
-    .textContent =
-      ativos;
-
-
-  document
-    .getElementById(
-      "contratosTotal"
-    )
-    .textContent =
-      contratos.length;
-
-
-  document
-    .getElementById(
-      "ativos2"
-    )
-    .textContent =
-      ativos;
-
-
-  document
-    .getElementById(
-      "renovar"
-    )
-    .textContent =
-      renovar;
-
+  document.getElementById("contratosAtivos").textContent = ativos;
+  document.getElementById("contratosTotal").textContent = contratos.length;
+  document.getElementById("ativos2").textContent = ativos;
+  document.getElementById("renovar").textContent = renovar;
 }
-
-
-/* =========================================================
-   CRM
-========================================================= */
 
 function carregarCRM(){
-
   let dados = [];
 
-
   try{
-
-    dados =
-      JSON.parse(
-        localStorage.getItem(
-          "insight_crm"
-        ) || "[]"
-      );
-
+    dados = JSON.parse(localStorage.getItem("insight_crm") || "[]");
   }catch(e){
-
     dados = [];
-
   }
 
+  document.getElementById("leads").textContent = dados.length;
+  document.getElementById("leads2").textContent = dados.length;
 
-  document
-    .getElementById(
-      "leads"
-    )
-    .textContent =
-      dados.length;
+  const pipeline = dados
+    .filter(x => x.etapa !== "ganho")
+    .reduce((s,x) => s + Number(x.valor || 0), 0);
 
-
-  document
-    .getElementById(
-      "leads2"
-    )
-    .textContent =
-      dados.length;
-
-
-  const pipeline =
-
-    dados
-
-      .filter(
-        x =>
-          x.etapa !==
-          "ganho"
-      )
-
-      .reduce(
-        (s,x) =>
-          s +
-          Number(
-            x.valor || 0
-          ),
-        0
-      );
-
-
-  document
-    .getElementById(
-      "pipeline"
-    )
-    .textContent =
-      moeda(
-        pipeline
-      );
-
-
-  document
-    .getElementById(
-      "pipeline2"
-    )
-    .textContent =
-      moeda(
-        pipeline
-      );
-
+  document.getElementById("pipeline").textContent = moeda(pipeline);
+  document.getElementById("pipeline2").textContent = moeda(pipeline);
 }
-
-
-/* =========================================================
-   SAIR
-========================================================= */
 
 async function sair(){
-
   await sb.auth.signOut();
-
-  window.location.href="../";
-
+  window.location.href = "../";
 }
 
-
-/* =========================================================
-   INICIAR
-========================================================= */
-
 iniciar();
-
 </script>
 
 </body>
