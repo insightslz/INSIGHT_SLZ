@@ -82,11 +82,6 @@ button:hover{
     color:#173f91;
 }
 
-.btn-danger{
-    background:#b42318;
-    color:#fff;
-}
-
 main{
     padding:0 16px 40px;
 }
@@ -96,7 +91,6 @@ main{
     padding:15px 18px;
     border-radius:12px;
     margin-bottom:15px;
-    font-size:15px;
 }
 
 .alert.error{
@@ -113,7 +107,10 @@ main{
     color:#08733f;
 }
 
-/* KPIs */
+
+/* =====================================================
+   KPIs
+===================================================== */
 
 .kpis{
     display:grid;
@@ -143,7 +140,10 @@ main{
     margin-top:8px;
 }
 
-/* TOOLBAR */
+
+/* =====================================================
+   PESQUISA
+===================================================== */
 
 .toolbar{
     display:grid;
@@ -162,7 +162,10 @@ main{
     font-size:15px;
 }
 
-/* TABLE */
+
+/* =====================================================
+   TABELA
+===================================================== */
 
 .table-container{
     background:#fff;
@@ -228,7 +231,10 @@ tbody tr:hover{
     color:#68758c;
 }
 
-/* MODAL */
+
+/* =====================================================
+   MODAL
+===================================================== */
 
 .modal{
     display:none;
@@ -308,7 +314,10 @@ tbody tr:hover{
     margin-top:22px;
 }
 
-/* SECTIONS */
+
+/* =====================================================
+   SEÇÕES
+===================================================== */
 
 .section{
     border-top:1px solid #e1e7ef;
@@ -333,7 +342,10 @@ tbody tr:hover{
     margin-top:0;
 }
 
-/* TRACEABILITY */
+
+/* =====================================================
+   RASTREABILIDADE
+===================================================== */
 
 .trace-card{
     background:#fbfcfe;
@@ -360,6 +372,13 @@ tbody tr:hover{
     font-size:15px;
     font-weight:700;
     margin-top:5px;
+}
+
+.trace-type{
+    margin-top:6px;
+    color:#68758c;
+    font-size:12px;
+    font-weight:700;
 }
 
 .timeline{
@@ -409,7 +428,22 @@ tbody tr:hover{
     font-size:13px;
 }
 
-/* CONTRATOS */
+.drive-link{
+    display:inline-block;
+    margin-top:8px;
+    color:#173f91;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.drive-link:hover{
+    text-decoration:underline;
+}
+
+
+/* =====================================================
+   CONTRATOS
+===================================================== */
 
 .contract-card{
     background:#fbfcfe;
@@ -433,7 +467,10 @@ tbody tr:hover{
     margin-bottom:4px;
 }
 
-/* RESPONSIVE */
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
 
 @media(max-width:1050px){
 
@@ -503,27 +540,19 @@ Cadastro, serviços e rastreabilidade da relação com o cliente
 
 <div class="header-actions">
 
-<button
-class="btn-white"
-id="btnNovoCliente">
+<button class="btn-white" id="btnNovoCliente">
 ＋ Novo Cliente
 </button>
 
-<button
-class="btn-white"
-id="btnAtualizar">
+<button class="btn-white" id="btnAtualizar">
 ↻ Atualizar
 </button>
 
-<button
-class="btn-white"
-id="btnInicio">
+<button class="btn-white" id="btnInicio">
 ⌂ Início
 </button>
 
-<button
-class="btn-white"
-id="btnSair">
+<button class="btn-white" id="btnSair">
 ↪ Sair
 </button>
 
@@ -535,29 +564,14 @@ id="btnSair">
 <main>
 
 
-<div
-id="alert"
-class="alert">
-</div>
+<div id="alert" class="alert"></div>
 
 
-<!-- KPIs -->
+<!-- =====================================================
+     INDICADORES
+===================================================== -->
 
 <div class="kpis">
-
-<div class="kpi">
-
-<div class="kpi-title">
-CLIENTES ATIVOS
-</div>
-
-<span
-class="kpi-value"
-id="kAtivos">
-0
-</span>
-
-</div>
 
 
 <div class="kpi">
@@ -566,24 +580,7 @@ id="kAtivos">
 CLIENTES CADASTRADOS
 </div>
 
-<span
-class="kpi-value"
-id="kTotal">
-0
-</span>
-
-</div>
-
-
-<div class="kpi">
-
-<div class="kpi-title">
-PROSPECTS
-</div>
-
-<span
-class="kpi-value"
-id="kProspects">
+<span class="kpi-value" id="kTotal">
 0
 </span>
 
@@ -596,9 +593,7 @@ id="kProspects">
 CONTRATOS ATIVOS
 </div>
 
-<span
-class="kpi-value"
-id="kContratos">
+<span class="kpi-value" id="kContratos">
 0
 </span>
 
@@ -608,21 +603,48 @@ id="kContratos">
 <div class="kpi">
 
 <div class="kpi-title">
-SERVIÇOS / PROJETOS
+CLIENTES INATIVOS
 </div>
 
-<span
-class="kpi-value"
-id="kServicos">
+<span class="kpi-value" id="kInativos">
 0
 </span>
 
 </div>
 
+
+<div class="kpi">
+
+<div class="kpi-title">
+PROSPECTS
+</div>
+
+<span class="kpi-value" id="kProspects">
+0
+</span>
+
 </div>
 
 
-<!-- PESQUISA -->
+<div class="kpi">
+
+<div class="kpi-title">
+CLIENTES SOB DEMANDA
+</div>
+
+<span class="kpi-value" id="kDemanda">
+0
+</span>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     PESQUISA
+===================================================== -->
 
 <div class="toolbar">
 
@@ -656,13 +678,17 @@ INATIVO
 <button
 class="btn-primary"
 id="btnLimparFiltro">
+
 Limpar
+
 </button>
 
 </div>
 
 
-<!-- TABELA -->
+<!-- =====================================================
+     TABELA DE CLIENTES
+===================================================== -->
 
 <div class="table-container">
 
@@ -673,21 +699,13 @@ Limpar
 <tr>
 
 <th>ID CLIENTE</th>
-
 <th>RAZÃO SOCIAL</th>
-
 <th>CNPJ</th>
-
 <th>NOME FANTASIA</th>
-
 <th>CONTATO</th>
-
 <th>E-MAIL</th>
-
 <th>RESPONSÁVEL</th>
-
 <th>STATUS</th>
-
 <th>AÇÃO</th>
 
 </tr>
@@ -695,8 +713,7 @@ Limpar
 </thead>
 
 
-<tbody
-id="corpo">
+<tbody id="corpo">
 </tbody>
 
 </table>
@@ -708,7 +725,7 @@ id="corpo">
 
 
 <!-- =====================================================
-     MODAL NOVO CLIENTE
+     NOVO CLIENTE
 ===================================================== -->
 
 <div
@@ -741,10 +758,7 @@ id="btnFecharNovoCliente">
 RAZÃO SOCIAL / NOME *
 </label>
 
-<input
-id="nRazao"
-type="text"
->
+<input id="nRazao">
 
 </div>
 
@@ -755,10 +769,7 @@ type="text"
 CNPJ / CPF
 </label>
 
-<input
-id="nCnpj"
-type="text"
->
+<input id="nCnpj">
 
 </div>
 
@@ -769,10 +780,7 @@ type="text"
 NOME FANTASIA
 </label>
 
-<input
-id="nFantasia"
-type="text"
->
+<input id="nFantasia">
 
 </div>
 
@@ -783,10 +791,7 @@ type="text"
 CONTATO PRINCIPAL
 </label>
 
-<input
-id="nContato"
-type="text"
->
+<input id="nContato">
 
 </div>
 
@@ -797,10 +802,7 @@ type="text"
 E-MAIL
 </label>
 
-<input
-id="nEmail"
-type="email"
->
+<input id="nEmail">
 
 </div>
 
@@ -811,10 +813,7 @@ type="email"
 RESPONSÁVEL PELO CLIENTE
 </label>
 
-<input
-id="nResponsavel"
-type="text"
->
+<input id="nResponsavel">
 
 </div>
 
@@ -851,13 +850,17 @@ INATIVO
 <button
 class="btn-secondary"
 id="btnCancelarNovoCliente">
+
 Cancelar
+
 </button>
 
 <button
 class="btn-primary"
 id="btnCadastrarCliente">
+
 Cadastrar Cliente
+
 </button>
 
 </div>
@@ -869,7 +872,7 @@ Cadastrar Cliente
 
 
 <!-- =====================================================
-     MODAL FICHA DO CLIENTE
+     FICHA DO CLIENTE
 ===================================================== -->
 
 <div
@@ -917,9 +920,7 @@ readonly
 RAZÃO SOCIAL
 </label>
 
-<input
-id="fRazao"
->
+<input id="fRazao">
 
 </div>
 
@@ -930,9 +931,7 @@ id="fRazao"
 CNPJ / CPF
 </label>
 
-<input
-id="fCnpj"
->
+<input id="fCnpj">
 
 </div>
 
@@ -943,9 +942,7 @@ id="fCnpj"
 NOME FANTASIA
 </label>
 
-<input
-id="fFantasia"
->
+<input id="fFantasia">
 
 </div>
 
@@ -956,9 +953,7 @@ id="fFantasia"
 CONTATO
 </label>
 
-<input
-id="fContato"
->
+<input id="fContato">
 
 </div>
 
@@ -969,9 +964,7 @@ id="fContato"
 E-MAIL
 </label>
 
-<input
-id="fEmail"
->
+<input id="fEmail">
 
 </div>
 
@@ -982,9 +975,7 @@ id="fEmail"
 RESPONSÁVEL
 </label>
 
-<input
-id="fResponsavel"
->
+<input id="fResponsavel">
 
 </div>
 
@@ -1021,14 +1012,18 @@ INATIVO
 <button
 class="btn-primary"
 id="btnSalvarCliente">
+
 Salvar alterações
+
 </button>
 
 </div>
 
 
 
-<!-- SERVIÇOS -->
+<!-- =====================================================
+     SERVIÇOS
+===================================================== -->
 
 <div class="section">
 
@@ -1042,11 +1037,7 @@ Rastreabilidade dos Serviços
 
 <p class="section-description">
 
-Cada serviço recebe um código único que acompanha:
-
-<strong>
-cliente → proposta → contrato → execução → registros → entrega
-</strong>
+Cada atendimento recebe um código único.
 
 </p>
 
@@ -1056,21 +1047,24 @@ cliente → proposta → contrato → execução → registros → entrega
 <button
 class="btn-primary"
 id="btnNovoServico">
+
 ＋ Novo Serviço
+
 </button>
 
 </div>
 
 
-<div
-id="listaServicos">
+<div id="listaServicos">
 </div>
 
 </div>
 
 
 
-<!-- CONTRATOS -->
+<!-- =====================================================
+     CONTRATOS
+===================================================== -->
 
 <div class="section">
 
@@ -1078,8 +1072,7 @@ id="listaServicos">
 Contratos vinculados
 </h3>
 
-<div
-id="listaContratos">
+<div id="listaContratos">
 </div>
 
 </div>
@@ -1092,7 +1085,7 @@ id="listaContratos">
 
 
 <!-- =====================================================
-     MODAL SERVIÇO
+     SERVIÇO / DEMANDA
 ===================================================== -->
 
 <div
@@ -1157,12 +1150,47 @@ placeholder="Ex.: Consultoria em SST"
 <div class="field">
 
 <label>
-PROPOSTA
+TIPO DE ATENDIMENTO
+</label>
+
+<select id="sTipoAtendimento">
+
+<option value="CONTRATO">
+CONTRATO
+</option>
+
+<option value="DEMANDA">
+DEMANDA / SOLICITAÇÃO
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+PROPOSTA / ORÇAMENTO
 </label>
 
 <input
 id="sProposta"
 placeholder="PROP-INS-2026-001"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+SOLICITAÇÃO / DEMANDA
+</label>
+
+<input
+id="sSolicitacao"
+placeholder="SOL-INS-2026-001"
 >
 
 </div>
@@ -1188,12 +1216,24 @@ Sem contrato vinculado
 <div class="field">
 
 <label>
-RESPONSÁVEL
+AUTORIZAÇÃO DA DEMANDA
 </label>
 
 <input
-id="sResponsavel"
+id="sAutorizacao"
+placeholder="E-mail, WhatsApp, pedido ou outra evidência"
 >
+
+</div>
+
+
+<div class="field">
+
+<label>
+RESPONSÁVEL
+</label>
+
+<input id="sResponsavel">
 
 </div>
 
@@ -1276,12 +1316,12 @@ id="sTermino"
 <div class="field full">
 
 <label>
-LOCAL DOS DOCUMENTOS
+LINK DA PASTA NO GOOGLE DRIVE
 </label>
 
 <input
 id="sLocal"
-placeholder="Drive / Clientes / INS-2026-001"
+placeholder="https://drive.google.com/..."
 >
 
 </div>
@@ -1293,9 +1333,7 @@ placeholder="Drive / Clientes / INS-2026-001"
 EXECUÇÃO / OBSERVAÇÕES
 </label>
 
-<textarea
-id="sExecucao">
-</textarea>
+<textarea id="sExecucao"></textarea>
 
 </div>
 
@@ -1308,8 +1346,8 @@ REGISTROS / EVIDÊNCIAS
 
 <textarea
 id="sRegistros"
-placeholder="Relatórios, listas, certificados, documentos etc.">
-</textarea>
+placeholder="Relatórios, listas, certificados, documentos etc."
+></textarea>
 
 </div>
 
@@ -1322,8 +1360,8 @@ ENTREGA
 
 <textarea
 id="sEntrega"
-placeholder="Descrição da entrega realizada">
-</textarea>
+placeholder="Descrição da entrega realizada"
+></textarea>
 
 </div>
 
@@ -1341,7 +1379,6 @@ id="sEntregaData"
 
 </div>
 
-
 </div>
 
 
@@ -1350,13 +1387,17 @@ id="sEntregaData"
 <button
 class="btn-secondary"
 id="btnCancelarServico">
+
 Cancelar
+
 </button>
 
 <button
 class="btn-primary"
 id="btnSalvarServico">
+
 Salvar Serviço
+
 </button>
 
 </div>
@@ -1370,11 +1411,12 @@ Salvar Serviço
 
 <script>
 
+
 'use strict';
 
 
 /* =====================================================
-   CONFIGURAÇÃO SUPABASE
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -1382,13 +1424,10 @@ const SUPABASE_URL =
 
 
 /*
- IMPORTANTE:
-
- COLE ABAIXO A SUA PUBLISHABLE KEY ATUAL.
+ MANTENHA A MESMA PUBLISHABLE KEY
+ QUE JÁ ESTÁ FUNCIONANDO NO SEU ARQUIVO.
 
  NÃO USE A SECRET KEY.
-
- NÃO COMPARTILHE A CHAVE NO CHAT.
 */
 
 const SUPABASE_KEY =
@@ -1400,7 +1439,6 @@ window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
-
 
 
 /* =====================================================
@@ -1416,7 +1454,6 @@ let contratos = [];
 let servicos = [];
 
 let clienteSelecionado = null;
-
 
 
 /* =====================================================
@@ -1467,9 +1504,8 @@ function mostrarAlerta(texto,tipo='error'){
 }
 
 
-
 /* =====================================================
-   CARREGAMENTO PRINCIPAL
+   CARREGAR
 ===================================================== */
 
 async function carregar(){
@@ -1500,8 +1536,6 @@ async function carregar(){
         }
 
 
-        /* CLIENTES */
-
         const resultadoClientes =
             await sb
                 .from('clientes')
@@ -1524,8 +1558,6 @@ async function carregar(){
             resultadoClientes.data || [];
 
 
-        /* CONTRATOS */
-
         const resultadoContratos =
             await sb
                 .from('contratos')
@@ -1547,8 +1579,6 @@ async function carregar(){
             resultadoContratos.data || [];
 
 
-        /* SERVIÇOS */
-
         const resultadoServicos =
             await sb
                 .from('servicos_clientes')
@@ -1563,11 +1593,6 @@ async function carregar(){
 
 
         if(resultadoServicos.error){
-
-            /*
-             Caso a tabela ainda não tenha sido criada,
-             não impede a exibição dos clientes.
-            */
 
             console.warn(
                 'Serviços:',
@@ -1600,9 +1625,8 @@ async function carregar(){
 }
 
 
-
 /* =====================================================
-   RENDERIZAÇÃO
+   RENDER
 ===================================================== */
 
 function render(){
@@ -1624,12 +1648,16 @@ function render(){
             const servicosCliente =
                 servicos.filter(function(servico){
 
-                    return servico.cliente_id === cliente.id;
+                    return String(
+                        servico.cliente_id
+                    ) === String(
+                        cliente.id
+                    );
 
                 });
 
 
-            const texto = [
+            const texto=[
 
                 cliente.id_cliente,
 
@@ -1663,7 +1691,9 @@ function render(){
             return (
 
                 (!filtro ||
-                 cliente.status === filtro)
+                 String(cliente.status || '')
+                 .trim()
+                 .toUpperCase() === filtro)
 
                 &&
 
@@ -1675,43 +1705,93 @@ function render(){
         });
 
 
-
-    /* KPIs */
-
-    $('kAtivos').textContent =
-        clientes.filter(function(x){
-
-            return x.status === 'ATIVO';
-
-        }).length;
-
+    /* =================================================
+       INDICADORES
+    ================================================= */
 
     $('kTotal').textContent =
         clientes.length;
 
 
-    $('kProspects').textContent =
-        clientes.filter(function(x){
-
-            return x.status === 'PROSPECT';
-
-        }).length;
-
-
     $('kContratos').textContent =
-        contratos.filter(function(x){
+        contratos.filter(function(contrato){
 
-            return x.status === 'ATIVO';
+            return String(
+                contrato.status || ''
+            )
+            .trim()
+            .toUpperCase() === 'ATIVO';
 
         }).length;
 
 
-    $('kServicos').textContent =
-        servicos.length;
+    $('kInativos').textContent =
+        clientes.filter(function(cliente){
+
+            return String(
+                cliente.status || ''
+            )
+            .trim()
+            .toUpperCase() === 'INATIVO';
+
+        }).length;
 
 
+    $('kProspects').textContent =
+        clientes.filter(function(cliente){
 
-    /* TABELA */
+            return String(
+                cliente.status || ''
+            )
+            .trim()
+            .toUpperCase() === 'PROSPECT';
+
+        }).length;
+
+
+    /*
+      CLIENTES SOB DEMANDA
+
+      Conta clientes únicos que possuem
+      pelo menos uma demanda sem contrato.
+    */
+
+    const clientesDemanda =
+        new Set(
+
+            servicos
+
+                .filter(function(servico){
+
+                    return (
+                        String(
+                            servico.tipo_atendimento || ''
+                        )
+                        .trim()
+                        .toUpperCase()
+                        === 'DEMANDA'
+                    );
+
+                })
+
+                .map(function(servico){
+
+                    return String(
+                        servico.cliente_id
+                    );
+
+                })
+
+        );
+
+
+    $('kDemanda').textContent =
+        clientesDemanda.size;
+
+
+    /* =================================================
+       TABELA
+    ================================================= */
 
     if(!lista.length){
 
@@ -1739,10 +1819,11 @@ function render(){
     $('corpo').innerHTML =
         lista.map(function(cliente){
 
-            let classeStatus =
+            const classe =
                 String(
                     cliente.status || ''
-                ).toLowerCase();
+                )
+                .toLowerCase();
 
 
             return `
@@ -1796,7 +1877,7 @@ function render(){
                     <td>
 
                         <span
-                            class="status ${classeStatus}">
+                            class="status ${classe}">
 
                             ${escapeHTML(
                                 cliente.status
@@ -1845,7 +1926,6 @@ function render(){
 }
 
 
-
 /* =====================================================
    NOVO CLIENTE
 ===================================================== */
@@ -1859,7 +1939,6 @@ function abrirNovoCliente(){
     $('nEmail').value='';
     $('nResponsavel').value='';
     $('nStatus').value='ATIVO';
-
 
     $('modalNovoCliente')
         .classList
@@ -1889,9 +1968,11 @@ async function cadastrarCliente(){
 
     const dados={
 
-        user_id:usuario.id,
+        user_id:
+            usuario.id,
 
-        razao_social:razao,
+        razao_social:
+            razao,
 
         cnpj:
             $('nCnpj')
@@ -1958,7 +2039,6 @@ async function cadastrarCliente(){
     );
 
 }
-
 
 
 /* =====================================================
@@ -2030,9 +2110,8 @@ function abrirCliente(id){
 }
 
 
-
 /* =====================================================
-   SALVAR ALTERAÇÕES DO CLIENTE
+   SALVAR CLIENTE
 ===================================================== */
 
 async function salvarCliente(){
@@ -2126,7 +2205,6 @@ async function salvarCliente(){
 }
 
 
-
 /* =====================================================
    CONTRATOS
 ===================================================== */
@@ -2177,10 +2255,12 @@ function carregarContratos(){
                 <div class="contract-card">
 
                     <strong>
+
                         ${escapeHTML(
                             contrato.numero_contrato ||
                             'Contrato'
                         )}
+
                     </strong>
 
                     <div class="contract-grid">
@@ -2243,7 +2323,6 @@ function carregarContratos(){
 }
 
 
-
 /* =====================================================
    SERVIÇOS
 ===================================================== */
@@ -2289,9 +2368,108 @@ function carregarServicos(){
     $('listaServicos').innerHTML =
         lista.map(function(servico){
 
+            const tipo =
+                String(
+                    servico.tipo_atendimento ||
+                    'CONTRATO'
+                )
+                .toUpperCase();
+
+
+            const ehDemanda =
+                tipo === 'DEMANDA';
+
+
+            const fluxo =
+                ehDemanda
+
+                ?
+
+                `
+                <span class="timeline-step">
+                    CLIENTE
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    SOLICITAÇÃO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    PROPOSTA / ORÇAMENTO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    AUTORIZAÇÃO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    EXECUÇÃO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    REGISTROS
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    ENTREGA
+                </span>
+                `
+
+                :
+
+                `
+                <span class="timeline-step">
+                    CLIENTE
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    PROPOSTA
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    CONTRATO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    EXECUÇÃO
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    REGISTROS
+                </span>
+
+                <span class="timeline-arrow">→</span>
+
+                <span class="timeline-step">
+                    ENTREGA
+                </span>
+                `;
+
+
             return `
 
                 <div class="trace-card">
+
 
                     <div class="trace-header">
 
@@ -2305,10 +2483,23 @@ function carregarServicos(){
 
                             </div>
 
+
                             <div class="trace-service">
 
                                 ${escapeHTML(
                                     servico.servico
+                                )}
+
+                            </div>
+
+
+                            <div class="trace-type">
+
+                                Tipo:
+                                ${escapeHTML(
+                                    ehDemanda
+                                    ? 'DEMANDA / SOLICITAÇÃO'
+                                    : 'CONTRATO'
                                 )}
 
                             </div>
@@ -2329,39 +2520,7 @@ function carregarServicos(){
 
                     <div class="timeline">
 
-                        <span class="timeline-step">
-                            CLIENTE
-                        </span>
-
-                        <span class="timeline-arrow">→</span>
-
-                        <span class="timeline-step">
-                            PROPOSTA
-                        </span>
-
-                        <span class="timeline-arrow">→</span>
-
-                        <span class="timeline-step">
-                            CONTRATO
-                        </span>
-
-                        <span class="timeline-arrow">→</span>
-
-                        <span class="timeline-step">
-                            EXECUÇÃO
-                        </span>
-
-                        <span class="timeline-arrow">→</span>
-
-                        <span class="timeline-step">
-                            REGISTROS
-                        </span>
-
-                        <span class="timeline-arrow">→</span>
-
-                        <span class="timeline-step">
-                            ENTREGA
-                        </span>
+                        ${fluxo}
 
                     </div>
 
@@ -2371,13 +2530,17 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>PROPOSTA</small>
+                            <small>
+                                PROPOSTA / ORÇAMENTO
+                            </small>
 
                             <div>
+
                                 ${escapeHTML(
                                     servico.proposta_codigo ||
                                     '—'
                                 )}
+
                             </div>
 
                         </div>
@@ -2385,14 +2548,36 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>CONTRATO</small>
+                            <small>
+                                SOLICITAÇÃO / DEMANDA
+                            </small>
 
                             <div>
+
+                                ${escapeHTML(
+                                    servico.solicitacao_codigo ||
+                                    '—'
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>
+                                CONTRATO
+                            </small>
+
+                            <div>
+
                                 ${escapeHTML(
                                     obterNumeroContrato(
                                         servico.contrato_id
                                     )
                                 )}
+
                             </div>
 
                         </div>
@@ -2400,13 +2585,35 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>RESPONSÁVEL</small>
+                            <small>
+                                AUTORIZAÇÃO
+                            </small>
 
                             <div>
+
+                                ${escapeHTML(
+                                    servico.autorizacao_demanda ||
+                                    '—'
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="trace-item">
+
+                            <small>
+                                RESPONSÁVEL
+                            </small>
+
+                            <div>
+
                                 ${escapeHTML(
                                     servico.responsavel ||
                                     '—'
                                 )}
+
                             </div>
 
                         </div>
@@ -2414,27 +2621,17 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>STATUS</small>
+                            <small>
+                                INÍCIO
+                            </small>
 
                             <div>
-                                ${escapeHTML(
-                                    servico.status ||
-                                    '—'
-                                )}
-                            </div>
 
-                        </div>
-
-
-                        <div class="trace-item">
-
-                            <small>INÍCIO</small>
-
-                            <div>
                                 ${escapeHTML(
                                     servico.data_inicio ||
                                     '—'
                                 )}
+
                             </div>
 
                         </div>
@@ -2442,13 +2639,17 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>PREVISÃO</small>
+                            <small>
+                                PREVISÃO
+                            </small>
 
                             <div>
+
                                 ${escapeHTML(
                                     servico.data_previsao_termino ||
                                     '—'
                                 )}
+
                             </div>
 
                         </div>
@@ -2456,13 +2657,17 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>ENTREGA</small>
+                            <small>
+                                ENTREGA
+                            </small>
 
                             <div>
+
                                 ${escapeHTML(
                                     servico.entrega_data ||
                                     '—'
                                 )}
+
                             </div>
 
                         </div>
@@ -2470,13 +2675,34 @@ function carregarServicos(){
 
                         <div class="trace-item">
 
-                            <small>DOCUMENTOS</small>
+                            <small>
+                                DOCUMENTOS
+                            </small>
 
                             <div>
-                                ${escapeHTML(
-                                    servico.local_documentos ||
+
+                                ${
+                                    servico.local_documentos
+
+                                    ?
+
+                                    `
+                                    <a
+                                        class="drive-link"
+                                        href="${escapeHTML(servico.local_documentos)}"
+                                        target="_blank"
+                                        rel="noopener">
+
+                                        📁 Abrir pasta no Google Drive ↗
+
+                                    </a>
+                                    `
+
+                                    :
+
                                     '—'
-                                )}
+                                }
+
                             </div>
 
                         </div>
@@ -2495,6 +2721,7 @@ function carregarServicos(){
                         </button>
 
                     </div>
+
 
                 </div>
 
@@ -2523,9 +2750,8 @@ function carregarServicos(){
 }
 
 
-
 /* =====================================================
-   CONTRATO DO SERVIÇO
+   CONTRATO
 ===================================================== */
 
 function obterNumeroContrato(id){
@@ -2558,9 +2784,8 @@ function obterNumeroContrato(id){
 }
 
 
-
 /* =====================================================
-   NOVO SERVIÇO
+   GERAR CÓDIGO
 ===================================================== */
 
 function gerarCodigoServico(){
@@ -2576,26 +2801,34 @@ function gerarCodigoServico(){
 
     const numeros =
         servicos
+
             .filter(function(servico){
 
                 return String(
                     servico.codigo_unico || ''
-                ).startsWith(prefixo);
+                )
+                .startsWith(prefixo);
 
             })
+
             .map(function(servico){
 
                 return parseInt(
+
                     String(
                         servico.codigo_unico
-                    ).replace(
+                    )
+                    .replace(
                         prefixo,
                         ''
                     ),
+
                     10
+
                 );
 
             })
+
             .filter(function(numero){
 
                 return !isNaN(numero);
@@ -2616,6 +2849,9 @@ function gerarCodigoServico(){
 }
 
 
+/* =====================================================
+   NOVO SERVIÇO
+===================================================== */
 
 function abrirNovoServico(){
 
@@ -2643,11 +2879,6 @@ function abrirNovoServico(){
 }
 
 
-
-/* =====================================================
-   LIMPAR SERVIÇO
-===================================================== */
-
 function limparFormularioServico(){
 
     $('servicoId').value='';
@@ -2656,9 +2887,15 @@ function limparFormularioServico(){
 
     $('sServico').value='';
 
+    $('sTipoAtendimento').value='CONTRATO';
+
     $('sProposta').value='';
 
+    $('sSolicitacao').value='';
+
     $('sContrato').value='';
+
+    $('sAutorizacao').value='';
 
     $('sResponsavel').value='';
 
@@ -2687,7 +2924,6 @@ function limparFormularioServico(){
 }
 
 
-
 /* =====================================================
    CONTRATOS NO SELECT
 ===================================================== */
@@ -2706,7 +2942,7 @@ function carregarSelectContratos(){
         });
 
 
-    $('sContrato').innerHTML = `
+    $('sContrato').innerHTML=`
 
         <option value="">
             Sem contrato vinculado
@@ -2745,7 +2981,6 @@ function carregarSelectContratos(){
 }
 
 
-
 /* =====================================================
    EDITAR SERVIÇO
 ===================================================== */
@@ -2755,7 +2990,9 @@ function editarServico(id){
     const servico =
         servicos.find(function(item){
 
-            return String(item.id) === String(id);
+            return String(
+                item.id
+            ) === String(id);
 
         });
 
@@ -2782,12 +3019,25 @@ function editarServico(id){
         servico.servico || '';
 
 
+    $('sTipoAtendimento').value =
+        servico.tipo_atendimento ||
+        'CONTRATO';
+
+
     $('sProposta').value =
         servico.proposta_codigo || '';
 
 
+    $('sSolicitacao').value =
+        servico.solicitacao_codigo || '';
+
+
     $('sContrato').value =
         servico.contrato_id || '';
+
+
+    $('sAutorizacao').value =
+        servico.autorizacao_demanda || '';
 
 
     $('sResponsavel').value =
@@ -2841,7 +3091,6 @@ function editarServico(id){
 }
 
 
-
 /* =====================================================
    SALVAR SERVIÇO
 ===================================================== */
@@ -2878,6 +3127,11 @@ async function salvarServico(){
     }
 
 
+    const tipo =
+        $('sTipoAtendimento')
+            .value;
+
+
     const dados={
 
         user_id:
@@ -2892,14 +3146,27 @@ async function salvarServico(){
         servico:
             servico,
 
+        tipo_atendimento:
+            tipo,
+
         proposta_codigo:
             $('sProposta')
+                .value
+                .trim() || null,
+
+        solicitacao_codigo:
+            $('sSolicitacao')
                 .value
                 .trim() || null,
 
         contrato_id:
             $('sContrato')
                 .value || null,
+
+        autorizacao_demanda:
+            $('sAutorizacao')
+                .value
+                .trim() || null,
 
         responsavel:
             $('sResponsavel')
@@ -2919,7 +3186,8 @@ async function salvarServico(){
                 .value || null,
 
         status:
-            $('sStatus').value,
+            $('sStatus')
+                .value,
 
         local_documentos:
             $('sLocal')
@@ -2949,7 +3217,8 @@ async function salvarServico(){
 
 
     const id =
-        $('servicoId').value;
+        $('servicoId')
+            .value;
 
 
     let resultado;
@@ -2961,8 +3230,14 @@ async function salvarServico(){
             await sb
                 .from('servicos_clientes')
                 .update(dados)
-                .eq('id',id)
-                .eq('user_id',usuario.id);
+                .eq(
+                    'id',
+                    id
+                )
+                .eq(
+                    'user_id',
+                    usuario.id
+                );
 
     }else{
 
@@ -2994,11 +3269,9 @@ async function salvarServico(){
     await carregar();
 
 
-    const clienteId =
-        clienteSelecionado.id;
-
-
-    abrirCliente(clienteId);
+    abrirCliente(
+        clienteSelecionado.id
+    );
 
 
     mostrarAlerta(
@@ -3009,13 +3282,9 @@ async function salvarServico(){
 }
 
 
-
 /* =====================================================
    EVENTOS
 ===================================================== */
-
-
-/* Novo cliente */
 
 $('btnNovoCliente')
     .addEventListener(
@@ -3057,18 +3326,12 @@ $('btnCadastrarCliente')
     );
 
 
-
-/* Atualizar */
-
 $('btnAtualizar')
     .addEventListener(
         'click',
         carregar
     );
 
-
-
-/* Limpar filtro */
 
 $('btnLimparFiltro')
     .addEventListener(
@@ -3085,9 +3348,6 @@ $('btnLimparFiltro')
     );
 
 
-
-/* Pesquisa */
-
 $('busca')
     .addEventListener(
         'input',
@@ -3101,9 +3361,6 @@ $('filtro')
         render
     );
 
-
-
-/* Cliente */
 
 $('btnFecharCliente')
     .addEventListener(
@@ -3124,9 +3381,6 @@ $('btnSalvarCliente')
         salvarCliente
     );
 
-
-
-/* Serviço */
 
 $('btnNovoServico')
     .addEventListener(
@@ -3168,9 +3422,6 @@ $('btnSalvarServico')
     );
 
 
-
-/* Navegação */
-
 $('btnInicio')
     .addEventListener(
         'click',
@@ -3193,7 +3444,6 @@ $('btnSair')
 
         }
     );
-
 
 
 /* =====================================================
