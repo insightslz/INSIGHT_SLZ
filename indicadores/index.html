@@ -369,7 +369,7 @@ td{
   <div class="grid2">
 
     <section class="panel">
-      <h2>Financeiro</h2>
+      <h2>Financeiro — integrado à DRE</h2>
 
       <table>
         <tbody>
@@ -631,6 +631,8 @@ async function carregarDRE(){
   document.getElementById("margem").textContent =
     percentual(margemLiquida);
 
+  document.getElementById("kpiMargemLiquida").textContent =
+  percentual(margemLiquida);
 
   document.getElementById("resReceita").textContent =
     moeda(totalReceita);
