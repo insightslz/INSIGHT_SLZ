@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equipamentos e Recursos | Insight</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f8fc;color:#18324b}
+header{background:#fff;border-bottom:1px solid #dce6f2;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+h1{margin:0;font-size:24px}.subtitle{margin:6px 0 0;color:#718096;font-size:14px}
+.container{max-width:1500px;margin:auto;padding:25px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:9px;padding:10px 15px;cursor:pointer;font-weight:600}
+.btn-primary{background:#1769aa;color:#fff}.btn-secondary{background:#eaf1f8;color:#23415f}.btn-danger{background:#fee2e2;color:#991b1b}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px}
+.card{background:#fff;border:1px solid #dce6f2;border-radius:15px;padding:18px}
+.kpi-label{font-size:12px;color:#718096;text-transform:uppercase}.kpi-value{font-size:27px;font-weight:700;margin-top:7px}
+.warn .kpi-value{color:#b7791f}.danger .kpi-value{color:#b42318}
+.toolbar{background:#fff;border:1px solid #dce6f2;border-radius:15px;padding:15px;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input{max-width:430px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #ccd8e6;border-radius:8px;background:#fff;color:#18324b}
+.table-container{width:100%;max-width:100%;background:#fff;border:1px solid #dce6f2;border-radius:16px;overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;max-width:100%;min-width:0;table-layout:fixed;border-collapse:collapse}
+th,td{padding:13px 12px;border-bottom:1px solid #e7edf5;text-align:left;font-size:13px;white-space:normal;overflow-wrap:anywhere;word-break:break-word;vertical-align:middle}
+th{background:#f8fafc;font-size:12px;text-transform:uppercase;color:#60748a}
+.status{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.ok{background:#dcfce7;color:#166534}.warning{background:#fef3c7;color:#92400e}.danger{background:#fee2e2;color:#991b1b}.neutral{background:#e8eef5;color:#526579}
+.modal-backdrop{position:fixed;inset:0;background:rgba(13,31,48,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal{width:min(1000px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:24px}
+.modal h2{margin-top:0}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.full{grid-column:1/-1}.form-group label{display:block;font-size:12px;font-weight:700;color:#526579;margin-bottom:6px}
+.section-title{margin:22px 0 10px;font-size:15px;border-bottom:1px solid #e7edf5;padding-bottom:8px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid #e7edf5}
+.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.detail{background:#f8fafc;border-radius:10px;padding:12px}.detail small{display:block;color:#718096;margin-bottom:4px}
+.doc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.doc{border:1px solid #dce6f2;border-radius:10px;padding:12px;background:#fbfdff}
+.doc a{display:inline-block;margin-top:6px;color:#1769aa;text-decoration:none;font-weight:600}
+.empty{padding:35px;text-align:center;color:#718096}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#17324d;color:#fff;padding:13px 17px;border-radius:10px;display:none;max-width:450px}
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){header{align-items:flex-start;flex-direction:column}.container{padding:15px}.kpis{grid-template-columns:repeat(2,1fr)}.form-grid,.details,.doc-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+<div>
+<h1>Equipamentos e Recursos</h1>
+<div class="subtitle">Controle de equipamentos, materiais, documentação, calibração, manutenção e evidências da Insight</div>
+</div>
+<div class="actions">
+<button class="btn-secondary" onclick="location.href='../'">Menu</button>
+<button class="btn-primary" onclick="openModal()">+ Novo Registro</button>
+<button class="btn-secondary" onclick="loadData()">Atualizar</button>
+</div>
+</header>
+
+<main class="container">
+<section class="kpis">
+<div class="card"><div class="kpi-label">Total</div><div class="kpi-value" id="kpiTotal">0</div></div>
+<div class="card"><div class="kpi-label">Medição</div><div class="kpi-value" id="kpiMedicao">0</div></div>
+<div class="card"><div class="kpi-label">Treinamento</div><div class="kpi-value" id="kpiTreinamento">0</div></div>
+<div class="card"><div class="kpi-label">Válidos / Disponíveis</div><div class="kpi-value" id="kpiValidos">0</div></div>
+<div class="card warn"><div class="kpi-label">A Vencer</div><div class="kpi-value" id="kpiVencer">0</div></div>
+<div class="card danger"><div class="kpi-label">Vencidos / Indisponíveis</div><div class="kpi-value" id="kpiVencidos">0</div></div>
+</section>
+
+<div class="toolbar">
+<input id="search" placeholder="Pesquisar código, equipamento, material, fabricante..." oninput="renderTable()">
+<select id="filtroTipo" onchange="renderTable()">
+<option value="">Todos os tipos</option><option value="MEDIÇÃO">Equipamento de Medição</option><option value="TREINAMENTO">Equipamento de Treinamento</option><option value="MATERIAL">Material de Treinamento</option><option value="TI">Equipamento de TI</option><option value="ADMINISTRATIVO">Equipamento Administrativo</option><option value="MOBILIÁRIO">Mobiliário</option><option value="VEÍCULO">Veículo</option><option value="OUTRO">Outro</option>
+</select>
+<select id="filtroSituacao" onchange="renderTable()">
+<option value="">Todas as situações</option><option value="DISPONÍVEL">Disponível</option><option value="VÁLIDO">Válido</option><option value="A VENCER">A vencer</option><option value="VENCIDO">Vencido</option><option value="EM MANUTENÇÃO">Em manutenção</option><option value="INDISPONÍVEL">Indisponível</option><option value="BAIXADO">Baixado</option>
+</select>
+</div>
+
+<section class="table-container"><div class="table-scroll">
+<table>
+<thead><tr>
+<th style="width:8%">Código</th><th style="width:18%">Equipamento / Material</th><th style="width:13%">Tipo</th><th style="width:13%">Fabricante / Modelo</th><th style="width:10%">Patrimônio / Série</th><th style="width:11%">Controle</th><th style="width:10%">Próximo</th><th style="width:10%">Situação</th><th style="width:7%">Ação</th>
+</tr></thead>
+<tbody id="tableBody"></tbody>
+</table></div></section>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal">
+<h2 id="modalTitle">Novo Registro</h2>
+<form id="formEquipamento" onsubmit="saveEquipment(event)">
+<input type="hidden" id="registroId">
+<div class="form-grid">
+
+<div class="form-group"><label>Código interno *</label><input id="codigo" required placeholder="EQ-001 / MAT-001"></div>
+<div class="form-group"><label>Tipo *</label><select id="tipo" required>
+<option value="MEDIÇÃO">Equipamento de Medição</option><option value="TREINAMENTO">Equipamento de Treinamento</option><option value="MATERIAL">Material de Treinamento</option><option value="TI">Equipamento de TI</option><option value="ADMINISTRATIVO">Equipamento Administrativo</option><option value="MOBILIÁRIO">Mobiliário</option><option value="VEÍCULO">Veículo</option><option value="OUTRO">Outro</option>
+</select></div>
+
+<div class="form-group full"><label>Equipamento / Material / Recurso *</label><input id="nome" required placeholder="Ex.: Decibelímetro, projetor, notebook, kit didático..."></div>
+<div class="form-group"><label>Categoria</label><input id="categoria"></div>
+<div class="form-group"><label>Fabricante</label><input id="fabricante"></div>
+<div class="form-group"><label>Modelo</label><input id="modelo"></div>
+<div class="form-group"><label>Nº Patrimônio</label><input id="patrimonio"></div>
+<div class="form-group"><label>Nº Série</label><input id="numero_serie"></div>
+<div class="form-group"><label>Data de aquisição</label><input id="data_aquisicao" type="date"></div>
+<div class="form-group"><label>Fornecedor</label><input id="fornecedor"></div>
+<div class="form-group"><label>Valor de aquisição</label><input id="valor_aquisicao" type="number" step="0.01" min="0"></div>
+<div class="form-group"><label>Garantia até</label><input id="garantia_ate" type="date"></div>
+<div class="form-group"><label>Origem</label><select id="origem"><option value="">Não informado</option><option>COMPRA PRÓPRIA</option><option>LOCAÇÃO</option><option>COMODATO</option><option>EMPRÉSTIMO</option><option>OUTRO</option></select></div>
+<div class="form-group"><label>Responsável</label><input id="responsavel"></div>
+<div class="form-group"><label>Localização</label><input id="localizacao"></div>
+
+<div class="form-group"><label>Faixa de medição</label><input id="faixa_medicao" placeholder="Quando aplicável"></div>
+<div class="form-group"><label>Unidade de medida</label><input id="unidade_medida" placeholder="dB, lux, °C etc."></div>
+<div class="form-group"><label>Tipo de controle</label><select id="tipo_controle"><option value="">Não aplicável</option><option>CALIBRAÇÃO</option><option>VERIFICAÇÃO</option><option>MANUTENÇÃO</option><option>CALIBRAÇÃO E VERIFICAÇÃO</option></select></div>
+<div class="form-group"><label>Periodicidade</label><input id="periodicidade" placeholder="Ex.: 12 meses"></div>
+<div class="form-group"><label>Último controle</label><input id="ultima_data" type="date"></div>
+<div class="form-group"><label>Próximo controle</label><input id="proxima_data" type="date"></div>
+<div class="form-group"><label>Situação *</label><select id="situacao" required><option>DISPONÍVEL</option><option>VÁLIDO</option><option>A VENCER</option><option>VENCIDO</option><option>EM MANUTENÇÃO</option><option>INDISPONÍVEL</option><option>BAIXADO</option></select></div>
+
+<div class="form-group full"><label>Observações</label><textarea id="observacoes" rows="3"></textarea></div>
+
+<div class="full section-title">Documentos e Evidências — links para Google Drive ou outro repositório</div>
+<div class="form-group"><label>Nota Fiscal</label><input id="nota_fiscal_url" type="url" placeholder="Link do documento"></div>
+<div class="form-group"><label>Certificado de Calibração</label><input id="certificado_calibracao_url" type="url" placeholder="Link do certificado"></div>
+<div class="form-group"><label>Certificado / Laudo / Verificação</label><input id="certificado_verificacao_url" type="url" placeholder="Link da evidência"></div>
+<div class="form-group"><label>Manual do Fabricante</label><input id="manual_url" type="url" placeholder="Link do manual"></div>
+<div class="form-group"><label>Manutenção</label><input id="manutencao_url" type="url" placeholder="Link do registro"></div>
+<div class="form-group"><label>Garantia / Comodato / Locação</label><input id="garantia_documento_url" type="url" placeholder="Link do documento"></div>
+<div class="form-group"><label>Foto</label><input id="foto_url" type="url" placeholder="Link da foto"></div>
+<div class="form-group"><label>Outro documento</label><input id="outro_documento_url" type="url" placeholder="Link"></div>
+
+</div>
+<div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button><button class="btn-primary">Salvar</button></div>
+</form>
+</div></div>
+
+<div class="modal-backdrop" id="detailBackdrop"><div class="modal">
+<h2 id="detailTitle">Detalhes</h2><div id="detailContent"></div>
+<div class="modal-footer"><button class="btn-secondary" onclick="closeDetail()">Fechar</button><button class="btn-primary" id="editDetailButton">Editar</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://sayeyuyampbsmhhdukzv.supabase.co';
+// COLE AQUI A MESMA PUBLISHABLE KEY QUE VOCÊ JÁ USA NAS OUTRAS PÁGINAS.
+const SUPABASE_KEY='sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA';
+const {createClient}=supabase;
+const db=createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,registros=[];
+
+const fields=['codigo','tipo','nome','categoria','fabricante','modelo','patrimonio','numero_serie','data_aquisicao','fornecedor','valor_aquisicao','garantia_ate','origem','responsavel','localizacao','faixa_medicao','unidade_medida','tipo_controle','periodicidade','ultima_data','proxima_data','situacao','observacoes','nota_fiscal_url','certificado_calibracao_url','certificado_verificacao_url','manual_url','manutencao_url','garantia_documento_url','foto_url','outro_documento_url'];
+
+async function init(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){location.href='../login/';return}
+ currentUser=session.user; await loadData();
+}
+async function loadData(){
+ const {data,error}=await db.from('equipamentos_materiais').select('*').eq('user_id',currentUser.id).order('codigo',{ascending:true});
+ if(error){showToast('Erro ao carregar: '+error.message);registros=[]}else registros=data||[];
+ updateKPIs();renderTable();
+}
+function updateKPIs(){
+ const total=registros.length,med=registros.filter(x=>x.tipo==='MEDIÇÃO').length,trei=registros.filter(x=>['TREINAMENTO','MATERIAL'].includes(x.tipo)).length;
+ const val=registros.filter(x=>['VÁLIDO','DISPONÍVEL'].includes(x.situacao)).length;
+ const av=registros.filter(x=>x.situacao==='A VENCER').length;
+ const venc=registros.filter(x=>['VENCIDO','INDISPONÍVEL'].includes(x.situacao)).length;
+ ['kpiTotal','kpiMedicao','kpiTreinamento','kpiValidos','kpiVencer','kpiVencidos'].forEach((id,i)=>document.getElementById(id).textContent=[total,med,trei,val,av,venc][i]);
+}
+function renderTable(){
+ const q=(document.getElementById('search').value||'').toLowerCase(),t=document.getElementById('filtroTipo').value,s=document.getElementById('filtroSituacao').value;
+ const list=registros.filter(x=>[x.codigo,x.nome,x.tipo,x.fabricante,x.modelo,x.patrimonio,x.numero_serie].join(' ').toLowerCase().includes(q)&&(!t||x.tipo===t)&&(!s||x.situacao===s));
+ const body=document.getElementById('tableBody');
+ if(!list.length){body.innerHTML='<tr><td colspan="9" class="empty">Nenhum registro encontrado.</td></tr>';return}
+ body.innerHTML=list.map(x=>`<tr>
+ <td><strong>${esc(x.codigo)}</strong></td><td>${esc(x.nome)}<br><small>${esc(x.categoria||'')}</small></td><td>${tipoLabel(x.tipo)}</td>
+ <td>${esc([x.fabricante,x.modelo].filter(Boolean).join(' / ')||'—')}</td><td>${esc([x.patrimonio,x.numero_serie].filter(Boolean).join(' / ')||'—')}</td>
+ <td>${esc(x.tipo_controle||'—')}<br><small>${formatDate(x.ultima_data)}</small></td><td>${formatDate(x.proxima_data)}</td>
+ <td><span class="status ${statusClass(x.situacao)}">${esc(x.situacao)}</span></td><td><button class="btn-secondary" onclick="viewDetail('${x.id}')">Ver</button></td></tr>`).join('');
+}
+function openModal(id=null){
+ document.getElementById('formEquipamento').reset();document.getElementById('registroId').value='';document.getElementById('modalTitle').textContent='Novo Registro';
+ if(id){const x=registros.find(r=>r.id===id);if(!x)return;document.getElementById('modalTitle').textContent='Editar Registro';document.getElementById('registroId').value=x.id;fields.forEach(k=>{const e=document.getElementById(k);if(e)e.value=x[k]??''})}
+ document.getElementById('modalBackdrop').style.display='flex';
+}
+function closeModal(){document.getElementById('modalBackdrop').style.display='none'}
+async function saveEquipment(e){
+ e.preventDefault();if(!currentUser){showToast('Sessão não encontrada. Faça login novamente.');return}
+ const id=document.getElementById('registroId').value,payload={};
+ fields.forEach(k=>payload[k]=document.getElementById(k).value.trim()||null);
+ if(payload.valor_aquisicao!==null)payload.valor_aquisicao=Number(payload.valor_aquisicao);
+ payload.user_id=currentUser.id;payload.updated_at=new Date().toISOString();
+ let result;
+ if(id)result=await db.from('equipamentos_materiais').update(payload).eq('id',id).eq('user_id',currentUser.id);
+ else{payload.created_at=new Date().toISOString();result=await db.from('equipamentos_materiais').insert(payload)}
+ if(result.error){showToast('Erro ao salvar: '+result.error.message);return}
+ closeModal();showToast('Registro salvo com sucesso.');await loadData();
+}
+function viewDetail(id){
+ const x=registros.find(r=>r.id===id);if(!x)return;
+ document.getElementById('detailTitle').textContent=x.codigo+' — '+x.nome;
+ const docs=[
+ ['Nota Fiscal',x.nota_fiscal_url],['Certificado de Calibração',x.certificado_calibracao_url],['Certificado / Laudo / Verificação',x.certificado_verificacao_url],
+ ['Manual do Fabricante',x.manual_url],['Manutenção',x.manutencao_url],['Garantia / Comodato / Locação',x.garantia_documento_url],['Foto',x.foto_url],['Outro documento',x.outro_documento_url]
+ ];
+ document.getElementById('detailContent').innerHTML=`
+ <div class="details">${detail('Tipo',tipoLabel(x.tipo))}${detail('Categoria',x.categoria)}${detail('Fabricante',x.fabricante)}${detail('Modelo',x.modelo)}${detail('Patrimônio',x.patrimonio)}${detail('Nº Série',x.numero_serie)}
+ ${detail('Aquisição',formatDate(x.data_aquisicao))}${detail('Fornecedor',x.fornecedor)}${detail('Origem',x.origem)}${detail('Valor',x.valor_aquisicao!==null&&x.valor_aquisicao!==undefined?'R$ '+Number(x.valor_aquisicao).toLocaleString('pt-BR',{minimumFractionDigits:2}):null)}
+ ${detail('Garantia',formatDate(x.garantia_ate))}${detail('Responsável',x.responsavel)}${detail('Localização',x.localizacao)}${detail('Faixa',x.faixa_medicao)}${detail('Unidade',x.unidade_medida)}
+ ${detail('Controle',x.tipo_controle)}${detail('Último controle',formatDate(x.ultima_data))}${detail('Próximo controle',formatDate(x.proxima_data))}${detail('Situação','<span class="status '+statusClass(x.situacao)+'">'+esc(x.situacao)+'</span>')}</div>
+ <div class="section-title">Documentos e Evidências</div><div class="doc-grid">${docs.map(d=>`<div class="doc"><strong>${esc(d[0])}</strong>${d[1]?`<br><a href="${escAttr(d[1])}" target="_blank" rel="noopener">Abrir documento</a>`:'<br><small>Não cadastrado</small>'}</div>`).join('')}</div>
+ <div class="section-title">Observações</div><div>${esc(x.observacoes||'—')}</div>`;
+ document.getElementById('editDetailButton').onclick=()=>{closeDetail();openModal(id)};document.getElementById('detailBackdrop').style.display='flex';
+}
+function closeDetail(){document.getElementById('detailBackdrop').style.display='none'}
+function detail(l,v){return `<div class="detail"><small>${esc(l)}</small><strong>${v||'—'}</strong></div>`}
+function tipoLabel(t){return ({'MEDIÇÃO':'Equip. de Medição','TREINAMENTO':'Equip. de Treinamento','MATERIAL':'Material de Treinamento','TI':'Equip. de TI','ADMINISTRATIVO':'Equip. Administrativo','MOBILIÁRIO':'Mobiliário','VEÍCULO':'Veículo','OUTRO':'Outro'})[t]||t||'—'}
+function statusClass(s){return ['VÁLIDO','DISPONÍVEL'].includes(s)?'ok':s==='A VENCER'?'warning':['VENCIDO','INDISPONÍVEL'].includes(s)?'danger':'neutral'}
+function formatDate(d){if(!d)return'—';const p=String(d).split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d}
+function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;")}
+function escAttr(v){return esc(v)}
+function showToast(m){const e=document.getElementById('toast');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',3500)}
+document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
+document.getElementById('detailBackdrop').addEventListener('click',e=>{if(e.target.id==='detailBackdrop')closeDetail()});
+init();
+</script>
+</body>
+</html>
