@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psicologia | Insight</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f8fc;color:#18324b}
+header{background:#fff;border-bottom:1px solid #dce6f2;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+h1{margin:0;font-size:24px}.subtitle{margin-top:6px;color:#718096;font-size:14px}.container{max-width:1500px;margin:auto;padding:25px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:10px 15px;cursor:pointer;font-weight:600}
+.btn-primary{background:#1769aa;color:#fff}.btn-secondary{background:#eaf1f8;color:#23415f}.btn-danger{background:#fee2e2;color:#991b1b}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px}.card{background:#fff;border:1px solid #dce6f2;border-radius:15px;padding:18px}
+.kpi-label{font-size:12px;color:#718096;text-transform:uppercase}.kpi-value{font-size:27px;font-weight:700;margin-top:7px}.warn .kpi-value{color:#b7791f}.danger .kpi-value{color:#b42318}
+.toolbar{background:#fff;border:1px solid #dce6f2;border-radius:15px;padding:15px;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input{max-width:400px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #ccd8e6;border-radius:8px;background:#fff;color:#18324b}
+.table-container{width:100%;background:#fff;border:1px solid #dce6f2;border-radius:16px;overflow:hidden}.table-scroll{overflow-x:auto}
+table{width:100%;table-layout:fixed;border-collapse:collapse}th,td{padding:13px 12px;border-bottom:1px solid #e7edf5;text-align:left;font-size:13px;white-space:normal;overflow-wrap:anywhere;word-break:break-word;vertical-align:middle}
+th{background:#f8fafc;font-size:12px;text-transform:uppercase;color:#60748a}.status,.priority{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.ok{background:#dcfce7;color:#166534}.warning{background:#fef3c7;color:#92400e}.danger{background:#fee2e2;color:#991b1b}.neutral{background:#e8eef5;color:#526579}
+.high{background:#fee2e2;color:#991b1b}.medium{background:#fef3c7;color:#92400e}.low{background:#e8eef5;color:#526579}.empty{padding:35px;text-align:center;color:#718096}
+.modal-backdrop{position:fixed;inset:0;background:rgba(13,31,48,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal{width:min(980px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:24px}.modal h2{margin-top:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}.form-group label{display:block;font-size:12px;font-weight:700;color:#526579;margin-bottom:6px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid #e7edf5}
+.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.detail{background:#f8fafc;border-radius:10px;padding:12px}.detail small{display:block;color:#718096;margin-bottom:4px}
+.notice{background:#eef6ff;border:1px solid #cfe3f8;color:#24496c;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#17324d;color:#fff;padding:13px 17px;border-radius:10px;display:none;max-width:460px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){header{align-items:flex-start;flex-direction:column}.container{padding:15px}.kpis{grid-template-columns:repeat(2,1fr)}.form-grid,.details{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<div><h1>Psicologia</h1><div class="subtitle">Controle de ações, campanhas e atividades de desenvolvimento</div></div>
+<div class="actions">
+<button class="btn-secondary" onclick="location.href='../menu/'">Menu</button>
+<button class="btn-primary" onclick="openModal()">+ Nova Ação</button>
+<button class="btn-secondary" onclick="importarBase()">Importar base atual</button>
+<button class="btn-secondary" onclick="loadData()">Atualizar</button>
+</div>
+</header>
+<main class="container">
+<div class="notice"><strong>Base atual:</strong> estruturada a partir da planilha <strong>CONTROLE DE AÇÕES</strong>. A importação preserva os dados da planilha e mantém também o status original.</div>
+<section class="kpis">
+<div class="card"><div class="kpi-label">Total de ações</div><div class="kpi-value" id="kTotal">0</div></div>
+<div class="card"><div class="kpi-label">Concluídas</div><div class="kpi-value" id="kConcluidas">0</div></div>
+<div class="card"><div class="kpi-label">Planejadas</div><div class="kpi-value" id="kPlanejadas">0</div></div>
+<div class="card"><div class="kpi-label">Agendadas</div><div class="kpi-value" id="kAgendadas">0</div></div>
+<div class="card warn"><div class="kpi-label">Alta prioridade</div><div class="kpi-value" id="kAlta">0</div></div>
+<div class="card danger"><div class="kpi-label">Concluídas/Pendentes</div><div class="kpi-value" id="kPendentes">0</div></div>
+</section>
+<div class="toolbar">
+<input id="search" placeholder="Pesquisar empresa, responsável, ação, objetivo..." oninput="renderTable()">
+<select id="fEmpresa" onchange="renderTable()"><option value="">Todas as empresas</option></select>
+<select id="fStatus" onchange="renderTable()"><option value="">Todos os status</option><option>PLANEJADO</option><option>AGENDADO</option><option>CONCLUÍDO</option><option>CONCLUÍDO/PENDENTE</option></select>
+<select id="fPrioridade" onchange="renderTable()"><option value="">Todas as prioridades</option><option>ALTA</option><option>MÉDIA</option><option>BAIXA</option></select>
+</div>
+<section class="table-container"><div class="table-scroll"><table>
+<thead><tr><th style="width:7%">Código</th><th style="width:13%">Empresa</th><th style="width:12%">Responsável</th><th style="width:15%">Tipo de Ação</th><th style="width:17%">Objetivo</th><th style="width:10%">Prevista</th><th style="width:9%">Realizada</th><th style="width:9%">Status</th><th style="width:7%">Prioridade</th><th style="width:8%">Ação</th></tr></thead>
+<tbody id="tbody"></tbody></table></div></section>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal">
+<h2 id="modalTitle">Nova Ação</h2><form id="actionForm" onsubmit="saveAction(event)"><input type="hidden" id="registroId">
+<div class="form-grid">
+<div class="form-group"><label>Código / ID da origem *</label><input id="codigo_origem" required></div>
+<div class="form-group"><label>Empresa *</label><input id="empresa" required></div>
+<div class="form-group"><label>Responsável *</label><input id="responsavel" required></div>
+<div class="form-group"><label>Tipo de Ação *</label><input id="tipo_acao" required></div>
+<div class="form-group full"><label>Objetivo</label><textarea id="objetivo" rows="3"></textarea></div>
+<div class="form-group"><label>Data prevista / período</label><input id="data_prevista" placeholder="Ex.: 14/09/2026 ou Setembro"></div>
+<div class="form-group"><label>Data realizada / período</label><input id="data_realizada" placeholder="Ex.: 14/09/2026 ou Setembro"></div>
+<div class="form-group"><label>Frequência</label><select id="frequencia"><option value="">Selecionar</option><option>ÚNICA</option><option>PERIÓDICA</option><option>ANUAL</option><option>SEMESTRAL</option></select></div>
+<div class="form-group"><label>Status</label><select id="status"><option>PLANEJADO</option><option>AGENDADO</option><option>CONCLUÍDO</option><option>CONCLUÍDO/PENDENTE</option></select></div>
+<div class="form-group"><label>Prioridade</label><select id="prioridade"><option>ALTA</option><option>MÉDIA</option><option>BAIXA</option></select></div>
+<div class="form-group"><label>Evidência</label><input id="evidencia" placeholder="Lista de presença, certificado, fotos..."></div>
+<div class="form-group full"><label>Link da evidência</label><input id="evidencia_url" type="url" placeholder="Google Drive ou outro repositório"></div>
+<div class="form-group full"><label>Próxima ação</label><input id="proxima_acao"></div>
+<div class="form-group full"><label>Observações</label><textarea id="observacoes" rows="4"></textarea></div>
+</div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button><button class="btn-primary">Salvar</button></div>
+</form></div></div>
+
+<div class="modal-backdrop" id="detailBackdrop"><div class="modal">
+<h2 id="detailTitle">Detalhes da Ação</h2><div id="detailContent"></div>
+<div class="modal-footer"><button class="btn-secondary" onclick="closeDetail()">Fechar</button><button class="btn-primary" id="editBtn">Editar</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://sayeyuyampbsmhhdukzv.supabase.co";
+const SUPABASE_KEY="sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,registros=[];
+const BASE_INICIAL=[{"chave_importacao": "PLAN-001", "codigo_origem": "ICG01", "empresa": "A5 AUTOMAÇÕES", "responsavel": "Lana Reis", "tipo_acao": "TREINAMENTOS", "objetivo": "Mobilização Vale", "data_prevista": "De 17 a 21/07", "data_realizada": "De 17 a 21/07", "frequencia": "Unica", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Certificado e lista de frequencia", "proxima_acao": "Riscos psicossocias", "observacoes": "N/A"}, {"chave_importacao": "PLAN-002", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Kelsiane/Suelma", "tipo_acao": "AET", "objetivo": "Implementação NR-17", "data_prevista": "2026-08-05", "data_realizada": "2026-08-05", "frequencia": "Periodica", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Implementação de pausas", "observacoes": "N/A"}, {"chave_importacao": "PLAN-003", "codigo_origem": "ICG03", "empresa": "FORT CENTER", "responsavel": "Yasmim", "tipo_acao": "Prevenção ao assédio", "objetivo": "Consientizar colaboradores sobre assédio moral e sexual no ambiente de trabalho, cumprindo norma NR-05", "data_prevista": "a definir", "data_realizada": "a definir", "frequencia": "Periodica", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Agosto Lilás", "observacoes": "N/A"}, {"chave_importacao": "PLAN-004", "codigo_origem": "ICG04", "empresa": "REFRIGEAR", "responsavel": "Kelsiane", "tipo_acao": "Ação dia dos pais", "objetivo": "Valorização dos colaboradores", "data_prevista": "a definir", "data_realizada": "a definir", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "MÉDIA", "evidencia": "Fotos, lista de presença", "proxima_acao": "Escuta psicologica", "observacoes": "NA"}, {"chave_importacao": "PLAN-005", "codigo_origem": "ICG05", "empresa": "CEMIC", "responsavel": "Yasmim", "tipo_acao": "Código de conduta", "objetivo": "Conscientizar colaboradores acerca de comportamentos adequados no ambiente de trabalho", "data_prevista": "2026-07-27", "data_realizada": "2026-07-27", "frequencia": "Periodica", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Lei 15.377 e Agosto Lilás", "observacoes": "N/A"}, {"chave_importacao": "PLAN-006", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Kelsiane/Yasmim", "tipo_acao": "Desenvolvimento socioemocional", "objetivo": "Sensibilização, assédio moral no trabalho.", "data_prevista": "-", "data_realizada": "-", "frequencia": "Semestral", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença/Certificado", "proxima_acao": "Agosto Lilás e Direitos Humanos", "observacoes": "N/A"}, {"chave_importacao": "PLAN-007", "codigo_origem": "ICG07", "empresa": "EMANI", "responsavel": "Lana Reis", "tipo_acao": "DDS: Comunicação da Lei 14.377", "objetivo": "Comunicar colaboradores da nova lei e de prevenção a saúde", "data_prevista": "2026-07-14", "data_realizada": "2026-07-14", "frequencia": "Unica", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Capacitação de liderança", "observacoes": "N/A"}, {"chave_importacao": "PLAN-008", "codigo_origem": "ICG08", "empresa": "Quali Água", "responsavel": "Yasmim/Suelma", "tipo_acao": "DDS: Agosto Lilás", "objetivo": "Conscientizar colaboradores sobre o combate a violência contra a mulher e fazer ginastica laboral explicando a importancia das pausas psicofisiologicas", "data_prevista": "A definir", "data_realizada": "a definir", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Capacitação de Liderança", "observacoes": "N/A"}, {"chave_importacao": "PLAN-009", "codigo_origem": "ICG03", "empresa": "FORT CENTER", "responsavel": "Yasmim", "tipo_acao": "Agosto Lilás", "objetivo": "Conscientizar colaboradores sobre o combate a violência contra a mulher e fazer ginastica laboral explicando a importancia das pausas psicofisiologicas", "data_prevista": "2026-08-26", "data_realizada": "2026-08-26", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Setembro amarelo", "observacoes": "Pendencias: Código de conduta"}, {"chave_importacao": "PLAN-010", "codigo_origem": "IGC05", "empresa": "CEMIC/MALHARIA", "responsavel": "Yasmim", "tipo_acao": "Lei 15.377 e Agosto Lilás", "objetivo": "Consicientizar colaboradores sobre combate a violência e informar a mudança na legislação e o direito trabalhista.", "data_prevista": "2026-08-11", "data_realizada": "2026-08-11", "frequencia": "anual", "status": "CONCLUÍDO/PENDENTE", "status_original": "Concluido/ Pendente", "prioridade": "MÉDIA", "evidencia": "Lista de presença", "proxima_acao": "Agosto Lilás Grafica", "observacoes": "Realizado somente na unidade malharia"}, {"chave_importacao": "PLAN-011", "codigo_origem": "ICG09", "empresa": "FORNECEDORA", "responsavel": "Yasmim/Suelma", "tipo_acao": "DDS: Agosto Lilás e Pausas psicofisiologicas", "objetivo": "Consicientizar colaboradores sobre combate a violência e informar a mudança na legislação e o direito trabalhista.", "data_prevista": "2026-08-12", "data_realizada": "2026-08-12", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Escuta psicologica", "observacoes": "Dia 12/08 foi realizada a escuta apenas com 4 colaboradores"}, {"chave_importacao": "PLAN-012", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim", "tipo_acao": "DDS: Agosto Lilás e Direitos humanos.", "objetivo": "Consicientizar colaboradores sobre combate a violência, etarismo e intolerangia religiosa.", "data_prevista": "2026-08-25", "data_realizada": "2026-08-31", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluído", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Capacitação de liderança", "observacoes": "N/A"}, {"chave_importacao": "PLAN-013", "codigo_origem": "ICG01", "empresa": "A5 AUTOMAÇÕES", "responsavel": "Valeria", "tipo_acao": "Agosto Lilás", "objetivo": "Consicientizar colaboradores sobre combate a violência", "data_prevista": "2026-08-14", "data_realizada": "2026-08-14", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Ação de Etarismo e intolerancia religiosa", "observacoes": "Aguardando retorno de data para a proxima ação"}, {"chave_importacao": "PLAN-014", "codigo_origem": "ICG01", "empresa": "A5 AUTOMAÇÕES", "responsavel": "Yasmim", "tipo_acao": "Etarismo e Intolerangia religiosa", "objetivo": "Consicientizar sobre direitos humanos", "data_prevista": "a definir", "data_realizada": "a definir", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "NR-01", "observacoes": "Aguardando retorno da empresa."}, {"chave_importacao": "PLAN-015", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim", "tipo_acao": "Agosto Lilás", "objetivo": "Consicientizar colaboradores sobre combate a violência", "data_prevista": "2026-08-20", "data_realizada": "2026-08-20", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Capacitação de liderança", "observacoes": "Aguardando retorno da empresa sobre inicio da capacitação de liderança"}, {"chave_importacao": "PLAN-016", "codigo_origem": "IGC10", "empresa": "AUQMIA", "responsavel": "Yasmim", "tipo_acao": "Agosto Lilás", "objetivo": "Consicientizar colaboradores sobre combate a violência", "data_prevista": "2026-08-21", "data_realizada": "2026-08-26", "frequencia": "anual", "status": "CONCLUÍDO", "status_original": "Concluido", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Etarismo e Intolerancia religiosa", "observacoes": "N/A"}, {"chave_importacao": "PLAN-017", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Kelsiane/ Yasmim", "tipo_acao": "Capacitação de Liderança", "objetivo": "Desenvolver habilidades sociemocionais", "data_prevista": "2026-08-14", "data_realizada": "2026-09-13", "frequencia": "Semestral", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Certificado e lista de frequencia", "proxima_acao": "Setembro amarelo", "observacoes": "14/09 e 15/09 (Intensivão)"}, {"chave_importacao": "PLAN-018", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim", "tipo_acao": "Setembro amarelo", "objetivo": "Conscientização sobre valorização a vida", "data_prevista": "2026-09-10", "data_realizada": "2026-09-10", "frequencia": "anual", "status": "AGENDADO", "status_original": "Agendado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Alcoolismo", "observacoes": "Programa anti-alcool"}, {"chave_importacao": "PLAN-019", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim", "tipo_acao": "Alcoolismo", "objetivo": "Conscientização sobre uso de alcool", "data_prevista": "2026-09-15", "data_realizada": "2026-09-15", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Programa anti alcool", "observacoes": "N/A"}, {"chave_importacao": "PLAN-020", "codigo_origem": "ICG08", "empresa": "Quali Água", "responsavel": "Yasmim", "tipo_acao": "Capacitação de Liderança", "objetivo": "Desenvolver habilidades sociemocionais", "data_prevista": "a definir", "data_realizada": "a definir", "frequencia": "Semestral", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "MÉDIA", "evidencia": "Certificado e lista de frequencia", "proxima_acao": "Lei 15.377", "observacoes": "N/A"}, {"chave_importacao": "PLAN-021", "codigo_origem": "ICG08", "empresa": "Quali Água", "responsavel": "Yasmim", "tipo_acao": "Lei 15.377", "objetivo": "Conscientização sobre saúde e direito trabalhista", "data_prevista": "2026-09-02", "data_realizada": "2026-09-02", "frequencia": "Periodica", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "MÉDIA", "evidencia": "Lista de frequência", "proxima_acao": "Setembro amarelo", "observacoes": "N/A"}, {"chave_importacao": "PLAN-022", "codigo_origem": "ICG09", "empresa": "EMANI", "responsavel": "Yasmim", "tipo_acao": "Setembro amarelo", "objetivo": "Conscientização sobre valorização a vida", "data_prevista": "Setembro", "data_realizada": "Setembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de frequência", "proxima_acao": "Outubro Rosa e Verde", "observacoes": "N/A"}, {"chave_importacao": "PLAN-023", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim/Adriana", "tipo_acao": "Outubro Rosa e Verde", "objetivo": "Câncer de mama e prevenção a sifilis", "data_prevista": "Outubro", "data_realizada": "Outubro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "Novembro Azul", "observacoes": "N/A"}, {"chave_importacao": "PLAN-024", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim/Adriana", "tipo_acao": "Novembro Azul e Vermelho", "objetivo": "Prevenção ao câncer de prostata e boca", "data_prevista": "Novembro", "data_realizada": "Novembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "Restrospectiva 2026", "observacoes": "N/A"}, {"chave_importacao": "PLAN-025", "codigo_origem": "ICG02", "empresa": "TAC", "responsavel": "Yasmim/ Adriana", "tipo_acao": "Restrospectiva 2026", "objetivo": "Visualizar linha do tempo e melhorias", "data_prevista": "Dezembro", "data_realizada": "Dezembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Ata de reunião", "proxima_acao": "Janeiro Branco", "observacoes": "N/A"}, {"chave_importacao": "PLAN-026", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim", "tipo_acao": "Setembro amarelo", "objetivo": "Conscientização e valorização à vida", "data_prevista": "Setembro", "data_realizada": "Setembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "MÉDIA", "evidencia": "Lista de presença", "proxima_acao": "Lei 15.377", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-027", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim/Adriana", "tipo_acao": "Lei 15.377", "objetivo": "Conscientização de cuidados preventivos e direito do trabalhor.", "data_prevista": "Setembro", "data_realizada": "Setembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Outubro Rosa e Verde", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-028", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim", "tipo_acao": "Outubro Rosa e Verde", "objetivo": "Prevenção câncer de mama e sifilis", "data_prevista": "Outubro", "data_realizada": "Outubro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "Campanha de saúde", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-029", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim/Adriana", "tipo_acao": "Diabetes e Hipertensão", "objetivo": "Conscientizar sobre cuidados preventivos", "data_prevista": "Outubro", "data_realizada": "Outubro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "Alcoolismo", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-030", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim/Adriana", "tipo_acao": "Alcoolismo", "objetivo": "Conscientização de riscos e consequencias", "data_prevista": "Novembro", "data_realizada": "Novembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "Novembro Azul", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-031", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim/Adriana", "tipo_acao": "Novembro Azul e Vermelho", "objetivo": "Prevenção ao câncer de prostata e boca", "data_prevista": "Novembro", "data_realizada": "Novembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "-", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-032", "codigo_origem": "ICG06", "empresa": "EUDES", "responsavel": "Yasmim/Adriana", "tipo_acao": "Dezembro", "objetivo": "AIDS e Câncer de pele", "data_prevista": "Dezembro", "data_realizada": "Dezembro", "frequencia": "anual", "status": "PLANEJADO", "status_original": "Planejado", "prioridade": "BAIXA", "evidencia": "Lista de presença", "proxima_acao": "-", "observacoes": "Confirmar data"}, {"chave_importacao": "PLAN-033", "codigo_origem": "ICG03", "empresa": "FORT CENTER", "responsavel": "Yasmim", "tipo_acao": "Setembro amarelo", "objetivo": "Consicientização e valorização a vida", "data_prevista": "2026-09-11", "data_realizada": "2026-09-11", "frequencia": "anual", "status": "AGENDADO", "status_original": "agendado", "prioridade": "ALTA", "evidencia": "Lista de presença", "proxima_acao": "Assédio moral", "observacoes": "N/A"}];
+
+async function init(){
+ const {data:{session},error}=await sb.auth.getSession();
+ if(error||!session){location.href="../";return}
+ currentUser=session.user;await loadData();
+}
+async function loadData(){
+ const {data,error}=await sb.from("psicologia_acoes").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:true});
+ if(error){showToast("Erro ao carregar: "+error.message);return}
+ registros=data||[];preencherEmpresas();updateKPIs();renderTable();
+}
+async function importarBase(){
+ const {data:existentes,error}=await sb.from("psicologia_acoes").select("chave_importacao").eq("user_id",currentUser.id);
+ if(error){showToast("Erro ao verificar base: "+error.message);return}
+ const set=new Set((existentes||[]).map(x=>x.chave_importacao));
+ const faltantes=BASE_INICIAL.filter(x=>!set.has(x.chave_importacao));
+ if(!faltantes.length){showToast("A base atual já foi importada.");return}
+ const payload=faltantes.map(x=>({...x,user_id:currentUser.id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()}));
+ const {error:err}=await sb.from("psicologia_acoes").insert(payload);
+ if(err){showToast("Erro na importação: "+err.message);return}
+ showToast(faltantes.length+" registros importados com sucesso.");await loadData();
+}
+function preencherEmpresas(){
+ const sel=document.getElementById("fEmpresa"),atual=sel.value;
+ const empresas=[...new Set(registros.map(x=>x.empresa).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+ sel.innerHTML='<option value="">Todas as empresas</option>'+empresas.map(x=>'<option value="'+escAttr(x)+'">'+esc(x)+'</option>').join("");
+ sel.value=atual;
+}
+function updateKPIs(){
+ const c=s=>registros.filter(x=>x.status===s).length;
+ document.getElementById("kTotal").textContent=registros.length;
+ document.getElementById("kConcluidas").textContent=c("CONCLUÍDO");
+ document.getElementById("kPlanejadas").textContent=c("PLANEJADO");
+ document.getElementById("kAgendadas").textContent=c("AGENDADO");
+ document.getElementById("kAlta").textContent=registros.filter(x=>x.prioridade==="ALTA").length;
+ document.getElementById("kPendentes").textContent=c("CONCLUÍDO/PENDENTE");
+}
+function renderTable(){
+ const q=(document.getElementById("search").value||"").toLowerCase(),emp=document.getElementById("fEmpresa").value,st=document.getElementById("fStatus").value,pr=document.getElementById("fPrioridade").value;
+ const list=registros.filter(x=>{const t=[x.codigo_origem,x.empresa,x.responsavel,x.tipo_acao,x.objetivo,x.proxima_acao,x.observacoes].join(" ").toLowerCase();return(!q||t.includes(q))&&(!emp||x.empresa===emp)&&(!st||x.status===st)&&(!pr||x.prioridade===pr)});
+ const body=document.getElementById("tbody");
+ if(!list.length){body.innerHTML='<tr><td colspan="10" class="empty">Nenhuma ação encontrada.</td></tr>';return}
+ body.innerHTML=list.map(x=>'<tr><td><strong>'+esc(x.codigo_origem)+'</strong></td><td>'+esc(x.empresa)+'</td><td>'+esc(x.responsavel)+'</td><td>'+esc(x.tipo_acao)+'</td><td>'+esc(x.objetivo)+'</td><td>'+esc(x.data_prevista||"—")+'</td><td>'+esc(x.data_realizada||"—")+'</td><td><span class="status '+statusClass(x.status)+'">'+esc(x.status)+'</span></td><td><span class="priority '+priorityClass(x.prioridade)+'">'+esc(x.prioridade||"—")+'</span></td><td><button class="btn-secondary" onclick="viewDetail(\''+x.id+'\')">Ver</button></td></tr>').join("");
+}
+function openModal(id=null){
+ document.getElementById("actionForm").reset();document.getElementById("registroId").value="";document.getElementById("modalTitle").textContent="Nova Ação";
+ if(id){const x=registros.find(r=>r.id===id);if(!x)return;document.getElementById("modalTitle").textContent="Editar Ação";document.getElementById("registroId").value=x.id;
+ ["codigo_origem","empresa","responsavel","tipo_acao","objetivo","data_prevista","data_realizada","frequencia","status","prioridade","evidencia","evidencia_url","proxima_acao","observacoes"].forEach(k=>document.getElementById(k).value=x[k]||"")}
+ document.getElementById("modalBackdrop").style.display="flex";
+}
+function closeModal(){document.getElementById("modalBackdrop").style.display="none"}
+async function saveAction(e){
+ e.preventDefault();const id=document.getElementById("registroId").value,p={};
+ ["codigo_origem","empresa","responsavel","tipo_acao","objetivo","data_prevista","data_realizada","frequencia","status","prioridade","evidencia","evidencia_url","proxima_acao","observacoes"].forEach(k=>p[k]=document.getElementById(k).value.trim()||null);
+ p.user_id=currentUser.id;p.updated_at=new Date().toISOString();
+ let result;
+ if(id)result=await sb.from("psicologia_acoes").update(p).eq("id",id).eq("user_id",currentUser.id);
+ else{p.chave_importacao="MAN-"+Date.now();p.created_at=new Date().toISOString();result=await sb.from("psicologia_acoes").insert(p)}
+ if(result.error){showToast("Erro ao salvar: "+result.error.message);return}
+ closeModal();showToast("Ação salva com sucesso.");await loadData();
+}
+function viewDetail(id){
+ const x=registros.find(r=>r.id===id);if(!x)return;
+ document.getElementById("detailTitle").textContent=(x.codigo_origem||"Ação")+" — "+x.empresa;
+ document.getElementById("detailContent").innerHTML='<div class="details">'+detail("Responsável",x.responsavel)+detail("Tipo de ação",x.tipo_acao)+detail("Frequência",x.frequencia)+detail("Data prevista",x.data_prevista)+detail("Data realizada",x.data_realizada)+detail("Status",'<span class="status '+statusClass(x.status)+'">'+esc(x.status)+'</span>')+detail("Prioridade",'<span class="priority '+priorityClass(x.prioridade)+'">'+esc(x.prioridade||"—")+'</span>')+detail("Próxima ação",x.proxima_acao)+'</div><div style="margin-top:15px"><strong>Objetivo</strong><p>'+esc(x.objetivo||"—")+'</p></div><div style="margin-top:15px"><strong>Evidência</strong><p>'+esc(x.evidencia||"—")+'</p>'+(x.evidencia_url?'<a href="'+escAttr(x.evidencia_url)+'" target="_blank" rel="noopener">Abrir evidência</a>':"")+'</div><div style="margin-top:15px"><strong>Observações</strong><p>'+esc(x.observacoes||"—")+'</p></div>';
+ document.getElementById("editBtn").onclick=()=>{closeDetail();openModal(id)};document.getElementById("detailBackdrop").style.display="flex";
+}
+function closeDetail(){document.getElementById("detailBackdrop").style.display="none"}
+function detail(l,v){return '<div class="detail"><small>'+esc(l)+'</small><strong>'+(v||"—")+'</strong></div>'}
+function statusClass(s){return s==="CONCLUÍDO"?"ok":s==="AGENDADO"?"warning":s==="CONCLUÍDO/PENDENTE"?"danger":"neutral"}
+function priorityClass(p){return p==="ALTA"?"high":p==="MÉDIA"?"medium":"low"}
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function escAttr(v){return esc(v)}
+function showToast(m){const e=document.getElementById("toast");e.textContent=m;e.style.display="block";setTimeout(()=>e.style.display="none",3500)}
+document.getElementById("modalBackdrop").addEventListener("click",e=>{if(e.target.id==="modalBackdrop")closeModal()});
+document.getElementById("detailBackdrop").addEventListener("click",e=>{if(e.target.id==="detailBackdrop")closeDetail()});
+init();
+</script>
+</body>
+</html>
