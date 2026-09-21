@@ -1,283 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Insight | Menu Principal</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #ffffff;
-      background:
-        radial-gradient(circle at 85% 15%, rgba(25,105,236,.18), transparent 28%),
-        radial-gradient(circle at 15% 85%, rgba(16,88,194,.18), transparent 30%),
-        linear-gradient(135deg, #032052 0%, #073d88 55%, #021b3e 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1100px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 35px;
-    }
-
-    .logo {
-      width: 230px;
-      max-width: 70vw;
-      height: auto;
-      margin: 0 auto 18px;
-      display: block;
-      filter: brightness(0) invert(1);
-      opacity: .98;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 30px;
-      font-weight: 700;
-    }
-
-    .subtitulo {
-      margin-top: 8px;
-      opacity: .78;
-      font-size: 15px;
-    }
-
-    .usuario {
-      margin-top: 14px;
-      font-size: 13px;
-      opacity: .65;
-    }
-
-    .modulos {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .modulo {
-      text-decoration: none;
-      color: #ffffff;
-      background: rgba(255,255,255,.09);
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 18px;
-      padding: 28px 22px;
-      min-height: 155px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      transition: .2s ease;
-      backdrop-filter: blur(8px);
-    }
-
-    .modulo:hover {
-      transform: translateY(-4px);
-      background: rgba(255,255,255,.15);
-      border-color: rgba(255,255,255,.30);
-      box-shadow: 0 12px 28px rgba(0,0,0,.16);
-    }
-
-    .icone {
-      font-size: 38px;
-      margin-bottom: 14px;
-    }
-
-    .nome {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .descricao {
-      margin-top: 6px;
-      font-size: 12px;
-      opacity: .65;
-    }
-
-    .rodape {
-      margin-top: 30px;
-      text-align: center;
-    }
-
-    .sair {
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.08);
-      color: #ffffff;
-      padding: 10px 24px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .sair:hover {
-      background: rgba(255,255,255,.15);
-    }
-
-    @media (max-width: 800px) {
-      .modulos {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 520px) {
-      .modulos {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 25px;
-      }
-
-      .logo {
-        width: 200px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Insight | Sistema de Gestão</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}:root{--a:#06275a;--b:#0b438d;--c:#062653;--line:rgba(133,201,255,.32);--muted:rgba(255,255,255,.68)}
+html,body{margin:0;min-height:100%}body{min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:#fff;background:radial-gradient(circle at 88% 8%,rgba(54,145,255,.18),transparent 26%),radial-gradient(circle at 8% 92%,rgba(30,110,220,.15),transparent 28%),linear-gradient(135deg,var(--a) 0%,var(--b) 52%,var(--c) 100%);display:flex;align-items:center;justify-content:center;padding:26px 28px;overflow-x:hidden}.container{width:100%;max-width:1420px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-bottom:28px;padding:0 8px}.marca{display:flex;align-items:center;gap:20px;min-width:0}.logo{width:185px;max-width:32vw;height:auto;display:block;object-fit:contain;filter:brightness(0) invert(1)}.divisor{width:1px;height:54px;background:rgba(255,255,255,.45)}.titulo-area h1{margin:0;font-size:24px;line-height:1.1;font-weight:700;letter-spacing:-.3px}.subtitulo{margin-top:7px;font-size:13px;color:var(--muted)}.usuario{margin-top:7px;font-size:11px;color:rgba(255,255,255,.48)}.cabecalho-direita{text-align:right;white-space:nowrap}.linha-acento{display:inline-block;width:54px;height:3px;background:#7cc9ff;margin-right:15px;vertical-align:middle;border-radius:5px}.slogan{font-size:12px;letter-spacing:3px;color:rgba(255,255,255,.75);vertical-align:middle}
+.modulos{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.modulo{position:relative;min-height:142px;padding:25px 25px 23px;text-decoration:none;color:#fff;background:rgba(255,255,255,.085);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;backdrop-filter:blur(8px);transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}.modulo::before{content:"";width:52px;height:3px;background:#7cc9ff;border-radius:4px;display:block;margin-bottom:19px}.modulo:hover{transform:translateY(-3px);background:rgba(255,255,255,.13);border-color:rgba(140,211,255,.62);box-shadow:0 12px 30px rgba(0,0,0,.16)}.nome{font-size:22px;line-height:1.15;font-weight:700;letter-spacing:-.2px}.descricao{margin-top:9px;max-width:230px;font-size:13px;line-height:1.45;color:var(--muted)}.seta{position:absolute;right:22px;bottom:19px;font-size:27px;line-height:1;color:#7cc9ff;transition:transform .18s ease}.modulo:hover .seta{transform:translateX(4px)}
+.rodape{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:25px;padding:16px 8px 0;border-top:1px solid rgba(255,255,255,.20)}.rodape-marca{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.72)}.rodape-frase{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.58)}.sair{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);color:#fff;padding:8px 19px;border-radius:9px;cursor:pointer;font-size:12px;transition:.18s ease}.sair:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.42)}
+@media(max-width:1050px){body{padding:24px 20px}.header{flex-direction:column;align-items:flex-start}.cabecalho-direita{text-align:left}.modulos{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){body{padding:20px 15px}.header{gap:18px;margin-bottom:22px}.marca{gap:14px}.logo{width:145px}.divisor{height:42px}.titulo-area h1{font-size:19px}.subtitulo{font-size:11px}.slogan{font-size:10px;letter-spacing:2px}.linha-acento{width:35px;margin-right:9px}.modulos{grid-template-columns:1fr;gap:12px}.modulo{min-height:125px;padding:21px 22px}.nome{font-size:19px}.descricao{font-size:12px}.rodape{flex-wrap:wrap}.rodape-frase{display:none}}
+</style>
 </head>
-
 <body>
-
-  <main class="container">
-
-    <header class="header">
-      <img
-        class="logo"
-        src="https://raw.githubusercontent.com/insightslz/INSIGHT_SLZ/main/logo_insight_semfundo.png"
-        alt="Insight Consultoria e Gestão"
-      >
-
-      <h1>Insight | Sistema de Gestão</h1>
-
-      <div class="subtitulo">
-        Gerenciamento SGQ — Insight SST
-      </div>
-
-      <div class="usuario" id="usuario">
-        Verificando acesso...
-      </div>
-    </header>
-
-    <section class="modulos">
-
-      <a class="modulo" href="../dre/">
-        <div class="icone">📊</div>
-        <div class="nome">DRE</div>
-        <div class="descricao">DRE Orçamentária</div>
-      </a>
-
-      <a class="modulo" href="../clientes/">
-        <div class="icone">👥</div>
-        <div class="nome">Clientes</div>
-        <div class="descricao">Cadastro e gestão de clientes</div>
-      </a>
-
-      <a class="modulo" href="../contratos/">
-        <div class="icone">📄</div>
-        <div class="nome">Contratos</div>
-        <div class="descricao">Gestão de contratos</div>
-      </a>
-
-      <a class="modulo" href="../crm/">
-        <div class="icone">🎯</div>
-        <div class="nome">CRM</div>
-        <div class="descricao">Gestão comercial</div>
-      </a>
-
-      <a class="modulo" href="../equipamentos/">
-        <div class="icone">🧰</div>
-        <div class="nome">Equipamentos</div>
-        <div class="descricao">Equipamentos, materiais, calibração e evidências</div>
-      </a>
-
-      <a class="modulo" href="../indicadores/">
-        <div class="icone">📈</div>
-        <div class="nome">Indicadores</div>
-        <div class="descricao">Indicadores de desempenho</div>
-      </a>
-
-      <a class="modulo" href="../treinamentos/">
-        <div class="icone">🎓</div>
-        <div class="nome">Treinamentos</div>
-        <div class="descricao">Matriz, participantes e horas de treinamento</div>
-      </a>
-
-      <a class="modulo" href="../psicologia/">
-        <div class="icone">🧠</div>
-        <div class="nome">Psicologia</div>
-        <div class="descricao">Gestão e desenvolvimento de pessoas</div>
-      </a>
-
-    </section>
-
-    <footer class="rodape">
-      <button class="sair" id="btnSair">
-        Sair
-      </button>
-    </footer>
-
-  </main>
-
-  <script>
-    const SUPABASE_URL = "https://sayeyuyampbsmhhdukzv.supabase.co";
-
-    /*
-      Mantenha aqui a mesma PUBLISHABLE KEY que já é utilizada
-      no seu menu atual e nas demais páginas do sistema.
-      Não utilize a Secret Key.
-    */
-    const SUPABASE_KEY =
-      "COLE_AQUI_A_MESMA_PUBLISHABLE_KEY_DO_MENU_ATUAL";
-
-    const sb = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-    async function iniciar() {
-
-      const {
-        data: { session },
-        error
-      } = await sb.auth.getSession();
-
-      if (error || !session) {
-        window.location.href = "../";
-        return;
-      }
-
-      const email = session.user.email || "";
-
-      document.getElementById("usuario").textContent =
-        "Usuário: " + email;
-    }
-
-    document.getElementById("btnSair").addEventListener("click", async () => {
-
-      await sb.auth.signOut();
-
-      window.location.href = "../";
-    });
-
-    iniciar();
-  </script>
-
+<main class="container">
+<header class="header">
+<div class="marca">
+<img class="logo" src="https://raw.githubusercontent.com/insightslz/INSIGHT_SLZ/main/logo_insight_semfundo.png" alt="Insight Consultoria e Gestão">
+<div class="divisor"></div>
+<div class="titulo-area"><h1>Sistema de Gestão</h1><div class="subtitulo">Gerenciamento SGQ — Insight SST</div><div class="usuario" id="usuario">Verificando acesso...</div></div>
+</div>
+<div class="cabecalho-direita"><span class="linha-acento"></span><span class="slogan">GESTÃO&nbsp;&nbsp;|&nbsp;&nbsp;EXCELÊNCIA&nbsp;&nbsp;|&nbsp;&nbsp;RESULTADOS</span></div>
+</header>
+<section class="modulos">
+<a class="modulo" href="../dre/"><div><div class="nome">DRE</div><div class="descricao">DRE Orçamentária</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../clientes/"><div><div class="nome">Clientes</div><div class="descricao">Cadastro e gestão de clientes</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../contratos/"><div><div class="nome">Contratos</div><div class="descricao">Gestão de contratos</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../crm/"><div><div class="nome">CRM</div><div class="descricao">Gestão comercial</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../equipamentos/"><div><div class="nome">Equipamentos</div><div class="descricao">Equipamentos, materiais, calibração e evidências</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../indicadores/"><div><div class="nome">Indicadores</div><div class="descricao">Indicadores de desempenho</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../treinamentos/"><div><div class="nome">Treinamentos</div><div class="descricao">Matriz, participantes e horas de treinamento</div></div><span class="seta">→</span></a>
+<a class="modulo" href="../psicologia/"><div><div class="nome">Psicologia</div><div class="descricao">Gestão e desenvolvimento de pessoas</div></div><span class="seta">→</span></a>
+</section>
+<footer class="rodape"><div class="rodape-marca">INSIGHT SST · GESTÃO COM PROPÓSITO</div><div class="rodape-frase">EXCELÊNCIA EM CADA DECISÃO</div><button class="sair" id="btnSair">Sair</button></footer>
+</main>
+<script>
+const SUPABASE_URL="https://sayeyuyampbsmhhdukzv.supabase.co";
+const SUPABASE_KEY="sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+async function iniciar(){const{data:{session},error}=await sb.auth.getSession();if(error||!session){window.location.href="../";return}document.getElementById("usuario").textContent="Usuário: "+(session.user.email||"")}
+document.getElementById("btnSair").addEventListener("click",async()=>{await sb.auth.signOut();window.location.href="../"});iniciar();
+</script>
 </body>
 </html>
