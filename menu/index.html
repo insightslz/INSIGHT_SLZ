@@ -30,7 +30,7 @@
 
     .container {
       width: 100%;
-      max-width: 1050px;
+      max-width: 1100px;
     }
 
     .header {
@@ -39,16 +39,13 @@
     }
 
     .logo {
-      width: 68px;
-      height: 68px;
+      width: 230px;
+      max-width: 70vw;
+      height: auto;
       margin: 0 auto 18px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
+      display: block;
+      filter: brightness(0) invert(1);
+      opacity: .98;
     }
 
     h1 {
@@ -96,6 +93,7 @@
       transform: translateY(-4px);
       background: rgba(255,255,255,.15);
       border-color: rgba(255,255,255,.30);
+      box-shadow: 0 12px 28px rgba(0,0,0,.16);
     }
 
     .icone {
@@ -147,6 +145,10 @@
       h1 {
         font-size: 25px;
       }
+
+      .logo {
+        width: 200px;
+      }
     }
   </style>
 </head>
@@ -156,7 +158,11 @@
   <main class="container">
 
     <header class="header">
-      <div class="logo">✚</div>
+      <img
+        class="logo"
+        src="https://raw.githubusercontent.com/insightslz/INSIGHT_SLZ/main/logo_insight_semfundo.png"
+        alt="Insight Consultoria e Gestão"
+      >
 
       <h1>Insight | Sistema de Gestão</h1>
 
@@ -195,10 +201,22 @@
         <div class="descricao">Gestão comercial</div>
       </a>
 
+      <a class="modulo" href="../equipamentos/">
+        <div class="icone">🧰</div>
+        <div class="nome">Equipamentos</div>
+        <div class="descricao">Equipamentos, materiais, calibração e evidências</div>
+      </a>
+
       <a class="modulo" href="../indicadores/">
         <div class="icone">📈</div>
         <div class="nome">Indicadores</div>
         <div class="descricao">Indicadores de desempenho</div>
+      </a>
+
+      <a class="modulo" href="../treinamentos/">
+        <div class="icone">🎓</div>
+        <div class="nome">Treinamentos</div>
+        <div class="descricao">Matriz, participantes e horas de treinamento</div>
       </a>
 
       <a class="modulo" href="../psicologia/">
@@ -220,8 +238,13 @@
   <script>
     const SUPABASE_URL = "https://sayeyuyampbsmhhdukzv.supabase.co";
 
+    /*
+      Mantenha aqui a mesma PUBLISHABLE KEY que já é utilizada
+      no seu menu atual e nas demais páginas do sistema.
+      Não utilize a Secret Key.
+    */
     const SUPABASE_KEY =
-      "sb_publishable_ehw8AIkVTSk6iI2Rh9nJ1w_2S6Au_GA";
+      "COLE_AQUI_A_MESMA_PUBLISHABLE_KEY_DO_MENU_ATUAL";
 
     const sb = window.supabase.createClient(
       SUPABASE_URL,
